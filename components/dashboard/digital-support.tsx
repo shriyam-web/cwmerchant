@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, FileText, Calendar, CheckCircle, Clock, Image } from 'lucide-react';
+import { Plus, FileText, Calendar, CheckCircle, Clock, Image as ImageIcon } from 'lucide-react';
 
 export function DigitalSupport() {
   const [requests, setRequests] = useState([
@@ -55,7 +55,7 @@ export function DigitalSupport() {
   };
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'completed': return 'bg-green-600';
       case 'in_progress': return 'bg-blue-600';
       case 'pending': return 'bg-orange-500';
@@ -64,7 +64,7 @@ export function DigitalSupport() {
   };
 
   const getStatusIcon = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'completed': return <CheckCircle className="h-4 w-4" />;
       case 'in_progress': return <Clock className="h-4 w-4" />;
       case 'pending': return <FileText className="h-4 w-4" />;
@@ -74,12 +74,14 @@ export function DigitalSupport() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Digital Support</h2>
           <p className="text-gray-600">Request professional marketing materials and graphics</p>
         </div>
-        
+
+        {/* New Request Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -92,9 +94,10 @@ export function DigitalSupport() {
               <DialogTitle>Request Digital Support</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              {/* Request Type */}
               <div>
                 <Label htmlFor="requestType">Request Type *</Label>
-                <Select onValueChange={(value) => setNewRequest({...newRequest, type: value})}>
+                <Select onValueChange={(value) => setNewRequest({ ...newRequest, type: value })}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select request type" />
                   </SelectTrigger>
@@ -108,33 +111,39 @@ export function DigitalSupport() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
+              {/* Title */}
               <div>
                 <Label htmlFor="requestTitle">Title *</Label>
                 <Input
                   id="requestTitle"
                   value={newRequest.title}
-                  onChange={(e) => setNewRequest({...newRequest, title: e.target.value})}
+                  onChange={(e) => setNewRequest({ ...newRequest, title: e.target.value })}
                   placeholder="Brief title for your request"
                   className="mt-1"
                 />
               </div>
-              
+
+              {/* Description */}
               <div>
                 <Label htmlFor="requestDescription">Description *</Label>
                 <Textarea
                   id="requestDescription"
                   value={newRequest.description}
-                  onChange={(e) => setNewRequest({...newRequest, description: e.target.value})}
+                  onChange={(e) => setNewRequest({ ...newRequest, description: e.target.value })}
                   placeholder="Describe what you need in detail..."
                   className="mt-1"
                   rows={4}
                 />
               </div>
-              
+
+              {/* Priority */}
               <div>
                 <Label htmlFor="priority">Priority</Label>
-                <Select onValueChange={(value) => setNewRequest({...newRequest, priority: value})} defaultValue="normal">
+                <Select
+                  onValueChange={(value) => setNewRequest({ ...newRequest, priority: value })}
+                  defaultValue="normal"
+                >
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
@@ -146,7 +155,7 @@ export function DigitalSupport() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <Button onClick={handleSubmitRequest} className="w-full">
                 Submit Request
               </Button>
@@ -162,16 +171,21 @@ export function DigitalSupport() {
           { type: 'social_media', title: 'Social Media Graphics', description: 'Instagram & Facebook posts' },
           { type: 'poster', title: 'Promotional Posters', description: 'Eye-catching marketing posters' }
         ].map((template, index) => (
-          <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow border-dashed border-2 border-gray-200 hover:border-blue-300">
+          <Card
+            key={index}
+            className="cursor-pointer hover:shadow-md transition-shadow border-dashed border-2 border-gray-200 hover:border-blue-300"
+          >
             <CardContent className="p-6 text-center">
-              <Image className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              {/* Icon */}
+              <ImageIcon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+
               <h3 className="font-semibold text-gray-900 mb-2">{template.title}</h3>
               <p className="text-sm text-gray-600 mb-4">{template.description}</p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => {
-                  setNewRequest({...newRequest, type: template.type, title: template.title});
+                  setNewRequest({ ...newRequest, type: template.type, title: template.title });
                   setIsDialogOpen(true);
                 }}
               >
@@ -185,7 +199,6 @@ export function DigitalSupport() {
       {/* Request History */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-gray-900">Request History</h3>
-        
         {requests.map((request) => (
           <Card key={request.id}>
             <CardContent className="p-6">
@@ -211,9 +224,9 @@ export function DigitalSupport() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-right">
-                  <Badge 
+                  <Badge
                     variant="secondary"
                     className={getStatusColor(request.status) + ' text-white capitalize'}
                   >

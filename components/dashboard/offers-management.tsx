@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image';
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ export function OffersManagement() {
       used: 45
     },
     {
-      id: '2', 
+      id: '2',
       title: 'Buy 2 Get 1 Free',
       description: 'Special offer on accessories',
       discount: 'BOGO',
@@ -73,7 +73,7 @@ export function OffersManagement() {
           <h2 className="text-2xl font-bold text-gray-900">Offers Management</h2>
           <p className="text-gray-600">Create and manage your promotional offers</p>
         </div>
-        
+
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -91,7 +91,7 @@ export function OffersManagement() {
                 <Input
                   id="offerTitle"
                   value={newOffer.title}
-                  onChange={(e) => setNewOffer({...newOffer, title: e.target.value})}
+                  onChange={(e) => setNewOffer({ ...newOffer, title: e.target.value })}
                   placeholder="e.g., 20% Off on Electronics"
                   className="mt-1"
                 />
@@ -101,7 +101,7 @@ export function OffersManagement() {
                 <Textarea
                   id="offerDescription"
                   value={newOffer.description}
-                  onChange={(e) => setNewOffer({...newOffer, description: e.target.value})}
+                  onChange={(e) => setNewOffer({ ...newOffer, description: e.target.value })}
                   placeholder="Describe your offer"
                   className="mt-1"
                 />
@@ -111,7 +111,7 @@ export function OffersManagement() {
                 <Input
                   id="discount"
                   value={newOffer.discount}
-                  onChange={(e) => setNewOffer({...newOffer, discount: e.target.value})}
+                  onChange={(e) => setNewOffer({ ...newOffer, discount: e.target.value })}
                   placeholder="e.g., 20% or ₹500"
                   className="mt-1"
                 />
@@ -122,7 +122,7 @@ export function OffersManagement() {
                   id="validUntil"
                   type="date"
                   value={newOffer.validUntil}
-                  onChange={(e) => setNewOffer({...newOffer, validUntil: e.target.value})}
+                  onChange={(e) => setNewOffer({ ...newOffer, validUntil: e.target.value })}
                   className="mt-1"
                 />
               </div>
@@ -142,7 +142,7 @@ export function OffersManagement() {
                 <div>
                   <CardTitle className="text-lg">{offer.title}</CardTitle>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge 
+                    <Badge
                       variant={offer.status === 'active' ? 'default' : 'secondary'}
                       className={offer.status === 'active' ? 'bg-green-600' : 'bg-gray-500'}
                     >
