@@ -23,7 +23,7 @@ export function PurchaseRequests() {
     },
     {
       id: '2',
-      customerName: 'Priya Singh', 
+      customerName: 'Priya Singh',
       amount: '₹850',
       product: 'Wireless Earphones',
       submittedAt: '2025-01-15 11:20',
@@ -57,26 +57,26 @@ export function PurchaseRequests() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleApprove = (id: string) => {
-    setRequests(requests.map(req => 
-      req.id === id ? {...req, status: 'approved'} : req
+    setRequests(requests.map(req =>
+      req.id === id ? { ...req, status: 'approved' } : req
     ));
   };
 
   const handleReject = (id: string) => {
-    setRequests(requests.map(req => 
-      req.id === id ? {...req, status: 'rejected'} : req
+    setRequests(requests.map(req =>
+      req.id === id ? { ...req, status: 'rejected' } : req
     ));
   };
 
   const filteredRequests = requests.filter(request => {
     const matchesFilter = filter === 'all' || request.status === filter;
     const matchesSearch = request.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         request.product.toLowerCase().includes(searchTerm.toLowerCase());
+      request.product.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'approved': return 'bg-green-600';
       case 'rejected': return 'bg-red-500';
       case 'pending': return 'bg-orange-500';
@@ -133,9 +133,15 @@ export function PurchaseRequests() {
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-12 h-12">
                     <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
-                      {request.customerName.split(' ').map(n => n[0]).join('')}
+                      {request.customerName
+                        ? request.customerName
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')
+                        : 'NA'}
                     </AvatarFallback>
                   </Avatar>
+
                   <div>
                     <div className="font-semibold text-gray-900">{request.customerName}</div>
                     <div className="text-sm text-gray-600">{request.customerPhone}</div>
@@ -144,11 +150,11 @@ export function PurchaseRequests() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-right">
                   <div className="text-xl font-bold text-gray-900 mb-1">{request.amount}</div>
                   <div className="text-sm text-gray-600 mb-2">{request.product}</div>
-                  <Badge 
+                  <Badge
                     variant="secondary"
                     className={getStatusColor(request.status) + ' text-white capitalize'}
                   >
@@ -159,19 +165,19 @@ export function PurchaseRequests() {
                   </Badge>
                 </div>
               </div>
-              
+
               {request.status === 'pending' && (
                 <div className="flex space-x-2 mt-4 pt-4 border-t border-gray-200">
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="bg-green-600 hover:bg-green-700"
                     onClick={() => handleApprove(request.id)}
                   >
                     <CheckCircle className="h-4 w-4 mr-1" />
                     Approve
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="destructive"
                     onClick={() => handleReject(request.id)}
                   >
