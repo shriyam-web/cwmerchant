@@ -52,22 +52,25 @@ export function ProductsManagement() {
 
   const handleAddProduct = () => {
     const product = {
-      id: Date.now().toString(),
       ...newProduct,
-      status: 'active',
-      image: 'https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=200'
+      id: Date.now().toString(),
+      stock: Number(newProduct.stock), // ✅ string -> number
+      image: 'https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=200',
+      status: 'Active',
     };
+
     setProducts([...products, product]);
     setNewProduct({ name: '', category: '', price: '', stock: '', description: '' });
     setIsAddDialogOpen(false);
   };
+
 
   const handleDeleteProduct = (id: string) => {
     setProducts(products.filter(product => product.id !== id));
   };
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'active': return 'bg-green-600';
       case 'out_of_stock': return 'bg-red-500';
       default: return 'bg-gray-500';
@@ -75,7 +78,7 @@ export function ProductsManagement() {
   };
 
   const getStatusLabel = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'active': return 'Active';
       case 'out_of_stock': return 'Out of Stock';
       default: return 'Unknown';
@@ -89,7 +92,7 @@ export function ProductsManagement() {
           <h2 className="text-2xl font-bold text-gray-900">Products Management</h2>
           <p className="text-gray-600">Add and manage your products inventory</p>
         </div>
-        
+
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -107,7 +110,7 @@ export function ProductsManagement() {
                 <Input
                   id="productName"
                   value={newProduct.name}
-                  onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                  onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
                   placeholder="Enter product name"
                   className="mt-1"
                 />
@@ -118,7 +121,7 @@ export function ProductsManagement() {
                   <Input
                     id="category"
                     value={newProduct.category}
-                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
                     placeholder="Category"
                     className="mt-1"
                   />
@@ -128,7 +131,7 @@ export function ProductsManagement() {
                   <Input
                     id="price"
                     value={newProduct.price}
-                    onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
                     placeholder="₹0"
                     className="mt-1"
                   />
@@ -140,7 +143,7 @@ export function ProductsManagement() {
                   id="stock"
                   type="number"
                   value={newProduct.stock}
-                  onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})}
+                  onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
                   placeholder="0"
                   className="mt-1"
                 />
@@ -150,7 +153,7 @@ export function ProductsManagement() {
                 <Textarea
                   id="description"
                   value={newProduct.description}
-                  onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
+                  onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
                   placeholder="Product description"
                   className="mt-1"
                 />
@@ -169,15 +172,15 @@ export function ProductsManagement() {
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <img 
-                    src={product.image} 
+                  <img
+                    src={product.image}
                     alt={product.name}
                     className="w-full h-32 object-cover rounded-lg mb-4"
                   />
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                   <div className="flex items-center gap-2 mt-2">
                     <Badge variant="outline">{product.category}</Badge>
-                    <Badge 
+                    <Badge
                       variant="secondary"
                       className={getStatusColor(product.status) + ' text-white'}
                     >
@@ -210,9 +213,9 @@ export function ProductsManagement() {
                     <Edit2 className="h-4 w-4 mr-1" />
                     Edit
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => handleDeleteProduct(product.id)}
                     className="text-red-600 hover:text-red-700"
                   >
