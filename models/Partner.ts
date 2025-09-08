@@ -1,4 +1,4 @@
-// models/Partner.js
+// models/Partner.ts
 import mongoose, { Schema, Document, model, models } from "mongoose";
 
 export interface IProduct {
@@ -9,8 +9,8 @@ export interface IProduct {
 }
 
 export interface IRating {
-  user: string; // reviewer ka naam ya userId
-  rating: number; // stars (1–5)
+  user: string; // userId or username
+  rating: number; // 1–5
   review?: string;
   reply?: string; // admin/owner reply
   createdAt?: Date;
@@ -21,7 +21,10 @@ export interface IPartner extends Document {
   businessName: string;
   ownerName: string;
   email: string;
+  emailVerified?: boolean;
   phone: string;
+  phoneVerified?: boolean;
+  password: string;
   category: string;
   city: string;
   address: string;
@@ -35,11 +38,16 @@ export interface IPartner extends Document {
   discountOffered: string;
   description: string;
   website?: string;
-  instagram?: string;
-  facebook?: string;
+  socialLinks?: {
+    linkedin?: string;
+    twitter?: string;
+    youtube?: string;
+    instagram?: string;
+    facebook?: string;
+  };
   agreeToTerms: boolean;
 
-  // 🔥 New Fields
+  // 🔥 New Features
   products: IProduct[];
   logo?: string;
   storeImages?: string[];
@@ -50,6 +58,9 @@ export interface IPartner extends Document {
   joinedSince: Date;
   citywittyAssured: boolean;
   ratings: IRating[];
+  averageRating?: number;
+  tags?: string[];
+  status: "pending" | "active" | "suspended";
 }
 
 const ProductSchema = new Schema<IProduct>({
@@ -73,7 +84,10 @@ const PartnerSchema = new Schema<IPartner>(
     businessName: { type: String, required: true },
     ownerName: { type: String, required: true },
     email: { type: String, required: true },
+    emailVerified: { type: Boolean, default: false },
     phone: { type: String, required: true },
+    phoneVerified: { type: Boolean, default: false },
+    password: { type: String, required: true, minlength: 6 },
     category: { type: String, required: true },
     city: { type: String, required: true },
     address: { type: String, required: true },
@@ -87,11 +101,16 @@ const PartnerSchema = new Schema<IPartner>(
     discountOffered: { type: String, required: true },
     description: { type: String, required: true },
     website: { type: String },
-    instagram: { type: String },
-    facebook: { type: String },
+    socialLinks: {
+      linkedin: { type: String },
+      twitter: { type: String },
+      youtube: { type: String },
+      instagram: { type: String },
+      facebook: { type: String },
+    },
     agreeToTerms: { type: Boolean, required: true },
 
-    // 🔥 New Fields
+    // 🔥 New Features
     products: [ProductSchema],
     logo: { type: String },
     storeImages: [{ type: String }],
@@ -102,8 +121,22 @@ const PartnerSchema = new Schema<IPartner>(
     joinedSince: { type: Date, default: Date.now },
     citywittyAssured: { type: Boolean, default: false },
     ratings: [RatingSchema],
+    averageRating: { type: Number, default: 0 },
+    tags: { type: [String], default: [] },
+    status: { type: String, enum: ["pending", "active", "suspended"], default: "pending" },
   },
   { timestamps: true }
 );
+
+// Optional: calculate average rating before save
+PartnerSchema.pre("save", function (next) {
+  if (this.ratings.length > 0) {
+    const total = this.ratings.reduce((sum, r) => sum + r.rating, 0);
+    this.averageRating = total / this.ratings.length;
+  } else {
+    this.averageRating = 0;
+  }
+  next();
+});
 
 export default models.Partner || model<IPartner>("Partner", PartnerSchema);

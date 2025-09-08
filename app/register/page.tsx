@@ -183,6 +183,8 @@ export default function PartnerPage() {
     address: '',
     whatsapp: '',
     isWhatsappSame: false,
+    password: '',
+    confirmPassword: '',
     gstNumber: '',
     hasWebsite: false,
     panNumber: '',
@@ -274,6 +276,9 @@ export default function PartnerPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -295,6 +300,8 @@ export default function PartnerPage() {
       "discountOffered",
       "description",
       "agreeToTerms",
+      "password",
+      "confirmPassword",
     ];
 
     const missingFields = requiredFields.filter(f => !formData[f as keyof typeof formData]);
@@ -306,13 +313,33 @@ export default function PartnerPage() {
       return; // stop submission
     }
 
+    // Check if passwords match
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Import bcryptjs dynamically to avoid SSR issues in Next.js
+      const bcrypt = (await import('bcryptjs')).default;
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(formData.password, 10); // 10 salt rounds
+
+      // Create payload without confirmPassword
+      const { confirmPassword, ...payload } = {
+        ...formData,
+        password: hashedPassword,
+      };
+
+
+      // Submit to API
       const response = await fetch('/api/partnerApplication', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -332,6 +359,7 @@ export default function PartnerPage() {
       setIsSubmitting(false);
     }
   };
+
 
 
 
@@ -538,7 +566,7 @@ export default function PartnerPage() {
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email Address *</Label>
+                        <Label htmlFor="email">Business Email  *</Label>
                         <Input
                           id="email"
                           type="email"
@@ -597,6 +625,45 @@ export default function PartnerPage() {
                         </div>
                       </div>
 
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2 relative">
+                          <Label htmlFor="password">Password *</Label>
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            value={formData.password}
+                            onChange={(e) => handleInputChange('password', e.target.value)}
+                            placeholder="Enter password"
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="absolute right-3 top-9 text-gray-500"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? "Hide" : "Show"}
+                          </button>
+                        </div>
+
+                        <div className="space-y-2 relative">
+                          <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                          <Input
+                            id="confirmPassword"
+                            type={showConfirmPassword ? "text" : "password"}
+                            value={formData.confirmPassword}
+                            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                            placeholder="Confirm password"
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="absolute right-3 top-9 text-gray-500"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? "Hide" : "Show"}
+                          </button>
+                        </div>
+                      </div>
 
                     </div>
 
