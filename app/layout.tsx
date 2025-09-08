@@ -10,14 +10,14 @@ export const metadata: Metadata = {
     default: 'Citywitty Merchant Hub - Grow Your Business with Premium Customers',
     template: '%s | Citywitty Merchant Hub'
   },
-  description: 'Join Citywitty Merchant Hub and connect with premium customers. Boost your sales, manage your business, and grow with India\'s leading loyalty card platform.',
+  description: 'Join Citywitty Merchant Hub and connect with premium customers. Boost your sales, manage your business, and grow with India\'s leading discount card platform.',
   keywords: 'citywitty merchant, business growth, loyalty cards, premium customers, merchant dashboard, business partners',
   authors: [{ name: 'Citywitty Team' }],
   creator: 'Citywitty',
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://merchant.citywitty.com',
+    url: 'https://partner.citywitty.com',
     siteName: 'Citywitty Merchant Hub',
     title: 'Citywitty Merchant Hub - Grow Your Business',
     description: 'Join thousands of successful merchants and grow your business with premium Citywitty card users.',
@@ -44,6 +44,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className={inter.className}>
         <AuthProvider>
           {children}
