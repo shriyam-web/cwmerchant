@@ -1,4 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from "next/link";
+
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, AlertTriangle, Shield, FileText } from 'lucide-react';
@@ -85,7 +87,7 @@ export default function Terms() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="pt-20 pb-16">
         <div className="container mx-auto px-4">
           {/* Hero Section */}
@@ -166,33 +168,33 @@ export default function Terms() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">1. Agreement Duration</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  This agreement is effective from the date of merchant approval and continues indefinitely 
+                  This agreement is effective from the date of merchant approval and continues indefinitely
                   unless terminated by either party with 30 days written notice.
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">2. Intellectual Property</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Merchants retain ownership of their brand, products, and content. Citywitty retains 
+                  Merchants retain ownership of their brand, products, and content. Citywitty retains
                   rights to platform technology, processes, and customer data analytics.
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">3. Liability & Insurance</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Merchants are responsible for product quality, customer satisfaction, and legal compliance. 
+                  Merchants are responsible for product quality, customer satisfaction, and legal compliance.
                   Citywitty provides platform services but is not liable for merchant business operations.
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">4. Contact Information</h3>
                 <p className="text-gray-700 leading-relaxed">
@@ -220,7 +222,7 @@ export default function Terms() {
               Ready to Accept These Terms?
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              By registering as a merchant, you agree to these terms and conditions. 
+              By registering as a merchant, you agree to these terms and conditions.
               Our team will guide you through the onboarding process.
             </p>
             <Link href="/register">
@@ -232,7 +234,7 @@ export default function Terms() {
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
