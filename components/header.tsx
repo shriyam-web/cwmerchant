@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth-context";
+import { useMerchantAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, User, LogOut, ChevronDown } from "lucide-react";
