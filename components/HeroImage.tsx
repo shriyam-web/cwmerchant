@@ -89,7 +89,7 @@ export default function HeroImage() {
 
                 {/* Your Uploaded Image on Top of Graph */}
                 <div
-                    className="absolute left-1/2 bottom-0 transform -translate-x-1/2 z-50"
+                    className="absolute left-1/2 bottom-0 transform -translate-x-1/2 z-10"
                 >
                     <img src="/happy.png" width={350} height={350} className="object-contain" />
                 </div>

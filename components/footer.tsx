@@ -89,11 +89,11 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="flex items-center space-x-3">
               <Mail className="h-5 w-5 text-blue-600" />
-              <span className="text-gray-700">support@citywitty.com</span>
+              <span className="text-gray-700">contact@citywitty.com</span>
             </div>
             <div className="flex items-center space-x-3">
               <Phone className="h-5 w-5 text-blue-600" />
-              <span className="text-gray-700">+91 98765 43210</span>
+              <span className="text-gray-700">+91 6389202030</span>
             </div>
             <div className="flex items-center space-x-3">
               <MapPin className="h-5 w-5 text-blue-600" />
@@ -101,7 +101,7 @@ export function Footer() {
             </div>
           </div>
           <div className="text-center text-gray-500">
-            <p>&copy; 2025 Citywitty Merchant Hub. All rights reserved.</p>
+            <p>&copy; 2025 <a href="https://partner.citywitty.com">CityWitty Merchant Hub </a> — Part of the <a href="https://citywitty.com"> CityWitty </a> Ecosystem. All rights reserved.</p>
           </div>
         </div>
       </div>

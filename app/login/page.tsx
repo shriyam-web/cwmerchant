@@ -19,18 +19,39 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate login process
-    setTimeout(() => {
+
+    try {
+      const res = await fetch("/api/merchant/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Login failed");
+        return;
+      }
+
+      // ✅ Save merchant info in localStorage (optional, ya context me store karo)
+      localStorage.setItem("merchant", JSON.stringify(data));
+
+      // ✅ redirect
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Something went wrong");
+    } finally {
       setIsLoading(false);
-      router.push('/dashboard');
-    }, 1500);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <Navbar />
-      
+
       <div className="pt-20 pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
@@ -51,11 +72,11 @@ export default function Login() {
                   Sign in to your merchant dashboard
                 </CardDescription>
               </CardHeader>
-              
+
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Registered Business Email *</Label>
                     <div className="relative mt-1">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <Input
@@ -69,9 +90,9 @@ export default function Login() {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Password *</Label>
                     <div className="relative mt-1">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <Input
@@ -85,13 +106,13 @@ export default function Login() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <Link href="#" className="text-sm text-blue-600 hover:underline">
                       Forgot password?
                     </Link>
                   </div>
-                  
+
                   <Button
                     type="submit"
                     className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 py-6"
@@ -100,7 +121,7 @@ export default function Login() {
                     {isLoading ? 'Signing in...' : 'Sign In'}
                   </Button>
                 </form>
-                
+
                 <div className="text-center mt-8">
                   <p className="text-gray-600">
                     Don't have an account?{' '}
