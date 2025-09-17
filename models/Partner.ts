@@ -9,10 +9,10 @@ export interface IProduct {
 }
 
 export interface IRating {
-  user: string; // userId or username
-  rating: number; // 1–5
+  user: string;
+  rating: number;
   review?: string;
-  reply?: string; // admin/owner reply
+  reply?: string;
   createdAt?: Date;
 }
 
@@ -61,6 +61,10 @@ export interface IPartner extends Document {
   averageRating?: number;
   tags?: string[];
   status: "pending" | "active" | "suspended";
+
+  // 🔐 Password Reset Fields
+  otpCode?: string;
+  otpExpiry?: Date;
 }
 
 const ProductSchema = new Schema<IProduct>({
@@ -124,11 +128,15 @@ const PartnerSchema = new Schema<IPartner>(
     averageRating: { type: Number, default: 0 },
     tags: { type: [String], default: [] },
     status: { type: String, enum: ["pending", "active", "suspended"], default: "pending" },
+
+    // 🔐 Password Reset
+    otpCode: { type: String },
+    otpExpiry: { type: Date },
   },
   { timestamps: true }
 );
 
-// Optional: calculate average rating before save
+// Auto-calc average rating
 PartnerSchema.pre("save", function (next) {
   if (this.ratings.length > 0) {
     const total = this.ratings.reduce((sum, r) => sum + r.rating, 0);
