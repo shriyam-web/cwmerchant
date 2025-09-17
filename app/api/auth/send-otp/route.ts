@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
           <p style="margin-top:10px;">If you did not request a password reset, please contact our <a href="https://partner.citywitty.com/support" style="color:#0d6efd; text-decoration:none;">merchant support</a> immediately.</p>
 
           <div style="text-align:center; margin-top:25px;">
-            <a href="https://partner.citywitty.com/reset-password" style="display:inline-block; background-color:#0d6efd; color:#ffffff; text-decoration:none; padding:12px 25px; border-radius:6px; font-weight:600; font-size:16px;">Reset Password</a>
+            <a href="https://partner.citywitty.com/forgot-password" style="display:inline-block; background-color:#0d6efd; color:#ffffff; text-decoration:none; padding:12px 25px; border-radius:6px; font-weight:600; font-size:16px;">Reset Password</a>
           </div>
 
           <p style="margin-top:30px;">Thank you,<br><strong>CityWitty Merchant Hub</strong></p>
