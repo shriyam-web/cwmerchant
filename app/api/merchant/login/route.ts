@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     // Optionally check approval status
     if (partner.status !== "active") {
-      return NextResponse.json({ error: "Account not active yet" }, { status: 403 });
+      return NextResponse.json({ error: "Your account is currently under review. Please allow up to 48 hours for approval by the CityWitty Admin after your profile has been evaluated." }, { status: 403 });
     }
 
     return NextResponse.json({
