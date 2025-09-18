@@ -130,32 +130,45 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      const data = await res.json();
+
       if (res.status === 401) {
-        // Only remove on invalid token
+        // Invalid token → logout
         logout();
+        setError("Session expired. Please login again.");
         return;
       }
 
       if (!res.ok) {
-        console.warn("Profile fetch failed, not logging out", res.status);
+        // Other backend errors
+        setError(data.error || "Failed to fetch merchant profile.");
         return;
       }
 
-
-      const data = await res.json();
-
-      // ✅ Check merchant status before login
+      // Status-based messages
       if (data.merchant.status !== "active") {
-        alert("Your account is pending approval. Please wait up to 48 hours.");
-        return false;
+        let message = "Your account is not active. Please contact support.";
+        if (data.merchant.status === "pending") {
+          message = "Your account is pending approval. Please wait up to 48 hours.";
+        } else if (data.merchant.status === "suspended") {
+          message = "Your account has been suspended due to policy violations. Contact support.";
+        } else if (data.merchant.status === "rejected") {
+          message = "Your account application has been rejected. Contact support for details.";
+        }
+
+        setError(message);
+        return;
       }
-      setMerchant(data);
-      localStorage.setItem("merchant", JSON.stringify(data));
+
+      // ✅ All good → set merchant
+      setMerchant(data.merchant);
+      localStorage.setItem("merchant", JSON.stringify(data.merchant));
     } catch (err) {
       console.error("Failed to fetch merchant profile", err);
-      // Optionally, keep localStorage intact
+      setError("Something went wrong while fetching your profile.");
     }
   };
+
 
 
 
@@ -191,27 +204,15 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!res.ok) {
-        setError("Invalid email or password");
-        return false;
-      }
-
       const data = await res.json();
-      const status = data.merchant.status;
 
-      // ✅ Custom messages for different statuses
-      if (status !== "active") {
-        if (status === "pending") {
-          setError("Your account is pending approval. Please wait up to 48 hours.");
-        } else if (status === "rejected") {
-          setError("Your account application has been rejected. Contact support for details.");
-        } else if (status === "suspended") {
-          setError("Your account has been suspended due to policy violations. Contact support.");
-        } else {
-          setError("Your account is not active. Please contact support.");
-        }
+      if (!res.ok) {
+        // 🔥 Show backend's custom error message
+        setError(data.error || "Login failed");
         return false;
       }
+
+      // ✅ Success
       setMerchant(data.merchant);
       localStorage.setItem("merchant", JSON.stringify(data.merchant));
       localStorage.setItem("merchantToken", data.token);
@@ -224,6 +225,7 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
+
 
 
 
