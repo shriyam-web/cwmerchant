@@ -141,7 +141,14 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+
       const data = await res.json();
+
+      // ✅ Check merchant status before login
+      if (data.merchant.status !== "active") {
+        alert("Your account is pending approval. Please wait up to 48 hours.");
+        return false;
+      }
       setMerchant(data);
       localStorage.setItem("merchant", JSON.stringify(data));
     } catch (err) {
