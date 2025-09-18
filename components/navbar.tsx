@@ -4,18 +4,19 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { usePathname } from "next/navigation";
 import { Menu, X } from 'lucide-react';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-
+  const pathname = usePathname();
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'About ', href: '/about' },
     { name: 'Categories', href: '/categories' },
     { name: 'Success Stories', href: '/success-stories' },
     { name: 'Contact', href: '/contact' },
-    { name: 'Pricing Plans', href: 'merchant-packages' },
+    { name: 'Pricing Plans', href: '/merchant-packages' },
   ];
 
   return (
@@ -44,7 +45,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-9">
+          {/* <div className="hidden md:flex items-center space-x-9">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -54,10 +55,28 @@ export function Navbar() {
                 {item.name}
               </Link>
             ))}
+          </div> */}
+          <div className="hidden md:flex items-center space-x-3">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href; // 👈 current route check
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`transition-all px-3 py-1.5 rounded-lg font-medium ${isActive
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                    : "text-gray-600 hover:text-blue-600"
+                    }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
 
+
           {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-2">
             <Link href="/login">
               <Button variant="ghost" className="text-gray-600 hover:text-blue-600">
                 Login
@@ -88,15 +107,15 @@ export function Navbar() {
                       {/* <img src="/logo.png" alt="Citywitty Logo" className="w-full h-full object-contain" /> */}
                       <span className="text-white font-bold">C</span>
                     </div>
-                    <span className="font-bold text-gray-900 text-lg">Citywitty</span>
+                    <span className="font-bold text-gray-900 text-lg">CW Merchant Hub</span>
                   </Link>
-                  <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
+                  {/* <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
                     <X className="h-6 w-6" />
-                  </Button>
+                  </Button> */}
                 </div>
 
                 {/* Navigation Links */}
-                <div className="flex flex-col space-y-4">
+                {/* <div className="flex flex-col space-y-4">
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
@@ -107,6 +126,24 @@ export function Navbar() {
                       {item.name}
                     </Link>
                   ))}
+                </div> */}
+                <div className="flex flex-col space-y-4">
+                  {navigation.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={`transition-all font-medium py-2 px-3 rounded-md ${isActive
+                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+                          : "text-gray-600 hover:text-blue-600"
+                          }`}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    );
+                  })}
                 </div>
 
                 {/* Auth Buttons */}
