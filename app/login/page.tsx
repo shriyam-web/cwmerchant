@@ -219,6 +219,7 @@ export default function Login() {
         router.push('/dashboard'); // redirect on success
       } else {
         alert('Login failed. Please check your credentials.');
+        console.error('Login error:', Error);
       }
     } catch (error) {
       console.error('Login error:', error);
