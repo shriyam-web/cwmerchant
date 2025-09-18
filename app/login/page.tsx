@@ -235,7 +235,7 @@ export default function Login() {
       <div className="flex flex-1 pt-10">
         {/* Left branding section */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white items-center justify-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+          <div className="absolute inset-0 opacity-20" />
           <div className="relative z-10 max-w-md text-center p-10">
             <h1 className="text-3xl font-extrabold mb-4">CityWitty Merchant Hub</h1>
             <p className="text-lg text-indigo-100 mb-6">
