@@ -1,5 +1,8 @@
 // app/register/page.tsx
 'use client';
+import { useRef } from "react";
+import debounce from "lodash.debounce"; // install: npm i lodash.debounce
+import { AlertCircle, CheckCircle as CheckIcon } from "lucide-react";
 
 import { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
@@ -94,6 +97,11 @@ const categories = [
   'Other Businesses'
 ];
 
+const isValidEmail = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+
 type CityAutocompleteProps = {
   value: string;
   onChange: (val: string) => void;
@@ -119,6 +127,9 @@ function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const handleSelect = (val: string) => {
     onChange(val); // update parent
   };
+
+
+
 
   return (
     <div className="relative w-full">
@@ -198,6 +209,87 @@ export default function PartnerPage() {
     facebook: '',
     agreeToTerms: false
   });
+
+  // inline uniqueness errors
+
+
+  // pending-check flags (to show loader if needed)
+
+  const [showPwdTooltip, setShowPwdTooltip] = useState(false);
+  const pwdTooltipTimer = useRef<number | null>(null);
+
+  const [checkingField, setCheckingField] = useState<{
+    email?: boolean;
+    phone?: boolean;
+    gstNumber?: boolean;
+    panNumber?: boolean;
+  }>({});
+
+  // password health tooltip
+  const [pwdChecks, setPwdChecks] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false
+  });
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string;
+    phone?: string;
+    gstNumber?: string;
+    panNumber?: string;
+  }>({});
+
+  const checkPasswordRules = (pwd: string) => {
+    const checks = {
+      length: pwd.length >= 8,
+      uppercase: /[A-Z]/.test(pwd),
+      lowercase: /[a-z]/.test(pwd),
+      number: /[0-9]/.test(pwd),
+      special: /[!@#$%^&*(),.?":{}|<>_\-\\[\];'`~+\/=]/.test(pwd)
+    };
+    setPwdChecks(checks);
+    return checks;
+  };
+
+  // Debounced API call to check field uniqueness
+  const checkUniqueRemote = useRef(
+    debounce(async (field: string, value: string) => {
+      try {
+        setCheckingField(prev => ({ ...prev, [field]: true }));
+        const res = await fetch("/api/partnerApplication/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ field, value })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setFieldErrors(prev => ({
+            ...prev,
+            [field]: data.exists ? `${fieldLabel(field)} already registered` : undefined
+          }));
+        } else {
+          // server returned error
+          setFieldErrors(prev => ({ ...prev, [field]: undefined }));
+        }
+      } catch (err) {
+        console.error("checkUnique error", err);
+        // don't block submit for network flakiness; but show generic
+        setFieldErrors(prev => ({ ...prev, [field]: undefined }));
+      } finally {
+        setCheckingField(prev => ({ ...prev, [field]: false }));
+      }
+    }, 600)
+  ).current;
+
+  const fieldLabel = (f: string) => {
+    if (f === "email") return "Email ID";
+    if (f === "phone") return "Phone Number";
+    if (f === "gstNumber") return "GST Number";
+    if (f === "panNumber") return "PAN Number";
+    return f;
+  };
+
 
   const downloadPDF = () => {
     const doc = new jsPDF();
@@ -366,7 +458,37 @@ export default function PartnerPage() {
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+
+    // if changing certain identity fields, run uniqueness check (debounced)
+    if (["email", "phone", "gstNumber", "panNumber"].includes(field)) {
+      if (!value) {
+        setFieldErrors(prev => ({ ...prev, [field]: undefined }));
+        return;
+      }
+      // simple client-side format gating (optional)
+      if (field === "email" && !/\S+@\S+\.\S+/.test(value)) {
+        setFieldErrors(prev => ({ ...prev, [field]: "Invalid email format" }));
+        return;
+      }
+      // trigger server uniqueness check
+      checkUniqueRemote(field, value);
+    }
+
+    // password live checks + show tooltip while typing
+    if (field === "password") {
+      const checks = checkPasswordRules(value);
+      // show tooltip while typing; hide after 2.5s of inactivity
+      setShowPwdTooltip(true);
+      if (pwdTooltipTimer.current) window.clearTimeout(pwdTooltipTimer.current);
+      pwdTooltipTimer.current = window.setTimeout(() => setShowPwdTooltip(false), 2500);
+    }
+
+    // if user toggles isWhatsappSame and we updated phone previously, keep whatsapp in sync
+    if (field === "isWhatsappSame" && value === true) {
+      setFormData(prev => ({ ...prev, whatsapp: prev.phone }));
+    }
   };
+
 
 
 
@@ -572,9 +694,22 @@ export default function PartnerPage() {
                           type="email"
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
+                          onBlur={() => formData.email && checkUniqueRemote("email", formData.email)}
                           placeholder="business@email.com"
                           required
                         />
+                        {checkingField.email ? (
+                          <p className="text-sm text-gray-500 mt-1">Checking email…</p>
+                        ) : fieldErrors.email ? (
+                          <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4" /> {fieldErrors.email}
+                          </p>
+                        ) : formData.email && isValidEmail(formData.email) ? (
+                          <p className="text-sm text-green-600 mt-1 flex items-center gap-2">
+                            <CheckIcon className="w-4 h-4" /> Email looks good
+                          </p>
+                        ) : null}
+
                       </div>
                       <div className="grid md:grid-cols-2 gap-6">
                         {/* Phone Number */}
@@ -589,9 +724,18 @@ export default function PartnerPage() {
                               handleInputChange('phone', value || '');
                               if (formData.isWhatsappSame) handleInputChange('whatsapp', value || '');
                             }}
+                            onBlur={() => formData.phone && checkUniqueRemote("phone", formData.phone)}
                             className="w-full border p-3 rounded-lg"
                             required
                           />
+                          {checkingField.phone ? (
+                            <p className="text-sm text-gray-500 mt-1">Checking phone…</p>
+                          ) : fieldErrors.phone ? (
+                            <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4" /> {fieldErrors.phone}
+                            </p>
+                          ) : null}
+
                         </div>
 
                         {/* WhatsApp Number */}
@@ -633,6 +777,11 @@ export default function PartnerPage() {
                             type={showPassword ? "text" : "password"}
                             value={formData.password}
                             onChange={(e) => handleInputChange('password', e.target.value)}
+                            onFocus={() => setShowPwdTooltip(true)}
+                            onBlur={() => {
+                              // hide after small delay so clickable items (if any) not cut off
+                              setTimeout(() => setShowPwdTooltip(false), 400);
+                            }}
                             placeholder="Enter password"
                             required
                           />
@@ -643,7 +792,41 @@ export default function PartnerPage() {
                           >
                             {showPassword ? "Hide" : "Show"}
                           </button>
+
+                          {/* Password tooltip - temporary */}
+                          {showPwdTooltip && (
+                            <div className="absolute left-0 mt-2 w-80 p-3 bg-white border rounded shadow-lg z-50 text-sm">
+                              <div className="flex items-center justify-between mb-2">
+                                <strong>Password requirements</strong>
+                                <span className="text-gray-500 text-xs">Strength</span>
+                              </div>
+                              <ul className="space-y-1">
+                                <li className="flex items-center gap-2">
+                                  {pwdChecks.length ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  <span>At least 8 characters</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  {pwdChecks.uppercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  <span>One uppercase letter (A–Z)</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  {pwdChecks.lowercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  <span>One lowercase letter (a–z)</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  {pwdChecks.number ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  <span>One number (0–9)</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  {pwdChecks.special ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  <span>One special character (!@#$...)</span>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
                         </div>
+
+
 
                         <div className="space-y-2 relative">
                           <Label htmlFor="confirmPassword">Confirm Password *</Label>
@@ -747,9 +930,18 @@ export default function PartnerPage() {
                           id="gstNumber"
                           value={formData.gstNumber}
                           onChange={(e) => handleInputChange('gstNumber', e.target.value)}
+                          onBlur={() => formData.gstNumber && checkUniqueRemote("gstNumber", formData.gstNumber)}
                           placeholder="Enter GST number"
                           required
                         />
+                        {checkingField.gstNumber ? (
+                          <p className="text-sm text-gray-500 mt-1">Checking GST…</p>
+                        ) : fieldErrors.gstNumber ? (
+                          <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4" /> {fieldErrors.gstNumber}
+                          </p>
+                        ) : null}
+
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="panNumber">PAN Number *</Label>
@@ -757,9 +949,18 @@ export default function PartnerPage() {
                           id="panNumber"
                           value={formData.panNumber}
                           onChange={(e) => handleInputChange('panNumber', e.target.value)}
+                          onBlur={() => formData.panNumber && checkUniqueRemote("panNumber", formData.panNumber)}
                           placeholder="Enter PAN number"
                           required
                         />
+                        {checkingField.panNumber ? (
+                          <p className="text-sm text-gray-500 mt-1">Checking PAN…</p>
+                        ) : fieldErrors.panNumber ? (
+                          <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4" /> {fieldErrors.panNumber}
+                          </p>
+                        ) : null}
+
                       </div>
                     </div>
                   </div>
@@ -868,7 +1069,11 @@ export default function PartnerPage() {
                   <Button
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3 flex items-center justify-center"
-                    disabled={isSubmitting || !formData.agreeToTerms}
+                    disabled={
+                      isSubmitting ||
+                      !formData.agreeToTerms ||
+                      Object.values(fieldErrors).some(Boolean)
+                    }
                   >
                     {isSubmitting ? (
                       <>
@@ -936,3 +1141,5 @@ export default function PartnerPage() {
     </main>
   );
 }
+
+
