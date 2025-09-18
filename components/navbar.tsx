@@ -341,7 +341,7 @@ export function Navbar() {
                     <div className="flex flex-col space-y-2">
                       <span className="px-4 py-2 font-medium">{merchant.businessName}</span>
                       <Link
-                        href="/merchant/dashboard"
+                        href="/dashboard"
                         className="px-4 py-2 hover:bg-gray-100 rounded-md"
                         onClick={() => setIsOpen(false)}
                       >
