@@ -183,7 +183,8 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false); // Mobile menu
   const [dropdownOpen, setDropdownOpen] = useState(false); // Desktop dropdown
   const pathname = usePathname();
-  const { merchant, logout } = useMerchantAuth();
+  const { merchant, logout, loadingProfile } = useMerchantAuth();
+
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -228,7 +229,9 @@ export function Navbar() {
 
           {/* Desktop Auth / Merchant */}
           <div className="hidden md:flex items-center space-x-3 relative">
-            {!merchant ? (
+            {loadingProfile ? (
+              <span className="text-gray-500">Loading...</span>
+            ) : !merchant ? (
               <>
                 <Link href="/login">
                   <Button variant="ghost" className="text-gray-600 hover:text-blue-600">
@@ -243,22 +246,28 @@ export function Navbar() {
               </>
             ) : (
               <div
-                className="cursor-pointer px-3 py-1.5 rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-1"
+                className="relative"
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <span>{merchant.businessName}</span>
-                <ChevronDown className="w-4 h-4" />
+                {/* Animated Gradient Button */}
+                <button
+                  className="px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:200%_200%] animate-gradient-slide flex items-center gap-2 shadow-lg transition-all"
+                >
+                  {merchant.businessName} <ChevronDown className="w-4 h-4" />
+                </button>
+
+                {/* Dropdown Menu */}
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-12 w-48 bg-white border border-gray-200 rounded-lg shadow-lg flex flex-col">
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden animate-fade-in">
                     <Link
-                      href="/merchant/dashboard"
-                      className="px-4 py-2 hover:bg-gray-100"
+                      href="/dashboard"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all"
                     >
                       Dashboard
                     </Link>
                     <button
-                      className="px-4 py-2 text-left hover:bg-gray-100"
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all"
                       onClick={logout}
                     >
                       Logout
@@ -268,6 +277,8 @@ export function Navbar() {
               </div>
             )}
           </div>
+
+
 
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>

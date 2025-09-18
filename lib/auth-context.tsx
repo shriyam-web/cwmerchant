@@ -95,6 +95,7 @@ interface Merchant {
   role: "merchant";
 }
 
+
 interface MerchantRegisterData {
   email: string;
   password: string;
@@ -105,6 +106,7 @@ interface MerchantRegisterData {
 interface MerchantAuthContextType {
   merchant: Merchant | null;
   loading: boolean;
+  loadingProfile: boolean; // ✅ add this
   error: string | null;
   login: (email: string, password: string) => Promise<boolean>;
   register: (formData: MerchantRegisterData) => Promise<boolean>;
@@ -119,39 +121,58 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
   const [merchant, setMerchant] = useState<Merchant | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
-  // Auto-load merchant from token
-  useEffect(() => {
-    const token = localStorage.getItem("merchantToken");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        if (payload.exp * 1000 > Date.now()) {
-          fetchMerchantProfile(token);
-        } else {
-          logout();
-        }
-      } catch {
-        logout();
-      }
-    }
-  }, []);
 
   const fetchMerchantProfile = async (token: string) => {
     try {
       const res = await fetch("/api/merchant/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) {
-        const data = await res.json();
-        setMerchant(data);
-      } else {
+
+      if (res.status === 401) {
+        // Only remove on invalid token
         logout();
+        return;
       }
-    } catch {
-      logout();
+
+      if (!res.ok) {
+        console.warn("Profile fetch failed, not logging out", res.status);
+        return;
+      }
+
+      const data = await res.json();
+      setMerchant(data);
+      localStorage.setItem("merchant", JSON.stringify(data));
+    } catch (err) {
+      console.error("Failed to fetch merchant profile", err);
+      // Optionally, keep localStorage intact
     }
   };
+
+
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("merchantToken");
+    const storedMerchant = localStorage.getItem("merchant");
+
+    if (storedMerchant) {
+      setMerchant(JSON.parse(storedMerchant));
+    }
+
+    if (token) {
+      fetchMerchantProfile(token).finally(() => setLoadingProfile(false));
+    } else {
+      setLoadingProfile(false);
+    }
+  }, []);
+
+
+
+
+
+
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -169,8 +190,9 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await res.json();
-      localStorage.setItem("merchantToken", data.token);
       setMerchant(data.merchant);
+      localStorage.setItem("merchant", JSON.stringify(data.merchant));
+      localStorage.setItem("merchantToken", data.token);
       return true;
     } catch (err) {
       console.error("Merchant login failed:", err);
@@ -180,6 +202,8 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
+
+
 
   const register = async (formData: MerchantRegisterData) => {
     setLoading(true);
@@ -209,11 +233,13 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setMerchant(null);
     localStorage.removeItem("merchantToken");
+    localStorage.removeItem("merchant"); // add this
   };
+
 
   return (
     <MerchantAuthContext.Provider
-      value={{ merchant, loading, error, login, register, logout }}
+      value={{ merchant, loading, loadingProfile, error, login, register, logout }}
     >
       {children}
     </MerchantAuthContext.Provider>
