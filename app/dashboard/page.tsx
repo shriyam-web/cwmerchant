@@ -375,7 +375,7 @@ export default function Dashboard() {
   if (!merchant) {
     return <div className="p-8">Loading...</div>;
   }
-
+  // heheeheheheheheh
   const renderMainContent = () => {
     switch (activeTab) {
       case "offers":
