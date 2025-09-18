@@ -1,7 +1,9 @@
 // app/privacy/page.tsx
+import { Footer } from '@/components/footer';
+import { Navbar } from '@/components/navbar';
 import { Metadata } from 'next';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
+import React from "react";
+
 // import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: 'Privacy Policy | CityWitty Privilege Card',
@@ -47,16 +49,16 @@ export const metadata: Metadata = {
 export default function PrivacyPolicyPage() {
     return (
         <main className="min-h-screen bg-gray-50">
-            <Header />
-
+            <Navbar />
+            <br />
             <section className="py-20">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-                        Privacy Policy – Merchant Registration
+                    <h1 className="text-4xl font-bold text-gray-900 mb-8 ">
+                        Privacy Policy for the CW Merchant Partners
                     </h1>
 
                     <p className="text-gray-700 mb-6">
-                        CityWitty is committed to protecting the privacy and confidentiality of all merchant partners. This Privacy Policy explains how we collect, use, store, and protect the information provided during merchant registration and participation on our platform. By registering as a merchant, you consent to the practices described below.
+                        CityWitty Merchant Hub is committed to protecting the privacy and confidentiality of all merchant partners. This Privacy Policy explains how we collect, use, store, and protect the information provided during merchant registration and participation on our platform. By registering as a merchant, you consent to the practices described below.
                     </p>
 
                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Information We Collect</h2>
@@ -67,7 +69,7 @@ export default function PrivacyPolicyPage() {
                         <li><strong>Business Details:</strong> Business name, type, category, years in operation, and physical address.</li>
                         <li><strong>Legal Information:</strong> GST number, PAN number, and other government-issued registration details.</li>
                         <li><strong>Contact Information:</strong> Owner/manager name, phone number, WhatsApp number, and email address.</li>
-                        <li><strong>Online Presence:</strong> Business website, social media handles (Instagram, Facebook, etc.).</li>
+                        <li><strong>Online Presence:</strong> Business website, social media handles (Instagram, Facebook, Youtube etc.).</li>
                         <li><strong>Transactional Data:</strong> Payment details related to commission, revenue, or fees for platform services.</li>
                     </ul>
 
@@ -85,7 +87,7 @@ export default function PrivacyPolicyPage() {
 
                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Data Security and Protection</h2>
                     <p className="text-gray-700 mb-6">
-                        CityWitty employs strict technical and organizational measures to safeguard merchant information against unauthorized access, alteration, disclosure, or destruction:
+                        CityWitty Merchant Hub (CWMH) employs strict technical and organizational measures to safeguard merchant information against unauthorized access, alteration, disclosure, or destruction:
                     </p>
                     <ul className="list-disc list-inside text-gray-700 mb-6 space-y-2">
                         <li>Encryption of sensitive data.</li>
@@ -105,12 +107,14 @@ export default function PrivacyPolicyPage() {
 
                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Merchant Rights</h2>
                     <p className="text-gray-700 mb-6">
-                        Merchants have the right to access, correct, or delete their personal information. Requests can be sent to our support team at <a href="mailto:contact@citywitty.com" className="text-blue-600 underline">contact@citywitty.com</a>.
+                        Merchants have the right to access, correct, or delete their personal information. Requests can be sent to our support team at <a href="mailto:support.merchant@citywitty.com
+" className="text-blue-600 underline">support.merchant@citywitty.com
+                        </a>.
                     </p>
 
                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. Updates to Privacy Policy</h2>
                     <p className="text-gray-700 mb-6">
-                        CityWitty may update this Privacy Policy periodically. Merchants are encouraged to review this page regularly. Significant changes will be communicated via email or platform notifications.
+                        CityWitty Merchant Hub may update this Privacy Policy periodically. Merchants are encouraged to review this page regularly. Significant changes will be communicated via email or platform notifications.
                     </p>
 
                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Contact Us</h2>

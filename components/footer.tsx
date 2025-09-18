@@ -115,20 +115,23 @@ import { FaWhatsapp } from 'react-icons/fa';
 
 export function Footer() {
   const footerLinks = {
-    Product: [
-      { name: 'Features', href: '#' },
-      { name: 'Integrations', href: '#' },
-      { name: 'Merchant Packages', href: '#' }
+    Products: [
+      { name: 'User Site', href: 'https://www.citywitty.com/' },
+      { name: 'Merchant Categories', href: '/categories' },
+
+      { name: 'Success Stories', href: '/success-stories' },
+      { name: 'Merchant Benefits', href: '/merchant-packages#benefits' },
+      { name: 'Merchant Packages', href: 'merchant-packages' },
     ],
     Company: [
-      { name: 'About Us', href: '#' },
-      { name: 'Careers', href: '#' },
-      { name: 'Contact', href: '#' }
+      { name: 'About Us', href: '/about' },
+      { name: 'Careers', href: 'https://www.citywitty.com/careers' },
+      { name: 'Contact', href: '/contact' }
     ],
     Legal: [
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
-      { name: 'Merchant Agreement', href: '#' }
+      { name: 'Privacy Policy', href: '/privacy-policy' },
+      { name: 'Terms & Conditions', href: '/terms' },
+      { name: 'Cookies', href: '/cookies' }
     ]
   };
 

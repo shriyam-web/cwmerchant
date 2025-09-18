@@ -11,10 +11,11 @@ export function Navbar() {
 
   const navigation = [
     { name: 'Home', href: '/' },
+    { name: 'About ', href: '/about' },
     { name: 'Categories', href: '/categories' },
     { name: 'Success Stories', href: '/success-stories' },
-    { name: 'Contact', href: '/support' },
-    { name: 'Pricing Plans', href: '#support' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Pricing Plans', href: 'merchant-packages' },
   ];
 
   return (
@@ -43,7 +44,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center space-x-9">
             {navigation.map((item) => (
               <Link
                 key={item.name}

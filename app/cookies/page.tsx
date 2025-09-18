@@ -1,17 +1,20 @@
 // app/cookies/page.tsx
 
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
+
+// import { Footer } from "@/components/layout/footer";
+// import { Header } from "@/components/layout/header";
 
 export default function CookiesPolicyPage() {
     return (
         <>
-            <Header /> <br /> <br />
+            <Navbar /> <br /> <br />
             <main className="max-w-4xl mx-auto px-6 py-12 text-gray-800">
                 <h1 className="text-3xl font-bold mb-6">Cookies Policy</h1>
 
                 <p className="mb-4">
-                    This Cookies Policy explains how <strong>CityWitty</strong> uses cookies
+                    This Cookies Policy explains how <strong>CityWitty Merchant Hub</strong> uses cookies
                     and similar technologies to recognize you when you visit our website. It
                     explains what these technologies are, why we use them, and your rights
                     to control our use of them.
@@ -28,7 +31,7 @@ export default function CookiesPolicyPage() {
                     How We Use Cookies
                 </h2>
                 <p className="mb-4">
-                    CityWitty uses cookies to improve your browsing experience, understand
+                    CityWitty Merchant Hub (CWMH) uses cookies to improve your browsing experience, understand
                     how you interact with our platform, and personalize the content you see.
                     We may also use cookies to analyze traffic and for advertising purposes.
                 </p>
@@ -75,10 +78,10 @@ export default function CookiesPolicyPage() {
                     If you have any questions about our use of cookies or this Cookies
                     Policy, please contact us at{" "}
                     <a
-                        href="mailto:support@citywitty.com"
+                        href="mailto:contact@citywitty.com"
                         className="text-blue-600 hover:underline"
                     >
-                        support@citywitty.com
+                        contact@citywitty.com
                     </a>
                     .
                 </p>
