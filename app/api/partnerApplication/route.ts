@@ -68,6 +68,11 @@ export async function POST(req: Request) {
     const appId = "CW-" + Math.random().toString(36).substring(2, 9).toUpperCase();
     data.applicationId = appId;
 
+// Normalize email to lowercase
+if (data.email) {
+  data.email = data.email.toLowerCase();
+}
+
     const newPartner = new Partner(data);
     await newPartner.save();
 
