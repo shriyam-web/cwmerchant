@@ -376,6 +376,8 @@ export default function Dashboard() {
     return <div className="p-8">Loading...</div>;
   }
   // heheeheheheheheh
+  // change bilkul hua haiu 
+  // update kro chalo
   const renderMainContent = () => {
     switch (activeTab) {
       case "offers":
