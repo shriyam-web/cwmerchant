@@ -197,6 +197,21 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await res.json();
+      const status = data.merchant.status;
+
+      // ✅ Custom messages for different statuses
+      if (status !== "active") {
+        if (status === "pending") {
+          setError("Your account is pending approval. Please wait up to 48 hours.");
+        } else if (status === "rejected") {
+          setError("Your account application has been rejected. Contact support for details.");
+        } else if (status === "suspended") {
+          setError("Your account has been suspended due to policy violations. Contact support.");
+        } else {
+          setError("Your account is not active. Please contact support.");
+        }
+        return false;
+      }
       setMerchant(data.merchant);
       localStorage.setItem("merchant", JSON.stringify(data.merchant));
       localStorage.setItem("merchantToken", data.token);
