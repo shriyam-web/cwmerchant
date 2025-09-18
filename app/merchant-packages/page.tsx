@@ -20,11 +20,11 @@ export const metadata: Metadata = {
         title: "Merchant Packages | CityWitty Privilege Card",
         description:
             "Choose from CityWitty’s merchant pricing plans to expand your business visibility and connect with more customers.",
-        url: "https://citywitty.com/merchant-packages",
+        url: "https://partner.citywitty.com/merchant-packages",
         siteName: "CityWitty",
         images: [
             {
-                url: "https://citywitty.com/citywittynew.jpg",
+                url: "https://partner.citywitty.com/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "CityWitty Merchant Packages",
@@ -38,10 +38,10 @@ export const metadata: Metadata = {
         title: "Merchant Packages | CityWitty Privilege Card",
         description:
             "Explore flexible merchant packages tailored for business growth and visibility on CityWitty.",
-        images: ["https://citywitty.com/citywittynew.jpg"],
+        images: ["https://partner.citywitty.com/logo.png"],
     },
     alternates: {
-        canonical: "https://citywitty.com/merchant-packages",
+        canonical: "https://partner.citywitty.com/merchant-packages",
     },
 };
 
@@ -169,7 +169,7 @@ export default function MerchantPackagesPage() {
                 </div>
             </section>
 
-            
+
             {/* Benefits Section */}
             <section id="benefits" className="py-20 bg-gray-100">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
