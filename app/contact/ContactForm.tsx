@@ -41,7 +41,7 @@ export default function ContactForm() {
 
     return (
         <section className="max-w-5xl mx-auto px-6 py-16">
-            <div className="bg-white shadow-md rounded-2xl overflow-hidden">
+            <div className="bg-white  rounded-2xl overflow-hidden">
                 <div className="grid md:grid-cols-2 gap-0">
                     {/* LEFT INFO */}
                     <div className="p-10">
