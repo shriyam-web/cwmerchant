@@ -185,6 +185,7 @@ export function Navbar() {
   const pathname = usePathname();
   const { merchant, logout, loadingProfile } = useMerchantAuth();
 
+  const firstWord = merchant?.businessName?.split(" ")[0];
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -251,7 +252,8 @@ export function Navbar() {
                 onMouseLeave={() => setDropdownOpen(false)}
               >
                 <button className="px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:200%_200%] animate-gradient-slide flex items-center gap-2 shadow-lg transition-all">
-                  {merchant.businessName} <ChevronDown className="w-4 h-4" />
+                  Hey, {firstWord} <ChevronDown className="w-4 h-4" />
+
                 </button>
 
                 {dropdownOpen && (
@@ -291,8 +293,9 @@ export function Navbar() {
                   onClick={() => setDropdownOpen((prev) => !prev)}
                   className="px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center gap-1 shadow"
                 >
-                  {merchant.businessName}
+                  Hey, {firstWord}
                   <ChevronDown className="w-4 h-4" />
+
                 </button>
 
                 {dropdownOpen && (
@@ -377,7 +380,8 @@ export function Navbar() {
                       </>
                     ) : (
                       <div className="flex flex-col space-y-2">
-                        <span className="px-4 py-2 font-medium">{merchant.businessName}</span>
+                        <span className="px-4 py-2 font-medium">Hey, {firstWord}</span>
+
                         <Link
                           href="/dashboard"
                           className="px-4 py-2 hover:bg-gray-100 rounded-md"
