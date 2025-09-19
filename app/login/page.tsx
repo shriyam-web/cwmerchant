@@ -266,6 +266,13 @@ export default function Login() {
                   </div>
                 </div>
 
+                {/* Forgot password link */}
+                <div className="flex items-center justify-end">
+                  <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
+
                 {/* Error message */}
                 {error && (
                   <p className="text-red-500 text-sm text-center">{error}</p>
