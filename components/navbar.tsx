@@ -175,17 +175,40 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { LogOut } from "lucide-react";
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { useMerchantAuth } from '@/lib/auth-context'; // path adjust karo
+import { useEffect, useRef } from "react";
+
+
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false); // Mobile menu
   const [dropdownOpen, setDropdownOpen] = useState(false); // Desktop dropdown
   const pathname = usePathname();
   const { merchant, logout, loadingProfile } = useMerchantAuth();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (desktopDropdownRef.current && !desktopDropdownRef.current.contains(e.target as Node)) {
+        setDesktopDropdownOpen(false);
+      }
+      if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(e.target as Node)) {
+        setMobileDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const firstWord = merchant?.businessName?.split(" ")[0];
+  const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+
+  const desktopDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -246,33 +269,38 @@ export function Navbar() {
                 </Link>
               </>
             ) : (
-              <div
-                className="relative"
-                onMouseEnter={() => setDropdownOpen(true)}
-                onMouseLeave={() => setDropdownOpen(false)}
-              >
-                <button className="px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:200%_200%] animate-gradient-slide flex items-center gap-2 shadow-lg transition-all">
+              <div className="relative" ref={desktopDropdownRef}>
+                <button
+                  onClick={() => setDesktopDropdownOpen((prev) => !prev)}
+                  className="px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center gap-2 shadow-lg transition-all"
+                >
                   Hey, {firstWord} <ChevronDown className="w-4 h-4" />
-
                 </button>
 
-                {dropdownOpen && (
+                {desktopDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden animate-fade-in">
                     <Link
                       href="/dashboard"
                       className="block px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all"
+                      onClick={() => setDesktopDropdownOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <button
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all"
-                      onClick={logout}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors"
+                      onClick={() => {
+                        logout();
+                        setDesktopDropdownOpen(false);
+                      }}
                     >
+                      <LogOut className="w-4 h-4" />
                       Logout
                     </button>
                   </div>
                 )}
               </div>
+
+
             )}
           </div>
 
@@ -288,37 +316,38 @@ export function Navbar() {
                 </Button>
               </Link>
             ) : (
-              <div className="relative">
+              <div className="relative" ref={mobileDropdownRef}>
                 <button
-                  onClick={() => setDropdownOpen((prev) => !prev)}
+                  onClick={() => setMobileDropdownOpen((prev) => !prev)}
                   className="px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center gap-1 shadow"
                 >
                   Hey, {firstWord}
                   <ChevronDown className="w-4 h-4" />
-
                 </button>
 
-                {dropdownOpen && (
+                {mobileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-md">
                     <Link
                       href="/dashboard"
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setMobileDropdownOpen(false)}
                     >
-                      Dashboard
+                      Merchant Dashboard
                     </Link>
                     <button
+                      className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors"
                       onClick={() => {
                         logout();
-                        setDropdownOpen(false);
+                        setMobileDropdownOpen(false);
                       }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                     >
+                      <LogOut className="w-4 h-4" />
                       Logout
                     </button>
                   </div>
                 )}
               </div>
+
             )}
 
             {/* Mobile Menu Trigger */}
@@ -387,15 +416,16 @@ export function Navbar() {
                           className="px-4 py-2 hover:bg-gray-100 rounded-md"
                           onClick={() => setIsOpen(false)}
                         >
-                          Dashboard
+                          Merchant Dashboard
                         </Link>
                         <button
-                          className="px-4 py-2 text-left hover:bg-gray-100 rounded-md"
+                          className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors"
                           onClick={() => {
                             logout();
                             setIsOpen(false);
                           }}
                         >
+                          <LogOut className="w-4 h-4" />
                           Logout
                         </button>
                       </div>
