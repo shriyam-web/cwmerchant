@@ -127,7 +127,7 @@ const PartnerSchema = new Schema<IPartner>(
     ratings: [RatingSchema],
     averageRating: { type: Number, default: 0 },
     tags: { type: [String], default: [] },
-    status: { type: String, enum: ["pending", "active", "suspended"], default: "pending" },
+    status: { type: String, enum: ["pending", "active", "suspended", "inactive"], default: "pending" },
 
     // 🔐 Password Reset
     otpCode: { type: String },
