@@ -49,6 +49,8 @@ export default function MerchantPackagesPage() {
     const plans = [
         {
             name: "Launch Pad",
+            badge: "Starter Plan",
+            badgeType: "starter", // for custom color
             price: "59,999",
             description: "Perfect for new businesses starting their digital journey",
             features: [
@@ -67,6 +69,8 @@ export default function MerchantPackagesPage() {
         },
         {
             name: "Scale Up",
+            badge: "Most Choice",
+            badgeType: "choice",
             price: "83,999",
             description: "Grow your presence and engagement on social media",
             features: [
@@ -81,24 +85,23 @@ export default function MerchantPackagesPage() {
                 "High Priority Support",
                 "PR/media features",
                 "❌ Dedicated growth manager",
-
             ],
             popular: true,
         },
         {
             name: "Market Leader",
+            badge: "Premium Plan",
+            badgeType: "premium",
             price: "1,19,999",
             description: "Complete digital marketing management for maximum impact",
             features: [
                 "Complete digital marketing management (24 creative graphics + 4 reels for FB, Insta, LinkedIn)",
                 "Website revamp with next-gen SEO (Human + AI friendly)",
                 "Monthly professional shoots (team/product)",
-
                 "30 products listings on Citywitty Merchant Store",
                 "Digital Business Card",
                 "CW Premium Seller badge",
                 "CityWitty Assured badge",
-
                 "High Priority Support",
                 "PR/influencer/media features",
                 "Dedicated growth manager",
@@ -106,6 +109,7 @@ export default function MerchantPackagesPage() {
             popular: false,
         },
     ];
+
 
     const benefits = [
         {
@@ -164,14 +168,25 @@ export default function MerchantPackagesPage() {
                                 className={`relative bg-white rounded-3xl border border-gray-200 p-10 flex flex-col shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300 ${plan.popular ? "ring-4 ring-indigo-400" : ""
                                     }`}
                             >
-                                {/* Popular Badge */}
-                                {plan.popular && (
-                                    <span className="absolute top-4 right-4 px-4 py-1 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-full shadow">
-                                        Most Popular
+                                {/* Plan Badge */}
+                                {plan.badge && (
+                                    <span
+                                        className={`absolute top-4 right-4 px-4 py-1 text-sm font-semibold rounded-full shadow
+            ${plan.badgeType === "starter" ? "bg-blue-200 text-blue-800" : ""}
+            ${plan.badgeType === "choice" ? "bg-purple-200 text-purple-800 animate-pulse" : ""}
+            ${plan.badgeType === "premium" ? "bg-gradient-to-r from-yellow-400 to-yellow-200 text-yellow-800 animate-shine" : ""}
+        `}
+                                    >
+                                        {plan.badge}
                                     </span>
+
                                 )}
 
+
+
+
                                 {/* Plan Name */}
+                                <br />
                                 <h3 className="text-3xl font-bold text-gray-900 mb-3">
                                     {plan.name}
                                 </h3>
