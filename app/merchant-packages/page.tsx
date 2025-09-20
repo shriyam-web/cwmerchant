@@ -167,9 +167,11 @@ export default function MerchantPackagesPage() {
                                 key={plan.name}
                                 className={`relative bg-white rounded-3xl border border-gray-200 p-10 flex flex-col shadow-lg 
     hover:shadow-2xl hover:scale-105 hover:border-indigo-400 transition-all duration-300
+    text-sm   // <-- smaller font for the whole card (roughly 20% smaller)
     ${plan.popular ? "ring-4 ring-indigo-400" : ""}
   `}
                             >
+
 
                                 {/* Plan Badge */}
                                 {plan.badge && (
@@ -204,7 +206,7 @@ export default function MerchantPackagesPage() {
                                 </div>
 
                                 {/* Price */}
-                                <div className="text-5xl font-extrabold text-indigo-600 mb-6">
+                                <div className="text-4xl font-extrabold text-indigo-600 mb-6">
                                     ₹{plan.price}
                                     <span className="text-lg font-medium text-gray-400">/yr</span>
                                 </div>
