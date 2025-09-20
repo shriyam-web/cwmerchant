@@ -17,49 +17,49 @@ export interface IRating {
 }
 
 export interface IPartner extends Document {
-  applicationId: string;
-  businessName: string;
-  ownerName: string;
-  email: string;
+  applicationId: string; //1
+  businessName: string; //2
+  ownerName: string; //3
+  email: string;  //4
   emailVerified?: boolean;
-  phone: string;
+  phone: string; //5
   phoneVerified?: boolean;
-  password: string;
-  category: string;
-  city: string;
-  address: string;
-  whatsapp: string;
+  password: string; 
+  category: string; //6
+  city: string; //7
+  address: string; //8
+  whatsapp: string; //9
   isWhatsappSame: boolean;
-  gstNumber: string;
-  panNumber: string;
-  businessType: string;
-  yearsInBusiness: string;
-  averageMonthlyRevenue: string;
-  discountOffered: string;
-  description: string;
-  website?: string;
+  gstNumber: string; //10
+  panNumber: string; //11
+  businessType: string; //12
+  yearsInBusiness: string; //13
+  averageMonthlyRevenue: string; //14
+  discountOffered: string; //15
+  description: string; //16
+  website?: string; //17
   socialLinks?: {
-    linkedin?: string;
-    twitter?: string;
-    youtube?: string;
-    instagram?: string;
-    facebook?: string;
+    linkedin?: string; //18
+    twitter?: string; //19
+    youtube?: string; //20
+    instagram?: string; //21
+    facebook?: string; //22
   };
-  agreeToTerms: boolean;
+  agreeToTerms: boolean; 
 
   // 🔥 New Features
   products: IProduct[];
-  logo?: string;
-  storeImages?: string[];
-  customOffer?: string;
+  logo?: string; //23
+  storeImages?: string[]; //24
+  customOffer?: string; 
   ribbonTag?: string;
-  mapLocation?: string;
+  mapLocation?: string; //25
   visibility: boolean;
-  joinedSince: Date;
+  joinedSince: Date; 
   citywittyAssured: boolean;
   ratings: IRating[];
   averageRating?: number;
-  tags?: string[];
+  tags?: string[]; //26
   status: "pending" | "active" | "suspended";
 
   // 🔐 Password Reset Fields

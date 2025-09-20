@@ -7,17 +7,20 @@ export async function GET(req: Request) {
   try {
     await dbConnect();
 
-    // merchantId localStorage/session se aayega, abhi demo ke liye hardcoded
     const url = new URL(req.url);
     const merchantId = url.searchParams.get("merchantId");
     if (!merchantId) {
+      console.log("Merchant ID missing in request");
       return NextResponse.json({ error: "Merchant ID required" }, { status: 400 });
     }
 
     const partner = await Partner.findById(merchantId);
     if (!partner) {
+      console.log(`Merchant not found for ID: ${merchantId}`);
       return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
     }
+
+    console.log("Partner object fetched from DB:", partner);
 
     // Example stats
     const stats = [
@@ -44,7 +47,9 @@ export async function GET(req: Request) {
       },
     ];
 
-    // Recent Requests (abhi demo ke liye dummy array)
+    console.log("Stats to send:", stats);
+
+    // Recent Requests (demo)
     const requests = [
       {
         id: "1",
@@ -62,21 +67,49 @@ export async function GET(req: Request) {
       },
     ];
 
-    return NextResponse.json({
+    console.log("Requests to send:", requests);
+
+    const response = {
       merchant: {
-        id: partner._id,
+        applicationId: partner.applicationId,
         businessName: partner.businessName,
+        ownerName: partner.ownerName,
+        email: partner.email,
+        phone: partner.phone,
         category: partner.category,
         city: partner.city,
-        joinedSince: partner.joinedSince,
-        status: partner.status,          // 👈 yeh add karo
-    visibility: partner.visibility,  // 👈 yeh bhi
+        address: partner.address,
+        whatsapp: partner.whatsapp,
+        gstNumber: partner.gstNumber,
+        panNumber: partner.panNumber,
+        businessType: partner.businessType,
+        yearsInBusiness: partner.yearsInBusiness,
+        averageMonthlyRevenue: partner.averageMonthlyRevenue,
+        discountOffered: partner.discountOffered,
+        description: partner.description,
+        website: partner.website || "",
+        socialLinks: {
+          linkedin: partner.socialLinks?.linkedin || "",
+          twitter: partner.socialLinks?.twitter || "",
+          youtube: partner.socialLinks?.youtube || "",
+          instagram: partner.socialLinks?.instagram || "",
+          facebook: partner.socialLinks?.facebook || "",
+        },
+        logo: partner.logo || "",
+        storeImages: partner.storeImages || [],
+        mapLocation: partner.mapLocation || "",
+        tags: partner.tags || [],
+         status: partner.status || "pending", // ✅ yeh line add karo
       },
       stats,
       requests,
-    });
+    };
+
+    console.log("Final API response:", response);
+
+    return NextResponse.json(response);
   } catch (err) {
-    console.error(err);
+    console.error("Error in GET /dashboard:", err);
     return NextResponse.json({ error: "Failed to load dashboard" }, { status: 500 });
   }
 }

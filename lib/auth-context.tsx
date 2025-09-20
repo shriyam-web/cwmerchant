@@ -93,6 +93,7 @@ interface Merchant {
   email: string;
   businessName: string;
   role: "merchant";
+  status: "active" | "pending" | "suspended" | "inactive";
 }
 
 
@@ -105,13 +106,15 @@ interface MerchantRegisterData {
 
 interface MerchantAuthContextType {
   merchant: Merchant | null;
+  setMerchant?: (m: Merchant) => void; // optional setter
   loading: boolean;
-  loadingProfile: boolean; // ✅ add this
+  loadingProfile: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<boolean>;
   register: (formData: MerchantRegisterData) => Promise<boolean>;
   logout: () => void;
 }
+
 
 const MerchantAuthContext = createContext<MerchantAuthContextType | undefined>(
   undefined
@@ -126,7 +129,7 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
 
   const fetchMerchantProfile = async (token: string) => {
     try {
-      const res = await fetch("/api/merchant/profile", {
+      const res = await fetch("/api/merchant/dashboard", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -263,8 +266,9 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <MerchantAuthContext.Provider
-      value={{ merchant, loading, loadingProfile, error, login, register, logout }}
+      value={{ merchant, setMerchant, loading, loadingProfile, error, login, register, logout }}
     >
+
       {children}
     </MerchantAuthContext.Provider>
   );

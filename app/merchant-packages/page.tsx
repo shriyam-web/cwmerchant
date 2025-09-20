@@ -2,7 +2,7 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Metadata } from "next";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Merchant Packages | CityWitty Privilege Card",
@@ -48,38 +48,62 @@ export const metadata: Metadata = {
 export default function MerchantPackagesPage() {
     const plans = [
         {
-            name: "Starter Plan",
-            price: "X",
-            description: "For new merchants beginning their digital journey.",
+            name: "Launch Pad",
+            price: "59,999",
+            description: "Perfect for new businesses starting their digital journey",
             features: [
-                "Business profile listing on CityWitty",
-                "Basic analytics and insights",
-                "Customer inquiries via platform",
-                "Email support",
+                "4 creative graphics + 1 reel per month (LinkedIn, Facebook, Instagram)",
+                "Basic landing page/Website",
+                "SEO optimization with AI integration",
+                "10 products listing on Citywitty Merchant Store",
+                "Digital Business Cards",
+                "Brand listing on Citywitty Growth Network",
+                "Faster Support",
+                "❌ High Priority Support",
+                "❌ PR/media features",
+                "❌ Dedicated growth manager",
             ],
+            popular: false,
         },
         {
-            name: "Growth Plan",
-            price: "X",
-            description: "For growing merchants who want more visibility.",
+            name: "Scale Up",
+            price: "83,999",
+            description: "Grow your presence and engagement on social media",
             features: [
-                "Priority placement in listings",
-                "Advanced business analytics",
-                "Social media promotions",
-                "Dedicated support manager",
+                "12 creatives graphics + 2 reels per month (Social media reach & engagement)",
+                "Advanced website",
+                "PR blog/article on Citywitty platform",
+                "20 products listing on Citywitty Merchant Store",
+                "Digital Business Cards",
+                "Verified Seller badge",
+                "CityWitty Assured badge",
+                "Search Engine Optimization with AI tools integration",
+                "High Priority Support",
+                "PR/media features",
+                "❌ Dedicated growth manager",
+
             ],
             popular: true,
         },
         {
-            name: "Premium Plan",
-            price: "X",
-            description: "For established businesses aiming for maximum reach.",
+            name: "Market Leader",
+            price: "1,19,999",
+            description: "Complete digital marketing management for maximum impact",
             features: [
-                "Top-tier placement in all listings",
-                "Comprehensive analytics dashboard",
-                "Exclusive marketing campaigns",
-                "24/7 premium support",
+                "Complete digital marketing management (24 creative graphics + 4 reels for FB, Insta, LinkedIn)",
+                "Website revamp with next-gen SEO (Human + AI friendly)",
+                "Monthly professional shoots (team/product)",
+
+                "30 products listings on Citywitty Merchant Store",
+                "Digital Business Card",
+                "CW Premium Seller badge",
+                "CityWitty Assured badge",
+
+                "High Priority Support",
+                "PR/influencer/media features",
+                "Dedicated growth manager",
             ],
+            popular: false,
         },
     ];
 
@@ -127,40 +151,59 @@ export default function MerchantPackagesPage() {
             </section>
 
             {/* Pricing Plans */}
-            <section id="pricing" className="py-20">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-12">
+            <section id="pricing" className="py-24 bg-gray-50">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
+                    <h2 className="text-4xl font-extrabold text-gray-900 mb-12">
                         Our Pricing Plans
                     </h2>
-                    <div className="grid gap-8 md:grid-cols-3">
+
+                    <div className="grid gap-10 md:grid-cols-3">
                         {plans.map((plan) => (
                             <div
                                 key={plan.name}
-                                className={`bg-white rounded-2xl border border-gray-200 p-8 flex flex-col shadow-md hover:shadow-xl hover:scale-105 transition duration-300 ${plan.popular ? "ring-2 ring-indigo-500" : ""
+                                className={`relative bg-white rounded-3xl border border-gray-200 p-10 flex flex-col shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300 ${plan.popular ? "ring-4 ring-indigo-400" : ""
                                     }`}
                             >
+                                {/* Popular Badge */}
                                 {plan.popular && (
-                                    <span className="inline-block mb-4 px-4 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full">
+                                    <span className="absolute top-4 right-4 px-4 py-1 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-full shadow">
                                         Most Popular
                                     </span>
                                 )}
-                                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+
+                                {/* Plan Name */}
+                                <h3 className="text-3xl font-bold text-gray-900 mb-3">
                                     {plan.name}
                                 </h3>
-                                <p className="text-gray-600 mb-4">{plan.description}</p>
-                                <div className="text-4xl font-bold text-indigo-600 mb-6">
+
+                                {/* Plan Description */}
+                                <p className="text-gray-500 mb-6">{plan.description}</p>
+
+                                {/* Price */}
+                                <div className="text-5xl font-extrabold text-indigo-600 mb-8">
                                     ₹{plan.price}
-                                    <span className="text-base font-medium text-gray-500">/yr</span>
+                                    <span className="text-lg font-medium text-gray-400">/yr</span>
                                 </div>
-                                <ul className="text-gray-700 space-y-3 flex-1 mb-6 text-left">
-                                    {plan.features.map((feature) => (
-                                        <li key={feature} className="flex items-start">
-                                            <CheckCircle className="w-5 h-5 text-indigo-600 mr-2" />
-                                            {feature}
-                                        </li>
-                                    ))}
+
+                                {/* Features List */}
+                                <ul className="text-gray-700 space-y-4 text-left flex-1 mb-8">
+                                    {plan.features.map((feature) => {
+                                        const isExcluded = feature.startsWith("❌");
+                                        return (
+                                            <li key={feature} className="flex items-start gap-3">
+                                                {isExcluded ? (
+                                                    <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
+                                                ) : (
+                                                    <CheckCircle className="w-6 h-6 text-indigo-500 flex-shrink-0 mt-1" />
+                                                )}
+                                                <span>{feature.replace("❌ ", "")}</span>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
-                                <button className="w-full py-3 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl shadow hover:scale-105 transition">
+
+                                {/* CTA Button */}
+                                <button className="w-full py-4 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-2xl shadow-lg hover:scale-105 hover:shadow-2xl transition-transform duration-300">
                                     Get Started
                                 </button>
                             </div>
@@ -168,6 +211,7 @@ export default function MerchantPackagesPage() {
                     </div>
                 </div>
             </section>
+
 
 
             {/* Benefits Section */}
