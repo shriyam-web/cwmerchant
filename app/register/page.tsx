@@ -1,5 +1,6 @@
 // app/register/page.tsx
 'use client';
+// import { useEffect } from "react";
 import { useRef } from "react";
 import debounce from "lodash.debounce"; // install: npm i lodash.debounce
 import { AlertCircle, CheckCircle as CheckIcon } from "lucide-react";
@@ -96,6 +97,22 @@ const categories = [
   'Agriculture & Farming',
   'Other Businesses'
 ];
+
+function SuccessScreen({ visible }: { visible: boolean }) {
+  useEffect(() => {
+    if (visible) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [visible]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="success-screen">
+      <h2>Form submitted successfully!</h2>
+    </div>
+  );
+}
 
 const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -439,6 +456,10 @@ export default function PartnerPage() {
         console.log('Submitted:', resData);
         setFormData(prev => ({ ...prev, applicationId: resData.applicationId }));
         setIsSubmitted(true);
+
+
+        // Scroll to top so success screen is visible
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         const errData = await response.json();
         console.error('Submission failed:', errData);
