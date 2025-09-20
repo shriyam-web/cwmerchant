@@ -95,7 +95,7 @@ export default function MerchantPackagesPage() {
             price: "1,19,999",
             description: "Complete digital marketing management for maximum impact",
             features: [
-                "Complete digital marketing management (24 creative graphics + 4 reels for FB, Insta, LinkedIn)",
+                "Complete digital marketing management (24 creative graphics + 4 reels for FB, Insta, LinkedIn) which gives advanced reach",
                 "Website revamp with next-gen SEO (Human + AI friendly)",
                 "Monthly professional shoots (team/product)",
                 "30 products listings on Citywitty Merchant Store",
@@ -165,9 +165,12 @@ export default function MerchantPackagesPage() {
                         {plans.map((plan) => (
                             <div
                                 key={plan.name}
-                                className={`relative bg-white rounded-3xl border border-gray-200 p-10 flex flex-col shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300 ${plan.popular ? "ring-4 ring-indigo-400" : ""
-                                    }`}
+                                className={`relative bg-white rounded-3xl border border-gray-200 p-10 flex flex-col shadow-lg 
+    hover:shadow-2xl hover:scale-105 hover:border-indigo-400 transition-all duration-300
+    ${plan.popular ? "ring-4 ring-indigo-400" : ""}
+  `}
                             >
+
                                 {/* Plan Badge */}
                                 {plan.badge && (
                                     <span
@@ -194,11 +197,20 @@ export default function MerchantPackagesPage() {
                                 {/* Plan Description */}
                                 <p className="text-gray-500 mb-6">{plan.description}</p>
 
+                                {/* Monthly Cost */}
+                                {/* Monthly Cost */}
+                                <div className="bg-indigo-50 text-indigo-700 px-4 py-1 rounded-full text-sm font-medium mb-4 inline-block">
+                                    ₹{Math.round(Number(plan.price.replace(/,/g, '')) / 12).toLocaleString()} /month
+                                </div>
+
                                 {/* Price */}
-                                <div className="text-5xl font-extrabold text-indigo-600 mb-8">
+                                <div className="text-5xl font-extrabold text-indigo-600 mb-6">
                                     ₹{plan.price}
                                     <span className="text-lg font-medium text-gray-400">/yr</span>
                                 </div>
+
+
+
 
                                 {/* Features List */}
                                 <ul className="text-gray-700 space-y-4 text-left flex-1 mb-8">
