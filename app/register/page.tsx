@@ -36,6 +36,8 @@ import {
   Globe
 } from 'lucide-react';
 import { Navbar } from '@/components/navbar';
+import PrivacyPolicyPage from "../privacy-policy/page";
+import TermsPage from "../terms/page";
 
 
 const benefits = [
@@ -61,6 +63,20 @@ const benefits = [
   }
 ];
 
+function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 mt-16 pt-20 pb-20">
+      <div className="bg-white rounded-lg w-11/12 max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
+        <button className="absolute top-3 p-3 right-3 text-gray-500 hover:text-gray-700" onClick={onClose} > ✕ </button>
+
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <div>{children}</div>
+      </div>
+    </div>
+  );
+}
 
 
 
@@ -200,6 +216,9 @@ const isValidURL = (url: string) => {
 
 
 export default function PartnerPage() {
+
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [formData, setFormData] = useState({
     applicationId: '', // ✅ Add this
     businessName: '',
@@ -1078,13 +1097,27 @@ export default function PartnerPage() {
                         required
                       />
                       <Label htmlFor="terms" className="text-sm">
-                        I agree to the{' '}
-                        <a href="/terms" className="text-blue-600 hover:underline">Terms & Conditions</a>
+                        I agree to {' '}
+                        <a
+                          href="#"
+                          className="text-blue-600 hover:underline"
+                          onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}
+                        >
+                          Terms & Conditions
+                        </a>
                         {' '}and{' '}
-                        <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
+                        <a
+                          href="#"
+                          className="text-blue-600 hover:underline"
+                          onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}
+                        >
+                          Privacy Policy
+                        </a>
                       </Label>
+
                     </div>
                   </div>
+
 
                   <Button
                     type="submit"
@@ -1158,6 +1191,15 @@ export default function PartnerPage() {
         </div>
       </section>
       <Footer />
+
+      <Modal open={showTermsModal} onClose={() => setShowTermsModal(false)} title="Terms & Conditions" >
+        <TermsPage />
+      </Modal>
+
+      <Modal open={showPrivacyModal} onClose={() => setShowPrivacyModal(false)} title="Privacy Policy">
+        <PrivacyPolicyPage />
+      </Modal>
+
     </main>
   );
 }
