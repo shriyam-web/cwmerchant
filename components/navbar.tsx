@@ -226,8 +226,8 @@ export function Navbar() {
 
           {/* ===== Logo ===== */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-15 h-10 rounded-xl flex items-center justify-center overflow-hidden">
-              <img src="/merchant-hub.png" alt="Citywitty Logo" className="w-full h-full object-contain" />
+            <div className="w-17 h-12 rounded-xl flex items-center justify-center overflow-hidden">
+              <img src="/merchant-hub.png" alt="Citywitty Logo" className="w-full h-full object-contain p-1" />
             </div>
           </Link>
 
@@ -271,7 +271,7 @@ export function Navbar() {
               <div className="relative" ref={desktopDropdownRef}>
                 <button
                   onClick={() => setDesktopDropdownOpen((prev) => !prev)}
-                  className="px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center gap-2 shadow-lg transition-all"
+                  className="px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center gap-2 shadow-lg transition-all p-3 ml-2 mt-1 mb-1 pt-1 pb-1"
                 >
                   Hey, {firstWord} <ChevronDown className="w-4 h-4" />
                 </button>

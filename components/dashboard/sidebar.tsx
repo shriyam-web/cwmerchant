@@ -58,27 +58,11 @@ export function DashboardSidebar({ activeTab, onTabChange }: DashboardSidebarPro
     <div className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 z-40 lg:block hidden">
       <div className="p-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2 mb-8">
+        <Link href="/" className="flex items-center space-x-2 mb-3">
 
-          <img
-            src="/logo.png"
-            alt="CityWitty Logo"
-            className="h-12 w-auto"
-          />
-          <div>
-            <span className="text-xl font-bold">
-              <span className="bg-gradient-to-r from-blue-500 to-blue-400 bg-clip-text text-transparent">
-                {/* <b>City</b> */}
-                City
-              </span>
-              <span className="bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">
-                {/* <b>Witty</b> */}
-                Witty
-              </span>
-            </span>
-
-
-            <p>for Merchants </p></div>
+          <div className="w-17 h-12 rounded-xl flex items-center justify-center overflow-hidden">
+            <img src="/merchant-hub.png" alt="Citywitty Logo" className="w-full h-full object-contain p-1" />
+          </div>
 
         </Link>
 
@@ -108,7 +92,7 @@ export function DashboardSidebar({ activeTab, onTabChange }: DashboardSidebarPro
 
 
         {/* Navigation Menu */}
-        <nav className="space-y-0">
+        <nav className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
