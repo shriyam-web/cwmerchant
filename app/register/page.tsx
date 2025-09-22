@@ -521,39 +521,39 @@ export default function PartnerPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-2xl mx-auto text-center">
             <Card className="border-0 shadow-xl bg-green-50">
-              <CardContent className="p-12">
+              <CardContent className="p-6 sm:p-12"> {/* Responsive padding */}
                 <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-6" />
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 text-center">
                   Application Submitted Successfully!
                 </h1>
-                <p className="text-lg text-gray-600 mb-6">
+                <p className="text-base sm:text-lg text-gray-600 mb-6 text-center">
                   Thank you for your interest in partnering with CityWitty. Our team will review your application and contact you within 2-3 business days.
                 </p>
-                <div className="bg-blue-50 p-4 rounded-lg mb-6">
-                  <p className="text-blue-800 font-medium">Application ID: {formData.applicationId}</p>
 
+                <div className="bg-blue-50 p-4 rounded-lg mb-6 text-center">
+                  <p className="text-blue-800 font-medium">Application ID: {formData.applicationId}</p>
                   <p className="text-blue-600 text-sm">Please save this ID for future reference</p>
                 </div>
 
-                <div className="flex justify-center gap-4 mt-4">
+                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
+                  {/* Mobile: column, Desktop: row */}
                   <Button
                     onClick={downloadPDF}
-                    className="bg-blue-500 hover:bg-blue-600"
+                    className="bg-blue-500 hover:bg-blue-600 w-full sm:w-auto"
                   >
                     Download Application PDF
                   </Button>
 
                   <Button
                     onClick={() => setIsSubmitted(false)}
-                    className="bg-green-500 hover:bg-green-600"
+                    className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
                   >
                     Submit Another Application
                   </Button>
                 </div>
-
-
               </CardContent>
             </Card>
+
           </div>
         </div>
         <Footer />

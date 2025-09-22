@@ -227,9 +227,8 @@ export function Navbar() {
           {/* ===== Logo ===== */}
           <Link href="/" className="flex items-center space-x-3">
             <div className="w-15 h-10 rounded-xl flex items-center justify-center overflow-hidden">
-              <img src="/logo.png" alt="Citywitty Logo" className="w-full h-full object-contain" />
+              <img src="/merchant-hub.png" alt="Citywitty Logo" className="w-full h-full object-contain" />
             </div>
-            <img src="/logo2.png" alt="Citywitty Logo" className="w-32 h-16 object-contain" />
           </Link>
 
           {/* ===== Desktop Navigation ===== */}
