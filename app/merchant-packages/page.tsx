@@ -199,14 +199,10 @@ export default function MerchantPackagesPage() {
                                 {/* Plan Description */}
                                 <p className="text-gray-500 mb-6">{plan.description}</p>
 
-                                {/* Monthly Cost */}
-                                {/* Monthly Cost */}
-                                <div className="bg-indigo-50 text-indigo-700 px-4 py-1 rounded-full text-sm font-medium mb-4 inline-block">
-                                    ₹{Math.round(Number(plan.price.replace(/,/g, '')) / 12).toLocaleString()} /month
-                                </div>
+
 
                                 {/* Price Section */}
-                                <div className="mb-6">
+                                <div className="mb-2">
                                     {/* Original Price (doubled, strike-through) */}
                                     <div className="text-2xl text-gray-400 line-through">
                                         ₹{(Number(plan.price.replace(/,/g, '')) * 2).toLocaleString()} /yr
@@ -218,15 +214,19 @@ export default function MerchantPackagesPage() {
                                         <span className="text-lg font-medium text-gray-400">/yr</span>
                                     </div>
 
-                                    {/* Offer Applied Badge */}
-                                    <div className="mt-2 inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                                        🎉 Festive50 Applied (50% OFF)
-                                    </div>
+
                                 </div>
 
+                                {/* Monthly Cost */}
+                                {/* Monthly Cost */}
+                                <div className="bg-indigo-50 text-indigo-700 px-4 py-1 rounded-full text-sm font-medium mb-4 inline-block">
+                                    ₹{Math.round(Number(plan.price.replace(/,/g, '')) / 12).toLocaleString()} /month
+                                </div>
 
-
-
+                                {/* Offer Applied Badge */}
+                                <div className="mt-1 mb-6 inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    🎉 Festive50 Applied (50% OFF)
+                                </div>
 
                                 {/* Features List */}
                                 <ul className="text-gray-700 space-y-4 text-left flex-1 mb-8">
