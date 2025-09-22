@@ -205,7 +205,7 @@ export default function Login() {
         </div>
 
         {/* Right login form */}
-        <div className="flex-1 flex items-center justify-center px-6 mb-2 mt-3 pt-5">
+        <div className="flex-1 flex items-center justify-center px-6 mb-2 mt-2 pt-7">
           <div className="w-full max-w-md">
             <Link href="/" className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 mb-6">
               <ArrowLeft className="h-4 w-4" />
