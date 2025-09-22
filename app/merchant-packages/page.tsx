@@ -205,11 +205,25 @@ export default function MerchantPackagesPage() {
                                     ₹{Math.round(Number(plan.price.replace(/,/g, '')) / 12).toLocaleString()} /month
                                 </div>
 
-                                {/* Price */}
-                                <div className="text-4xl font-extrabold text-indigo-600 mb-6">
-                                    ₹{plan.price}
-                                    <span className="text-lg font-medium text-gray-400">/yr</span>
+                                {/* Price Section */}
+                                <div className="mb-6">
+                                    {/* Original Price (doubled, strike-through) */}
+                                    <div className="text-2xl text-gray-400 line-through">
+                                        ₹{(Number(plan.price.replace(/,/g, '')) * 2).toLocaleString()} /yr
+                                    </div>
+
+                                    {/* Discounted Price (final after Festive50) */}
+                                    <div className="text-4xl font-extrabold text-indigo-600">
+                                        ₹{plan.price}
+                                        <span className="text-lg font-medium text-gray-400">/yr</span>
+                                    </div>
+
+                                    {/* Offer Applied Badge */}
+                                    <div className="mt-2 inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                        🎉 Festive50 Applied (50% OFF)
+                                    </div>
                                 </div>
+
 
 
 
