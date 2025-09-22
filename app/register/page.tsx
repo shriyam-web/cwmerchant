@@ -534,23 +534,22 @@ export default function PartnerPage() {
                   <p className="text-blue-800 font-medium">Application ID: {formData.applicationId}</p>
                   <p className="text-blue-600 text-sm">Please save this ID for future reference</p>
                 </div>
-
-                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
-                  {/* Mobile: column, Desktop: row */}
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4 w-full">
                   <Button
                     onClick={downloadPDF}
-                    className="bg-blue-500 hover:bg-blue-600 w-full sm:w-auto"
+                    className="bg-blue-500 hover:bg-blue-600 w-full sm:w-auto max-w-xs"
                   >
                     Download Application PDF
                   </Button>
 
                   <Button
                     onClick={() => setIsSubmitted(false)}
-                    className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
+                    className="bg-green-500 hover:bg-green-600 w-full sm:w-auto max-w-xs"
                   >
                     Submit Another Application
                   </Button>
                 </div>
+
               </CardContent>
             </Card>
 

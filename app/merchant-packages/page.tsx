@@ -1,5 +1,8 @@
 
 // app/merchant-packages/page.tsx
+// "use client";
+
+// import { motion } from "framer-motion";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Metadata } from "next";
@@ -7,6 +10,8 @@ import { Metadata } from "next";
 import { Loader2 } from "lucide-react"; // spinner icon
 import { CheckCircle, XCircle } from "lucide-react";
 import PricingCard from "@/components/ui/pricing-card";
+
+import { Eye, Users, Megaphone, ShieldCheck, BarChart3, Headset } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Merchant Packages | CityWitty Privilege Card",
@@ -50,6 +55,39 @@ export const metadata: Metadata = {
 };
 
 export default function MerchantPackagesPage() {
+
+    const benefits = [
+        {
+            title: "Boost Your Visibility",
+            desc: "Get priority placement and premium exposure on CityWitty, ensuring more customers discover your business.",
+            icon: Eye,
+        },
+        {
+            title: "Lead Generation",
+            desc: "Receive genuine customer inquiries and build a steady pipeline of leads directly through the platform.",
+            icon: Users,
+        },
+        {
+            title: "Digital Marketing Support",
+            desc: "Leverage social media promotions, exclusive campaigns, and targeted reach to expand your customer base.",
+            icon: Megaphone,
+        },
+        {
+            title: "Stronger Customer Trust",
+            desc: "Showcase a verified merchant profile with CityWitty branding, building instant credibility with new customers.",
+            icon: ShieldCheck,
+        },
+        {
+            title: "Analytics & Insights",
+            desc: "Track performance with in-depth analytics to understand customer behavior and optimize your business strategy.",
+            icon: BarChart3,
+        },
+        {
+            title: "Dedicated Support",
+            desc: "Enjoy priority customer support to resolve issues quickly and get expert guidance for growing your business.",
+            icon: Headset,
+        },
+    ];
     const plans = [
         {
             name: "Launch Pad",
@@ -116,24 +154,24 @@ export default function MerchantPackagesPage() {
 
 
 
-    const benefits = [
-        {
-            title: "Increased Visibility",
-            desc: "Get featured on CityWitty and reach thousands of potential customers actively searching for services like yours.",
-        },
-        {
-            title: "Customer Trust",
-            desc: "A verified merchant profile builds credibility, helping customers choose your business with confidence.",
-        },
-        {
-            title: "Business Growth",
-            desc: "Leverage promotional tools, analytics, and campaigns to expand your customer base and revenue.",
-        },
-        {
-            title: "Dedicated Support",
-            desc: "Our support team ensures your business queries and concerns are resolved quickly and efficiently.",
-        },
-    ];
+    // const benefits = [
+    //     {
+    //         title: "Increased Visibility",
+    //         desc: "Get featured on CityWitty and reach thousands of potential customers actively searching for services like yours.",
+    //     },
+    //     {
+    //         title: "Customer Trust",
+    //         desc: "A verified merchant profile builds credibility, helping customers choose your business with confidence.",
+    //     },
+    //     {
+    //         title: "Business Growth",
+    //         desc: "Leverage promotional tools, analytics, and campaigns to expand your customer base and revenue.",
+    //     },
+    //     {
+    //         title: "Dedicated Support",
+    //         desc: "Our support team ensures your business queries and concerns are resolved quickly and efficiently.",
+    //     },
+    // ];
 
     return (
         <main className="min-h-screen bg-gray-50">
@@ -177,52 +215,70 @@ export default function MerchantPackagesPage() {
 
 
             {/* Benefits Section */}
-            <section id="benefits" className="py-20 bg-gray-100">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
-                        Benefits of Choosing CityWitty Merchant Packages
-                    </h2>
+            <section
+                id="benefits"
+                className="relative py-28 bg-gradient-to-b from-white via-indigo-50/50 to-purple-50 overflow-hidden"
+            >
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
+                    {/* Intro */}
+                    <div className="text-center max-w-3xl mx-auto mb-20">
+                        <h2
+                            style={{ lineHeight: "1.25" }}
+                            className="text-4xl md:text-5xl text-gray-900 mb-6 leading-tight"
+                        >
+                            Unlock the <span style={{ color: "#4F46E5" }}>Power & Benefits</span> of <br />
+                            <span style={{
+                                background: "linear-gradient(to right, #6366F1, #e22d2dff)",
+                                WebkitBackgroundClip: "text",
+                                color: "transparent",
+                                fontWeight: 600
+                            }}>
+                                CityWitty Merchant Packages
+                            </span>
+                        </h2>
+
+
+
+
+                        <p className="text-lg text-gray-600">
+                            Empower your business with premium visibility, trust, and growth tools — all bundled into one powerful package.
+                        </p>
+                    </div>
+
+                    {/* Grid */}
                     <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-                        {[
-                            {
-                                title: "Boost Your Visibility",
-                                desc: "Get priority placement and premium exposure on CityWitty, ensuring more customers discover your business.",
-                            },
-                            {
-                                title: "Lead Generation",
-                                desc: "Receive genuine customer inquiries and build a steady pipeline of leads directly through the platform.",
-                            },
-                            {
-                                title: "Digital Marketing Support",
-                                desc: "Leverage social media promotions, exclusive campaigns, and targeted reach to expand your customer base.",
-                            },
-                            {
-                                title: "Stronger Customer Trust",
-                                desc: "Showcase a verified merchant profile with CityWitty branding, building instant credibility with new customers.",
-                            },
-                            {
-                                title: "Analytics & Insights",
-                                desc: "Track performance with in-depth analytics to understand customer behavior and optimize your business strategy.",
-                            },
-                            {
-                                title: "Dedicated Support",
-                                desc: "Enjoy priority customer support to resolve issues quickly and get expert guidance for growing your business.",
-                            },
-                        ].map((benefit) => (
+                        {benefits.map((benefit) => (
                             <div
                                 key={benefit.title}
-                                className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg hover:scale-105 transition"
+                                className="relative bg-white rounded-3xl p-8 text-center border border-gray-100
+            shadow-md hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-300 transition-all duration-300 group"
                             >
-                                <CheckCircle className="w-10 h-10 text-indigo-600 mx-auto mb-4" />
-                                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                    {benefit.title}
-                                </h3>
-                                <p className="text-gray-600 text-sm">{benefit.desc}</p>
+                                {/* Icon wrapper */}
+                                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 
+            flex items-center justify-center shadow-xl ring-1 ring-indigo-200 group-hover:scale-110 transition-transform duration-300">
+                                    <benefit.icon className="w-10 h-10 text-white" />
+                                </div>
+
+                                {/* Title */}
+                                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
+
+                                {/* Description */}
+                                <p className="text-gray-600 text-sm md:text-base leading-relaxed">{benefit.desc}</p>
+
+                                {/* Accent border bottom */}
+                                <div className="mt-6 h-1 w-16 bg-indigo-500 mx-auto rounded-full opacity-70"></div>
                             </div>
                         ))}
                     </div>
                 </div>
+
+                {/* Decorative Background */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute -top-20 -right-20 w-96 h-96 bg-purple-200 rounded-full opacity-10"></div>
+                    <div className="absolute -bottom-32 -left-24 w-96 h-96 bg-indigo-200 rounded-full opacity-10"></div>
+                </div>
             </section>
+
 
 
             <Footer />
