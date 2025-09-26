@@ -142,7 +142,7 @@ export default function MerchantPackagesPage() {
             price: "1,20,000",
             description: "Complete digital marketing management for maximum impact",
             features: [
-                "Complete digital marketing management (16 creative graphics + 4 reels for Facebook, Instagram, LinkedIn and Youtube) which gives advanced reach",
+                "Complete digital marketing management (16 creative graphics + 4 reels per month for Facebook, Instagram, LinkedIn and Youtube) which gives advanced reach",
                 "Website revamp with next-gen SEO (Human + AI friendly)",
                 "Monthly professional shoots (team/product)",
                 "30 products listings on Citywitty Merchant Store",
