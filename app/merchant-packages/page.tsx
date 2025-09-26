@@ -96,9 +96,10 @@ export default function MerchantPackagesPage() {
             price: "60,000",
             description: "Perfect for new businesses starting their digital journey",
             features: [
-                "4 creative graphics + 1 reel per month (LinkedIn, Facebook, Instagram)",
+                "4 creative graphics + 1 reel per month (LinkedIn, Facebook, Instagram and Youtube)",
                 "Basic landing page/Website",
-                "SEO optimization with AI integration",
+                "SEO optimization with AI integration", 
+                "Upto 2x Sales Growth Expected",                 
                 "10 products listing on Citywitty Merchant Store",
                 "Digital Business Cards",
                 "Brand listing on Citywitty Growth Network",
@@ -106,27 +107,31 @@ export default function MerchantPackagesPage() {
                 "❌ High Priority Support",
                 "❌ PR/media features",
                 "❌ Dedicated growth manager",
+                "❌ Podcast",
             ],
             popular: false,
         },
         {
             name: "Scale Up",
-            badge: "Most Choice",
+            badge: "Most Popular",
             badgeType: "choice",
             price: "84,000",
             description: "Grow your presence and engagement on social media",
             features: [
-                "12 creatives graphics + 2 reels per month (Social media reach & engagement)",
+                "8 creatives graphics + 2 reels per month (Social media reach on LinkedIn, Facebook, Instagram and Youtube & engagement tracking)",
                 "Advanced website",
                 "PR blog/article on Citywitty platform",
                 "20 products listing on Citywitty Merchant Store",
+                "Upto 4x Sales Growth Expected",
                 "Digital Business Cards",
                 "Verified Seller badge",
                 "CityWitty Assured badge",
                 "Search Engine Optimization with AI tools integration",
                 "High Priority Support",
+                "High Visibility on the platform",
                 "PR/media features",
                 "❌ Dedicated growth manager",
+                "❌ Podcast",
             ],
             popular: true,
         },
@@ -137,41 +142,23 @@ export default function MerchantPackagesPage() {
             price: "1,20,000",
             description: "Complete digital marketing management for maximum impact",
             features: [
-                "Complete digital marketing management (24 creative graphics + 4 reels for FB, Insta, LinkedIn) which gives advanced reach",
+                "Complete digital marketing management (16 creative graphics + 4 reels for Facebook, Instagram, LinkedIn and Youtube) which gives advanced reach",
                 "Website revamp with next-gen SEO (Human + AI friendly)",
                 "Monthly professional shoots (team/product)",
                 "30 products listings on Citywitty Merchant Store",
+                "Upto 8x Sales Growth Expected",
                 "Digital Business Card",
                 "CW Premium Seller badge",
                 "CityWitty Assured badge",
                 "High Priority Support",
+                "High Visibility on the CW E-commerce platform for high sales",
                 "PR/influencer/media features",
                 "Dedicated growth manager",
+                "Podcast",
             ],
             popular: false,
         },
     ];
-
-
-
-    // const benefits = [
-    //     {
-    //         title: "Increased Visibility",
-    //         desc: "Get featured on CityWitty and reach thousands of potential customers actively searching for services like yours.",
-    //     },
-    //     {
-    //         title: "Customer Trust",
-    //         desc: "A verified merchant profile builds credibility, helping customers choose your business with confidence.",
-    //     },
-    //     {
-    //         title: "Business Growth",
-    //         desc: "Leverage promotional tools, analytics, and campaigns to expand your customer base and revenue.",
-    //     },
-    //     {
-    //         title: "Dedicated Support",
-    //         desc: "Our support team ensures your business queries and concerns are resolved quickly and efficiently.",
-    //     },
-    // ];
 
     return (
         <main className="min-h-screen bg-gray-50">
