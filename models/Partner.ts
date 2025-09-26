@@ -1,7 +1,76 @@
 import mongoose, { Schema, Document, model, models } from "mongoose";
 
-// ---------------- Product Nested Schemas ----------------
-const VariantSchema = new Schema(
+// ---------------- Product Nested Interfaces ----------------
+export interface IVariant {
+  variantId: string;
+  name: string;
+  price: number;
+  stock: number;
+}
+
+export interface IProductRating {
+  userId: string;
+  userName: string;
+  rating: number;
+  review: string;
+  merchantReply?: string;
+  isLike?: boolean;
+  certifiedBuyer?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface IFAQ {
+  question: string;
+  answer: string;
+  certifiedBuyer: boolean;
+  isLike?: boolean;
+}
+
+export interface IProduct {
+  productId: string;
+  productName: string;
+  productImages: string[];
+  productDescription: string;
+  productCategory: string;
+  brand?: string;
+  productHighlights?: string[];
+  productVariants: IVariant[];
+  originalPrice: number;
+  discountedPrice?: number;
+  offerApplicable: string;
+  deliveryFee?: number;
+  orderHandlingFee?: number;
+  discountOfferedOnProduct?: number;
+  productHeight?: number;
+  productWidth?: number;
+  productWeight?: number;
+  productPackageWeight?: number;
+  productPackageHeight?: number;
+  productPackageWidth?: number;
+  whatsInsideTheBox: string[];
+  isWarranty: boolean;
+  warrantyDescription?: string;
+  rating?: IProductRating[];
+  deliverableLocations: string[];
+  eta: string;
+  faq?: IFAQ[];
+  instore?: boolean;
+  cityWittyAssured?: boolean;
+  isWalletCompatible?: boolean;
+  cashbackPoints?: number;
+  isPriority?: boolean;
+  sponsored?: boolean;
+  bestsellerBadge?: boolean;
+  additionalInfo?: string;
+  isReplacement?: boolean;
+  replacementDays?: number;
+  isAvailableStock?: boolean;
+  availableStocks?: number;
+}
+
+// ---------------- Product Schemas ----------------
+const VariantSchema = new Schema<IVariant>(
   {
     variantId: { type: String, required: true },
     name: { type: String, required: true },
@@ -11,7 +80,7 @@ const VariantSchema = new Schema(
   { _id: false }
 );
 
-const ProductRatingSchema = new Schema(
+const ProductRatingSchema = new Schema<IProductRating>(
   {
     userId: { type: String, required: true },
     userName: { type: String, required: true },
@@ -24,7 +93,7 @@ const ProductRatingSchema = new Schema(
   { _id: false, timestamps: true }
 );
 
-const FAQSchema = new Schema(
+const FAQSchema = new Schema<IFAQ>(
   {
     question: { type: String, required: true },
     answer: { type: String, required: true },
@@ -34,7 +103,7 @@ const FAQSchema = new Schema(
   { _id: false }
 );
 
-const ProductSchema = new Schema(
+const ProductSchema = new Schema<IProduct>(
   {
     productId: { type: String, required: true, unique: true },
     productName: { type: String, required: true },
@@ -50,17 +119,13 @@ const ProductSchema = new Schema(
     productDescription: { type: String, required: true },
     productCategory: { type: String, required: true },
     brand: { type: String },
-
     productHighlights: [{ type: String }],
     productVariants: { type: [VariantSchema], required: true },
-
     originalPrice: { type: Number, required: true },
     discountedPrice: { type: Number },
-
     offerApplicable: { type: String, required: true },
-
     deliveryFee: { type: Number, default: 0 },
-    orderHandlingFee: { type: Number, default: 0 }, // ⭐ Order Handling Fee per product
+    orderHandlingFee: { type: Number, default: 0 },
     discountOfferedOnProduct: { type: Number, default: 0 },
     productHeight: { type: Number },
     productWidth: { type: Number },
@@ -68,40 +133,30 @@ const ProductSchema = new Schema(
     productPackageWeight: { type: Number },
     productPackageHeight: { type: Number },
     productPackageWidth: { type: Number },
-
     whatsInsideTheBox: { type: [String], required: true },
     isWarranty: { type: Boolean, required: true },
     warrantyDescription: { type: String },
-
     rating: [ProductRatingSchema],
-
     deliverableLocations: { type: [String], required: true },
     eta: { type: String, required: true },
-
     faq: [FAQSchema],
-
     instore: { type: Boolean, default: false },
     cityWittyAssured: { type: Boolean, default: false },
     isWalletCompatible: { type: Boolean, default: false },
     cashbackPoints: { type: Number, default: 0 },
     isPriority: { type: Boolean, default: false },
     sponsored: { type: Boolean, default: false },
-
     bestsellerBadge: { type: Boolean, default: false },
-
     additionalInfo: { type: String },
-
     isReplacement: { type: Boolean, default: false },
     replacementDays: { type: Number, default: 0 },
-
-    // ⭐ NEW FIELDS
     isAvailableStock: { type: Boolean, default: true },
     availableStocks: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-// ---------------- Partner Schema ----------------
+// ---------------- Partner Interface ----------------
 export interface IPartner extends Document {
   merchantId: string;
   legalName: string;
@@ -137,7 +192,7 @@ export interface IPartner extends Document {
   };
   agreeToTerms: boolean;
 
-  products: (typeof ProductSchema)[];
+  products: IProduct[];
   logo?: string;
   storeImages?: string[];
   customOffer?: string;
@@ -196,21 +251,18 @@ export interface IPartner extends Document {
     upiId?: string;
   };
 
-  // ⭐ NEW FIELDS
   ListingLimit?: number;
   Addedlistings?: number;
   totalGraphics?: number;
   totalReels?: number;
   isWebsite?: boolean;
-
-  // ✅ NEW FIELD (Merchant Total Earnings)
   totalEarnings?: number;
 
   ds_graphics?: {
     graphicId: string;
     requestDate: Date;
     completionDate?: Date;
-    status: string;
+    status: "completed" | "pending";
     requestCategory: string;
     content: string;
     subject: string;
@@ -221,29 +273,29 @@ export interface IPartner extends Document {
     reelId: string;
     requestDate: Date;
     completionDate?: Date;
-    status: string;
+    status: "completed" | "pending";
     content: string;
     subject: string;
   }[];
 
   ds_weblog?: {
     weblog_id: string;
-    status: string;
+    status: "completed" | "pending";
     completionDate?: Date;
     description: string;
   }[];
 
-  // ⭐ Podcast fields
   totalPodcast?: number;
   completedPodcast?: number;
   podcastLog?: {
     title: string;
-    status: string;
+    status: "scheduled" | "completed" | "pending";
     scheduleDate: Date;
     completeDate?: Date;
   }[];
 }
 
+// ---------------- Partner Schema ----------------
 const PartnerSchema = new Schema<IPartner>(
   {
     merchantId: { type: String, required: true, unique: true },
@@ -336,7 +388,6 @@ const PartnerSchema = new Schema<IPartner>(
     paymentMethodAccepted: { type: [String], default: [] },
     qrcodeLink: { type: String },
 
-
     bankDetails: {
       bankName: { type: String },
       accountHolderName: { type: String },
@@ -346,14 +397,11 @@ const PartnerSchema = new Schema<IPartner>(
       upiId: { type: String },
     },
 
-    // ⭐ NEW FIELDS
     ListingLimit: { type: Number, default: 0 },
     Addedlistings: { type: Number, default: 0 },
     totalGraphics: { type: Number, default: 0 },
     totalReels: { type: Number, default: 0 },
     isWebsite: { type: Boolean, default: false },
-
-    // ✅ Total earnings of merchant
     totalEarnings: { type: Number, default: 0 },
 
     ds_graphics: [
@@ -401,7 +449,6 @@ const PartnerSchema = new Schema<IPartner>(
       },
     ],
 
-    // ⭐ Podcast fields
     totalPodcast: { type: Number, default: 0 },
     completedPodcast: { type: Number, default: 0 },
     podcastLog: [
