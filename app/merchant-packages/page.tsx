@@ -144,7 +144,7 @@ export default function MerchantPackagesPage() {
             features: [
                 "Complete digital marketing management (16 creative graphics + 4 reels per month for Facebook, Instagram, LinkedIn and Youtube) which gives advanced reach",
                 "Website revamp with next-gen SEO (Human + AI friendly)",
-                "Enhance product images with professional tools to improve visual appeal and boost their sales.",
+                "Enhance product images with professional tools to improve visual appeal and boost their sales on our E-commerce store.",
                 "30 products listings on Citywitty Merchant Store",
                 "Upto 8x Sales Growth Expected",
                 "Digital Business Card",
