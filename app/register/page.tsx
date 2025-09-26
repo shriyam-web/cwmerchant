@@ -1,11 +1,9 @@
 // app/register/page.tsx
 'use client';
-// import { useEffect } from "react";
-import { useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import debounce from "lodash.debounce"; // install: npm i lodash.debounce
 import { AlertCircle, CheckCircle as CheckIcon } from "lucide-react";
-
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
@@ -15,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useMemo } from 'react';
 import { Combobox } from "@headlessui/react";
 import allCities from '@/data/allCities.json';
 import PhoneInput from 'react-phone-number-input';
@@ -219,21 +216,28 @@ export default function PartnerPage() {
 
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [stepErrors, setStepErrors] = useState<boolean[]>([false, false, false, false, false]);
   const [formData, setFormData] = useState({
-    applicationId: '', // ✅ Add this
-    businessName: '',
-    ownerName: '',
+    merchantId: '',
+    legalName: '',
+    displayName: '',
     email: '',
+    emailVerified: false,
     phone: '',
-    category: '',
-    city: '',
-    address: '',
-    whatsapp: '',
-    isWhatsappSame: false,
+    phoneVerified: false,
     password: '',
     confirmPassword: '',
+    category: '',
+    city: '',
+    streetAddress: '',
+    pincode: '',
+    locality: '',
+    state: '',
+    country: 'India',
+    whatsapp: '',
+    isWhatsappSame: false,
     gstNumber: '',
-    hasWebsite: false,
     panNumber: '',
     businessType: '',
     yearsInBusiness: '',
@@ -241,8 +245,18 @@ export default function PartnerPage() {
     discountOffered: '',
     description: '',
     website: '',
-    instagram: '',
-    facebook: '',
+    socialLinks: {
+      linkedin: '',
+      twitter: '',
+      youtube: '',
+      instagram: '',
+      facebook: '',
+    },
+    businessHours: {
+      open: '',
+      close: '',
+      days: [] as string[],
+    },
     agreeToTerms: false
   });
 
@@ -269,12 +283,7 @@ export default function PartnerPage() {
     number: false,
     special: false
   });
-  const [fieldErrors, setFieldErrors] = useState<{
-    email?: string;
-    phone?: string;
-    gstNumber?: string;
-    panNumber?: string;
-  }>({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string | undefined>>({});
 
   const checkPasswordRules = (pwd: string) => {
     const checks = {
@@ -354,12 +363,20 @@ export default function PartnerPage() {
     };
 
     // Helper to add field line
-    const addField = (label: string, value: string) => {
+    const addField = (label: string, value: any) => {
       doc.setFontSize(12);
       doc.setFont("helvetica", "normal");
-      const text = `${label}: ${value || "-"}`;
+      let displayValue = value || "-";
+      if (Array.isArray(value)) {
+        displayValue = value.join(', ');
+      }
+      const text = `${label}: ${displayValue}`;
       const splitText = doc.splitTextToSize(text, 186); // wrap text if too long
       splitText.forEach((line: string) => {
+        if (y > 280) { // Near bottom of page (A4 ~297mm, margin 10mm)
+          doc.addPage();
+          y = 20;
+        }
         doc.text(line, 12, y);
         y += 7;
       });
@@ -369,12 +386,16 @@ export default function PartnerPage() {
 
     // --- Business Information ---
     addSection("Business Information");
-    addField("Application ID (auto-generated)", formData.applicationId);
-    addField("Business Name", formData.businessName);
-    addField("Owner/Manager Name", formData.ownerName);
+    addField("Merchant ID", formData.merchantId);
+    addField("Legal Name", formData.legalName);
+    addField("Display Name", formData.displayName);
     addField("Category", formData.category);
     addField("City", formData.city);
-    addField("Address", formData.address);
+    addField("Street Address", formData.streetAddress);
+    addField("Pincode", formData.pincode);
+    addField("Locality", formData.locality);
+    addField("State", formData.state);
+    addField("Country", formData.country);
 
     // --- Contact Information ---
     addSection("Contact Information");
@@ -382,8 +403,11 @@ export default function PartnerPage() {
     addField("Phone", formData.phone);
     addField("WhatsApp", formData.whatsapp);
     addField("Website", formData.website);
-    addField("Instagram", formData.instagram);
-    addField("Facebook", formData.facebook);
+    addField("LinkedIn", formData.socialLinks.linkedin);
+    addField("Twitter", formData.socialLinks.twitter);
+    addField("YouTube", formData.socialLinks.youtube);
+    addField("Instagram", formData.socialLinks.instagram);
+    addField("Facebook", formData.socialLinks.facebook);
 
     // --- Legal Information ---
     addSection("Legal Information");
@@ -397,9 +421,12 @@ export default function PartnerPage() {
     addField("Average Monthly Revenue", formData.averageMonthlyRevenue);
     addField("Discount Offered", formData.discountOffered);
     addField("Business Description", formData.description);
+    addField("Business Hours Open", formData.businessHours.open);
+    addField("Business Hours Close", formData.businessHours.close);
+    addField("Business Days", formData.businessHours.days.join(', '));
 
     // Save PDF
-    doc.save(`${formData.businessName || 'CityWitty_Application'}.pdf`);
+    doc.save(`${formData.displayName || 'CityWitty_Application'}.pdf`);
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -407,19 +434,108 @@ export default function PartnerPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const stepFields = [
+    ['legalName', 'displayName', 'category', 'city', 'streetAddress'], // step 0
+    ['email', 'phone', 'whatsapp'], // step 1
+    ['gstNumber', 'panNumber', 'businessType'], // step 2
+    ['yearsInBusiness', 'averageMonthlyRevenue', 'discountOffered', 'description'], // step 3
+    ['password', 'confirmPassword', 'agreeToTerms'] // step 4
+  ];
+
+  const requiredFields = [
+    "legalName",
+    "displayName",
+    "category",
+    "city",
+    "streetAddress",
+    "email",
+    "phone",
+    "whatsapp",
+    "gstNumber",
+    "panNumber",
+    "businessType",
+    "yearsInBusiness",
+    "averageMonthlyRevenue",
+    "discountOffered",
+    "description",
+    "agreeToTerms",
+    "password",
+    "confirmPassword",
+  ];
+
+  // Compute form validity
+  const isFormValid = useMemo(() => {
+    return requiredFields.every(field => {
+      const value = formData[field as keyof typeof formData];
+      if (field === 'confirmPassword') {
+        return value && value === formData.password;
+      }
+      return !!value;
+    }) && formData.agreeToTerms;
+  }, [formData, requiredFields]);
+
+  const isCurrentStepValid = useMemo(() => {
+    const currentStepFields = stepFields[currentStep];
+    return currentStepFields.every(field => !!formData[field as keyof typeof formData]);
+  }, [formData, currentStep, stepFields]);
+
+  const validateCurrentStep = useCallback(() => {
+    const currentStepFields = stepFields[currentStep];
+    const newFieldErrors = { ...fieldErrors };
+    let hasErrors = false;
+
+    currentStepFields.forEach((field: string) => {
+      if (!formData[field as keyof typeof formData]) {
+        newFieldErrors[field] = 'This field is required';
+        hasErrors = true;
+      } else {
+        delete newFieldErrors[field];
+      }
+    });
+
+    setFieldErrors(newFieldErrors);
+    setStepErrors(prev => {
+      const updated = [...prev];
+      updated[currentStep] = hasErrors;
+      return updated;
+    });
+
+    if (hasErrors) {
+      // Blink step if errors
+      setTimeout(() => {
+        setStepErrors(prev => {
+          const updated = [...prev];
+          updated[currentStep] = false;
+          return updated;
+        });
+      }, 1000);
+    }
+  }, [currentStep, formData, fieldErrors, stepFields]);
+
+  const handleNextStep = () => {
+    if (currentStep === 4) return; // Step 4 is submit
+
+    validateCurrentStep();
+
+    if (isCurrentStepValid) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation
+    // Client-side validation for all steps
     const requiredFields = [
-      "businessName",
-      "ownerName",
+      "legalName",
+      "displayName",
       "category",
       "city",
-      "address",
+      "streetAddress",
       "email",
       "phone",
+      "whatsapp",
       "gstNumber",
       "panNumber",
       "businessType",
@@ -432,18 +548,39 @@ export default function PartnerPage() {
       "confirmPassword",
     ];
 
-    const missingFields = requiredFields.filter(f => !formData[f as keyof typeof formData]);
+    const stepFields = [
+      ['legalName', 'displayName', 'category', 'city', 'streetAddress'], // step 0
+      ['email', 'phone', 'whatsapp'], // step 1
+      ['gstNumber', 'panNumber', 'businessType'], // step 2
+      ['yearsInBusiness', 'averageMonthlyRevenue', 'discountOffered', 'description'], // step 3
+      ['password', 'confirmPassword', 'agreeToTerms'] // step 4
+    ];
 
-    if (missingFields.length > 0) {
-      alert(
-        `Please fill all required fields before submitting:\n${missingFields.join(", ")}`
-      );
-      return; // stop submission
+    let hasErrors = false;
+    const newFieldErrors: any = {};
+    const newStepErrors = [false, false, false, false, false];
+
+    requiredFields.forEach(field => {
+      if (!formData[field as keyof typeof formData]) {
+        newFieldErrors[field] = 'This field is required';
+        hasErrors = true;
+        const stepIndex = stepFields.findIndex(step => step.includes(field));
+        if (stepIndex !== -1) newStepErrors[stepIndex] = true;
+      }
+    });
+
+    if (formData.password !== formData.confirmPassword) {
+      newFieldErrors.confirmPassword = 'Passwords do not match';
+      hasErrors = true;
+      newStepErrors[4] = true;
     }
 
-    // Check if passwords match
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+    setFieldErrors(newFieldErrors);
+    setStepErrors(newStepErrors);
+
+    if (hasErrors) {
+      const firstErrorStep = newStepErrors.findIndex(e => e);
+      if (firstErrorStep !== -1) setCurrentStep(firstErrorStep);
       return;
     }
 
@@ -473,7 +610,7 @@ export default function PartnerPage() {
       if (response.ok) {
         const resData = await response.json();
         console.log('Submitted:', resData);
-        setFormData(prev => ({ ...prev, applicationId: resData.applicationId }));
+        setFormData(prev => ({ ...prev, merchantId: resData.merchantId }));
         setIsSubmitted(true);
 
 
@@ -497,7 +634,20 @@ export default function PartnerPage() {
 
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field.includes('.')) {
+      const parts = field.split('.');
+      setFormData(prev => {
+        const updateNested = (obj: any, keys: string[], val: any): any => {
+          if (keys.length === 1) {
+            return { ...obj, [keys[0]]: val };
+          }
+          return { ...obj, [keys[0]]: updateNested(obj[keys[0]], keys.slice(1), val) };
+        };
+        return updateNested(prev, parts, value);
+      });
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
 
     // if changing certain identity fields, run uniqueness check (debounced)
     if (["email", "phone", "gstNumber", "panNumber"].includes(field)) {
@@ -527,6 +677,28 @@ export default function PartnerPage() {
     if (field === "isWhatsappSame" && value === true) {
       setFormData(prev => ({ ...prev, whatsapp: prev.phone }));
     }
+
+    // Clear required field errors when filled
+    if (requiredFields.includes(field) && value) {
+      setFieldErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+
+    // Clear confirmPassword error if matches
+    if (field === 'confirmPassword' && value && value === formData.password) {
+      setFieldErrors(prev => ({ ...prev, 'confirmPassword': undefined }));
+    }
+
+    // Clear agreeToTerms error if checked
+    if (field === 'agreeToTerms' && value) {
+      setFieldErrors(prev => ({ ...prev, 'agreeToTerms': undefined }));
+    }
+
+    // If field is in current step, re-validate to clear errors
+    const currentStepFields = stepFields[currentStep];
+    if (currentStepFields.includes(field)) {
+      // Small delay to allow state update
+      setTimeout(validateCurrentStep, 0);
+    }
   };
 
 
@@ -550,7 +722,7 @@ export default function PartnerPage() {
                 </p>
 
                 <div className="bg-blue-50 p-4 rounded-lg mb-6 text-center">
-                  <p className="text-blue-800 font-medium">Application ID: {formData.applicationId}</p>
+                  <p className="text-blue-800 font-medium">Merchant ID: {formData.merchantId}</p>
                   <p className="text-blue-600 text-sm">Please save this ID for future reference</p>
                 </div>
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4 w-full">
@@ -580,6 +752,9 @@ export default function PartnerPage() {
   }
 
   return (
+
+
+
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* <Header /> */}
       <Navbar />
@@ -626,6 +801,18 @@ export default function PartnerPage() {
 
             <Card className="border-0 ">
 
+              <div className="flex justify-center mb-6">
+                <div className="flex items-center space-x-2">
+                  {[0, 1, 2, 3, 4].map(step => (
+                    <div key={step} className="flex items-center">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${currentStep >= step ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''}`}>
+                        {step + 1}
+                      </div>
+                      {step < 4 && <div className={`w-8 h-1 ${currentStep > step ? 'bg-blue-600' : 'bg-gray-200'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''}`}></div>}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <CardHeader className="text-center py-10 flex flex-col items-center space-y-6">
                 <div className="flex items-center space-x-3">
@@ -651,162 +838,478 @@ export default function PartnerPage() {
 
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Business Information */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                      Business Information
-                    </h3>
+                  {/* Step 1: Basic Business Information */}
+                  {currentStep === 0 && (
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
+                        Step 1: Basic Business Information
+                      </h3>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="businessName">Business Name *</Label>
-                        <Input
-                          id="businessName"
-                          value={formData.businessName}
-                          onChange={(e) => handleInputChange('businessName', e.target.value)}
-                          placeholder="Enter your business name"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="ownerName">Owner/Manager Name *</Label>
-                        <Input
-                          id="ownerName"
-                          value={formData.ownerName}
-                          onChange={(e) => handleInputChange('ownerName', e.target.value)}
-                          placeholder="Enter owner/manager name"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="category">Business Category *</Label>
-                        <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.map(category => (
-                              <SelectItem key={category} value={category}>{category}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="city">City *</Label>
-                        <CityAutocomplete
-                          value={formData.city}
-                          onChange={(val: string) => handleInputChange("city", val)}
-                        />
-
-
-                      </div>
-
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Business Address *</Label>
-                      <Textarea
-                        id="address"
-                        value={formData.address}
-                        onChange={(e) => handleInputChange('address', e.target.value)}
-                        placeholder="Enter complete business address"
-                        rows={3}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Contact Information */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                      Contact Information
-                    </h3>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Business Email  *</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          onBlur={() => formData.email && checkUniqueRemote("email", formData.email)}
-                          placeholder="business@email.com"
-                          required
-                        />
-                        {checkingField.email ? (
-                          <p className="text-sm text-gray-500 mt-1">Checking email…</p>
-                        ) : fieldErrors.email ? (
-                          <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4" /> {fieldErrors.email}
-                          </p>
-                        ) : formData.email && isValidEmail(formData.email) ? (
-                          <p className="text-sm text-green-600 mt-1 flex items-center gap-2">
-                            <CheckIcon className="w-4 h-4" /> Email looks good
-                          </p>
-                        ) : null}
-
-                      </div>
                       <div className="grid md:grid-cols-2 gap-6">
-                        {/* Phone Number */}
                         <div className="space-y-2">
-                          <Label htmlFor="phone">Phone Number *</Label>
-                          <PhoneInput
-                            id="phone"
-                            placeholder="Enter your number"
-                            defaultCountry="IN"
-                            value={formData.phone}
-                            onChange={(value) => {
-                              handleInputChange('phone', value || '');
-                              if (formData.isWhatsappSame) handleInputChange('whatsapp', value || '');
-                            }}
-                            onBlur={() => formData.phone && checkUniqueRemote("phone", formData.phone)}
-                            className="w-full border p-3 rounded-lg"
+                          <Label htmlFor="merchantId" className="text-sm font-medium text-gray-700">Merchant ID</Label>
+                          <Input
+                            id="merchantId"
+                            value={formData.merchantId || "Auto-generated"}
+                            disabled
+                            className="bg-gradient-to-r from-gray-100 to-gray-200 cursor-not-allowed border-gray-300 focus:border-blue-500 shadow-sm"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="legalName" className="text-sm font-medium text-gray-700">Legal Name *</Label>
+                          <Input
+                            id="legalName"
+                            value={formData.legalName}
+                            onChange={(e) => handleInputChange('legalName', e.target.value)}
+                            placeholder="Enter legal name"
+                            required
+                            className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${fieldErrors.legalName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                          />
+                          {fieldErrors.legalName && (
+                            <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4" /> {fieldErrors.legalName}
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="displayName" className="text-sm font-medium text-gray-700">Display Name *</Label>
+                          <Input
+                            id="displayName"
+                            value={formData.displayName}
+                            onChange={(e) => handleInputChange('displayName', e.target.value)}
+                            placeholder="Enter display/business name"
+                            required
+                            className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${fieldErrors.displayName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                          />
+                          {fieldErrors.displayName && (
+                            <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4" /> {fieldErrors.displayName}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="category">Business Category *</Label>
+                          <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categories.map(category => (
+                                <SelectItem key={category} value={category}>{category}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="city">City *</Label>
+                          <CityAutocomplete
+                            value={formData.city}
+                            onChange={(val: string) => handleInputChange("city", val)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="streetAddress">Street Address *</Label>
+                          <Input
+                            id="streetAddress"
+                            value={formData.streetAddress}
+                            onChange={(e) => handleInputChange('streetAddress', e.target.value)}
+                            placeholder="Enter street address"
                             required
                           />
-                          {checkingField.phone ? (
-                            <p className="text-sm text-gray-500 mt-1">Checking phone…</p>
-                          ) : fieldErrors.phone ? (
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="pincode">Pincode</Label>
+                          <Input
+                            id="pincode"
+                            value={formData.pincode}
+                            onChange={(e) => handleInputChange('pincode', e.target.value)}
+                            placeholder="Enter pincode"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="locality">Locality</Label>
+                          <Input
+                            id="locality"
+                            value={formData.locality}
+                            onChange={(e) => handleInputChange('locality', e.target.value)}
+                            placeholder="Enter locality"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="state">State</Label>
+                          <Input
+                            id="state"
+                            value={formData.state}
+                            onChange={(e) => handleInputChange('state', e.target.value)}
+                            placeholder="Enter state"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="country">Country</Label>
+                          <Input
+                            id="country"
+                            value={formData.country}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 2: Contact Information */}
+                  {currentStep === 1 && (
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
+                        Step 2: Contact Information
+                      </h3>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Business Email  *</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => handleInputChange('email', e.target.value)}
+                            onBlur={() => formData.email && checkUniqueRemote("email", formData.email)}
+                            placeholder="business@email.com"
+                            required
+                          />
+                          {checkingField.email ? (
+                            <p className="text-sm text-gray-500 mt-1">Checking email…</p>
+                          ) : fieldErrors.email ? (
                             <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
-                              <AlertCircle className="w-4 h-4" /> {fieldErrors.phone}
+                              <AlertCircle className="w-4 h-4" /> {fieldErrors.email}
+                            </p>
+                          ) : formData.email && isValidEmail(formData.email) ? (
+                            <p className="text-sm text-green-600 mt-1 flex items-center gap-2">
+                              <CheckIcon className="w-4 h-4" /> Email looks good
                             </p>
                           ) : null}
 
                         </div>
-
-                        {/* WhatsApp Number */}
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox
-                              id="isWhatsappSame"
-                              checked={formData.isWhatsappSame}
-                              onCheckedChange={(checked) => {
-                                handleInputChange('isWhatsappSame', checked as boolean);
-                                if (checked) handleInputChange('whatsapp', formData.phone);
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {/* Phone Number */}
+                          <div className="space-y-2">
+                            <Label htmlFor="phone">Phone Number *</Label>
+                            <PhoneInput
+                              id="phone"
+                              placeholder="Enter your number"
+                              defaultCountry="IN"
+                              value={formData.phone}
+                              onChange={(value) => {
+                                handleInputChange('phone', value || '');
+                                if (formData.isWhatsappSame) handleInputChange('whatsapp', value || '');
                               }}
+                              onBlur={() => formData.phone && checkUniqueRemote("phone", formData.phone)}
+                              className="w-full border p-3 rounded-lg"
+                              required
                             />
-                            <Label htmlFor="isWhatsappSame" className="text-sm">
-                              WhatsApp same as phone? *
-                            </Label>
+                            {checkingField.phone ? (
+                              <p className="text-sm text-gray-500 mt-1">Checking phone…</p>
+                            ) : fieldErrors.phone ? (
+                              <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                                <AlertCircle className="w-4 h-4" /> {fieldErrors.phone}
+                              </p>
+                            ) : null}
+
                           </div>
-                          <PhoneInput
-                            id="whatsapp"
-                            placeholder="Enter WhatsApp number"
-                            defaultCountry="IN"
-                            value={formData.whatsapp}
-                            onChange={(value) => handleInputChange('whatsapp', value || '')}
-                            className="w-full border p-3 rounded-lg"
-                            required
-                            disabled={formData.isWhatsappSame}
+
+                          {/* WhatsApp Number */}
+                          <div className="space-y-2">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <Checkbox
+                                id="isWhatsappSame"
+                                checked={formData.isWhatsappSame}
+                                onCheckedChange={(checked) => {
+                                  handleInputChange('isWhatsappSame', checked as boolean);
+                                  if (checked) handleInputChange('whatsapp', formData.phone);
+                                }}
+                              />
+                              <Label htmlFor="isWhatsappSame" className="text-sm">
+                                WhatsApp same as phone? *
+                              </Label>
+                            </div>
+                            <PhoneInput
+                              id="whatsapp"
+                              placeholder="Enter WhatsApp number"
+                              defaultCountry="IN"
+                              value={formData.whatsapp}
+                              onChange={(value) => handleInputChange('whatsapp', value || '')}
+                              className="w-full border p-3 rounded-lg"
+                              required
+                              disabled={formData.isWhatsappSame}
+                            />
+                            <p className="text-sm text-gray-500 mt-1">
+                              Communications and promotions may be sent to this via Whatsapp.
+                            </p>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="website">Website (Optional)</Label>
+                        <Input
+                          id="website"
+                          value={formData.website}
+                          onChange={(e) => handleInputChange('website', e.target.value)}
+                          placeholder="https://yourbusiness.com"
+                          className={formData.website && !isValidURL(formData.website) ? 'border-red-500' : ''}
+                        />
+                        {formData.website && !isValidURL(formData.website) && (
+                          <p className="text-red-500 text-sm mt-1">Please enter a valid URL</p>
+                        )}
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="linkedin">LinkedIn (Optional)</Label>
+                          <Input
+                            id="linkedin"
+                            value={formData.socialLinks.linkedin}
+                            onChange={(e) => handleInputChange('socialLinks.linkedin', e.target.value)}
+                            placeholder="https://linkedin.com/in/yourprofile"
                           />
-                          <p className="text-sm text-gray-500 mt-1">
-                            Communications and promotions may be sent to this via Whatsapp.
-                          </p>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="twitter">Twitter (Optional)</Label>
+                          <Input
+                            id="twitter"
+                            value={formData.socialLinks.twitter}
+                            onChange={(e) => handleInputChange('socialLinks.twitter', e.target.value)}
+                            placeholder="https://twitter.com/yourhandle"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="youtube">YouTube (Optional)</Label>
+                          <Input
+                            id="youtube"
+                            value={formData.socialLinks.youtube}
+                            onChange={(e) => handleInputChange('socialLinks.youtube', e.target.value)}
+                            placeholder="https://youtube.com/channel/yourchannel"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="instagram">Instagram (Optional)</Label>
+                          <Input
+                            id="instagram"
+                            value={formData.socialLinks.instagram}
+                            onChange={(e) => handleInputChange('socialLinks.instagram', e.target.value)}
+                            placeholder="https://instagram.com/yourhandle"
+                            className={!isValidURL(formData.socialLinks.instagram) && formData.socialLinks.instagram ? 'border-red-500' : ''}
+                          />
+                          {!isValidURL(formData.socialLinks.instagram) && formData.socialLinks.instagram && (
+                            <p className="text-red-500 text-sm mt-1">Please enter a valid URL</p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="facebook">Facebook (Optional)</Label>
+                          <Input
+                            id="facebook"
+                            value={formData.socialLinks.facebook}
+                            onChange={(e) => handleInputChange('socialLinks.facebook', e.target.value)}
+                            placeholder="https://facebook.com/yourpage"
+                          />
                         </div>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Step 3: Legal Information */}
+                  {currentStep === 2 && (
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
+                        Step 3: Legal Information
+                      </h3>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="gstNumber">GST Number *</Label>
+                          <Input
+                            id="gstNumber"
+                            value={formData.gstNumber}
+                            onChange={(e) => handleInputChange('gstNumber', e.target.value)}
+                            onBlur={() => formData.gstNumber && checkUniqueRemote("gstNumber", formData.gstNumber)}
+                            placeholder="Enter GST number"
+                            required
+                          />
+                          {checkingField.gstNumber ? (
+                            <p className="text-sm text-gray-500 mt-1">Checking GST…</p>
+                          ) : fieldErrors.gstNumber ? (
+                            <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4" /> {fieldErrors.gstNumber}
+                            </p>
+                          ) : null}
+
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="panNumber">PAN Number *</Label>
+                          <Input
+                            id="panNumber"
+                            value={formData.panNumber}
+                            onChange={(e) => handleInputChange('panNumber', e.target.value)}
+                            onBlur={() => formData.panNumber && checkUniqueRemote("panNumber", formData.panNumber)}
+                            placeholder="Enter PAN number"
+                            required
+                          />
+                          {checkingField.panNumber ? (
+                            <p className="text-sm text-gray-500 mt-1">Checking PAN…</p>
+                          ) : fieldErrors.panNumber ? (
+                            <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4" /> {fieldErrors.panNumber}
+                            </p>
+                          ) : null}
+
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 4: Business Details */}
+                  {currentStep === 3 && (
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
+                        Step 4: Business Details
+                      </h3>
+
+                      <div className="grid md:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="businessType">Business Type *</Label>
+                          <Select value={formData.businessType} onValueChange={(value) => handleInputChange('businessType', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="sole-proprietorship">Sole Proprietorship</SelectItem>
+                              <SelectItem value="partnership">Partnership</SelectItem>
+                              <SelectItem value="private-limited">Private Limited</SelectItem>
+                              <SelectItem value="public-limited">Public Limited</SelectItem>
+                              <SelectItem value="llp">LLP</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="yearsInBusiness">Years in Business *</Label>
+                          <Select value={formData.yearsInBusiness} onValueChange={(value) => handleInputChange('yearsInBusiness', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select years" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="0-1">0-1 years</SelectItem>
+                              <SelectItem value="1-3">1-3 years</SelectItem>
+                              <SelectItem value="3-5">3-5 years</SelectItem>
+                              <SelectItem value="5-10">5-10 years</SelectItem>
+                              <SelectItem value="10+">10+ years</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="discountOffered">Discount Offered *</Label>
+                          <Select value={formData.discountOffered} onValueChange={(value) => handleInputChange('discountOffered', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select discount" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="10-15">10-15%</SelectItem>
+                              <SelectItem value="15-20">15-20%</SelectItem>
+                              <SelectItem value="20-30">20-30%</SelectItem>
+                              <SelectItem value="30-40">30-40%</SelectItem>
+                              <SelectItem value="40+">40%+</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="averageMonthlyRevenue">Average Monthly Revenue *</Label>
+                        <Select value={formData.averageMonthlyRevenue} onValueChange={(value) => handleInputChange('averageMonthlyRevenue', value)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select revenue range" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0-1L">₹0 - ₹1 Lakh</SelectItem>
+                            <SelectItem value="1-5L">₹1 - ₹5 Lakh</SelectItem>
+                            <SelectItem value="5-10L">₹5 - ₹10 Lakh</SelectItem>
+                            <SelectItem value="10-25L">₹10 - ₹25 Lakh</SelectItem>
+                            <SelectItem value="25L+">₹25 Lakh+</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="description">Business Description *</Label>
+                        <Textarea
+                          id="description"
+                          value={formData.description}
+                          onChange={(e) => handleInputChange('description', e.target.value)}
+                          placeholder="Describe your business, services, and what makes you unique..."
+                          rows={4}
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-4">
+                        <Label>Business Hours</Label>
+                        <div className="grid md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <Label htmlFor="businessHoursOpen">Open Time</Label>
+                            <Input
+                              id="businessHoursOpen"
+                              type="time"
+                              value={formData.businessHours.open}
+                              onChange={(e) => handleInputChange('businessHours.open', e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="businessHoursClose">Close Time</Label>
+                            <Input
+                              id="businessHoursClose"
+                              type="time"
+                              value={formData.businessHours.close}
+                              onChange={(e) => handleInputChange('businessHours.close', e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Days Open</Label>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                              <div key={day} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`day-${day}`}
+                                  checked={formData.businessHours.days.includes(day)}
+                                  onCheckedChange={(checked) => {
+                                    const newDays = checked
+                                      ? [...formData.businessHours.days, day]
+                                      : formData.businessHours.days.filter(d => d !== day);
+                                    handleInputChange('businessHours.days', newDays);
+                                  }}
+                                />
+                                <Label htmlFor={`day-${day}`}>{day}</Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 5: Account Setup & Summary */}
+                  {currentStep === 4 && (
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
+                        Step 5: Account Setup & Review
+                      </h3>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2 relative">
@@ -818,7 +1321,6 @@ export default function PartnerPage() {
                             onChange={(e) => handleInputChange('password', e.target.value)}
                             onFocus={() => setShowPwdTooltip(true)}
                             onBlur={() => {
-                              // hide after small delay so clickable items (if any) not cut off
                               setTimeout(() => setShowPwdTooltip(false), 400);
                             }}
                             placeholder="Enter password"
@@ -832,7 +1334,6 @@ export default function PartnerPage() {
                             {showPassword ? "Hide" : "Show"}
                           </button>
 
-                          {/* Password tooltip - temporary */}
                           {showPwdTooltip && (
                             <div className="absolute left-0 mt-2 w-80 p-3 bg-white border rounded shadow-lg z-50 text-sm">
                               <div className="flex items-center justify-between mb-2">
@@ -865,8 +1366,6 @@ export default function PartnerPage() {
                           )}
                         </div>
 
-
-
                         <div className="space-y-2 relative">
                           <Label htmlFor="confirmPassword">Confirm Password *</Label>
                           <Input
@@ -887,267 +1386,109 @@ export default function PartnerPage() {
                         </div>
                       </div>
 
-                    </div>
+                      <div className="space-y-4">
+                        <h4 className="text-lg font-semibold">Review Your Information</h4>
+                        <div className="grid md:grid-cols-2 gap-4 text-sm">
+                          <div><strong>Merchant ID:</strong> {formData.merchantId}</div>
+                          <div><strong>Legal Name:</strong> {formData.legalName}</div>
+                          <div><strong>Display Name:</strong> {formData.displayName}</div>
+                          <div><strong>Category:</strong> {formData.category}</div>
+                          <div><strong>City:</strong> {formData.city}</div>
+                          <div><strong>Street Address:</strong> {formData.streetAddress}</div>
+                          <div><strong>Pincode:</strong> {formData.pincode}</div>
+                          <div><strong>Locality:</strong> {formData.locality}</div>
+                          <div><strong>State:</strong> {formData.state}</div>
+                          <div><strong>Country:</strong> {formData.country}</div>
+                          <div><strong>Email:</strong> {formData.email}</div>
+                          <div><strong>Phone:</strong> {formData.phone}</div>
+                          <div><strong>WhatsApp:</strong> {formData.whatsapp}</div>
+                          <div><strong>Website:</strong> {formData.website}</div>
+                          <div><strong>LinkedIn:</strong> {formData.socialLinks.linkedin}</div>
+                          <div><strong>Twitter:</strong> {formData.socialLinks.twitter}</div>
+                          <div><strong>YouTube:</strong> {formData.socialLinks.youtube}</div>
+                          <div><strong>Instagram:</strong> {formData.socialLinks.instagram}</div>
+                          <div><strong>Facebook:</strong> {formData.socialLinks.facebook}</div>
+                          <div><strong>GST Number:</strong> {formData.gstNumber}</div>
+                          <div><strong>PAN Number:</strong> {formData.panNumber}</div>
+                          <div><strong>Business Type:</strong> {formData.businessType}</div>
+                          <div><strong>Years in Business:</strong> {formData.yearsInBusiness}</div>
+                          <div><strong>Average Monthly Revenue:</strong> {formData.averageMonthlyRevenue}</div>
+                          <div><strong>Discount Offered:</strong> {formData.discountOffered}</div>
+                          <div><strong>Description:</strong> {formData.description}</div>
+                          <div><strong>Business Hours:</strong> {formData.businessHours.open} - {formData.businessHours.close}, {formData.businessHours.days.join(', ')}</div>
+                        </div>
+                      </div>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
+                      <div className="space-y-4">
                         <div className="flex items-center space-x-2">
                           <Checkbox
-                            id="hasWebsite"
-                            checked={formData.hasWebsite}
-                            onCheckedChange={(checked) => handleInputChange("hasWebsite", checked as boolean)}
+                            id="terms"
+                            checked={formData.agreeToTerms}
+                            onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
+                            required
                           />
-                          <Label htmlFor="hasWebsite">Do you have a website?</Label>
+                          <Label htmlFor="terms" className="text-sm">
+                            I agree to {' '}
+                            <a
+                              href="#"
+                              className="text-blue-600 hover:underline"
+                              onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}
+                            >
+                              Terms & Conditions
+                            </a>
+                            {' '}and{' '}
+                            <a
+                              href="#"
+                              className="text-blue-600 hover:underline"
+                              onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}
+                            >
+                              Privacy Policy
+                            </a>
+                          </Label>
                         </div>
-                        {formData.hasWebsite && (
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between mt-8">
+                    {currentStep > 0 && (
+                      <Button type="button" variant="outline" onClick={() => setCurrentStep(currentStep - 1)}>
+                        Previous
+                      </Button>
+                    )}
+                    <div></div>
+                    {currentStep < 4 ? (
+                      <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                        Next
+                      </Button>
+                    ) : (
+                      <Button
+                        type="submit"
+                        className="bg-blue-600 hover:bg-blue-700 text-lg py-3 flex items-center justify-center"
+                        disabled={isSubmitting || !isFormValid}
+                      >
+                        {isSubmitting ? (
                           <>
-                            <Input
-                              id="website"
-                              type="text"
-                              value={formData.website}
-                              onChange={(e) => handleInputChange("website", e.target.value)}
-                              placeholder="https://yourbusiness.com"
-                              className={
-                                formData.website && !isValidURL(formData.website)
-                                  ? "border-red-500"
-                                  : ""
-                              }
-                            />
-                            {formData.website && !isValidURL(formData.website) && (
-                              <p className="text-red-500 text-sm mt-1">
-                                Please enter a valid URL. Example formats:
-                                <br />- example.com
-                                <br />- www.example.com
-                                <br />- https://example.com
-                                <br />- https://example.com/path
-                              </p>
-                            )}
+                            <svg
+                              className="animate-spin h-5 w-5 mr-2 text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-5 w-5" />
+                            Submit Partnership Application
                           </>
                         )}
-
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="instagram">Instagram (Optional)</Label>
-                          <Input
-                            id="instagram"
-                            value={formData.instagram || ""}
-                            onChange={(e) => handleInputChange("instagram", e.target.value)}
-                            placeholder="https://instagram.com/yourhandle"
-                            className={!isValidURL(formData.instagram) && formData.instagram ? 'border-red-500' : ''}
-                          />
-                          {!isValidURL(formData.instagram) && formData.instagram && (
-                            <p className="text-red-500 text-sm mt-1">Please enter a valid URL</p>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="facebook">Facebook (Optional)</Label>
-                          <Input
-                            id="facebook"
-                            value={formData.facebook || ""}
-                            onChange={(e) => handleInputChange("facebook", e.target.value)}
-                            placeholder="Facebook page link"
-                          />
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-
-                  {/* Legal Information */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                      Legal Information
-                    </h3>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="gstNumber">GST Number *</Label>
-                        <Input
-                          id="gstNumber"
-                          value={formData.gstNumber}
-                          onChange={(e) => handleInputChange('gstNumber', e.target.value)}
-                          onBlur={() => formData.gstNumber && checkUniqueRemote("gstNumber", formData.gstNumber)}
-                          placeholder="Enter GST number"
-                          required
-                        />
-                        {checkingField.gstNumber ? (
-                          <p className="text-sm text-gray-500 mt-1">Checking GST…</p>
-                        ) : fieldErrors.gstNumber ? (
-                          <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4" /> {fieldErrors.gstNumber}
-                          </p>
-                        ) : null}
-
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="panNumber">PAN Number *</Label>
-                        <Input
-                          id="panNumber"
-                          value={formData.panNumber}
-                          onChange={(e) => handleInputChange('panNumber', e.target.value)}
-                          onBlur={() => formData.panNumber && checkUniqueRemote("panNumber", formData.panNumber)}
-                          placeholder="Enter PAN number"
-                          required
-                        />
-                        {checkingField.panNumber ? (
-                          <p className="text-sm text-gray-500 mt-1">Checking PAN…</p>
-                        ) : fieldErrors.panNumber ? (
-                          <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4" /> {fieldErrors.panNumber}
-                          </p>
-                        ) : null}
-
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Business Details */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                      Business Details
-                    </h3>
-
-                    <div className="grid md:grid-cols-3 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="businessType">Business Type *</Label>
-                        <Select value={formData.businessType} onValueChange={(value) => handleInputChange('businessType', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="sole-proprietorship">Sole Proprietorship</SelectItem>
-                            <SelectItem value="partnership">Partnership</SelectItem>
-                            <SelectItem value="private-limited">Private Limited</SelectItem>
-                            <SelectItem value="public-limited">Public Limited</SelectItem>
-                            <SelectItem value="llp">LLP</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="yearsInBusiness">Years in Business *</Label>
-                        <Select value={formData.yearsInBusiness} onValueChange={(value) => handleInputChange('yearsInBusiness', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select years" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="0-1">0-1 years</SelectItem>
-                            <SelectItem value="1-3">1-3 years</SelectItem>
-                            <SelectItem value="3-5">3-5 years</SelectItem>
-                            <SelectItem value="5-10">5-10 years</SelectItem>
-                            <SelectItem value="10+">10+ years</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="discountOffered">Discount Offered *</Label>
-                        <Select value={formData.discountOffered} onValueChange={(value) => handleInputChange('discountOffered', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select discount" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="10-15">10-15%</SelectItem>
-                            <SelectItem value="15-20">15-20%</SelectItem>
-                            <SelectItem value="20-30">20-30%</SelectItem>
-                            <SelectItem value="30-40">30-40%</SelectItem>
-                            <SelectItem value="40+">40%+</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="averageMonthlyRevenue">Average Monthly Revenue *</Label>
-                      <Select value={formData.averageMonthlyRevenue} onValueChange={(value) => handleInputChange('averageMonthlyRevenue', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select revenue range" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="0-1L">₹0 - ₹1 Lakh</SelectItem>
-                          <SelectItem value="1-5L">₹1 - ₹5 Lakh</SelectItem>
-                          <SelectItem value="5-10L">₹5 - ₹10 Lakh</SelectItem>
-                          <SelectItem value="10-25L">₹10 - ₹25 Lakh</SelectItem>
-                          <SelectItem value="25L+">₹25 Lakh+</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="description">Business Description *</Label>
-                      <Textarea
-                        id="description"
-                        value={formData.description}
-                        onChange={(e) => handleInputChange('description', e.target.value)}
-                        placeholder="Describe your business, services, and what makes you unique..."
-                        rows={4}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Terms and Conditions */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="terms"
-                        checked={formData.agreeToTerms}
-                        onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
-                        required
-                      />
-                      <Label htmlFor="terms" className="text-sm">
-                        I agree to {' '}
-                        <a
-                          href="#"
-                          className="text-blue-600 hover:underline"
-                          onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}
-                        >
-                          Terms & Conditions
-                        </a>
-                        {' '}and{' '}
-                        <a
-                          href="#"
-                          className="text-blue-600 hover:underline"
-                          onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}
-                        >
-                          Privacy Policy
-                        </a>
-                      </Label>
-
-                    </div>
-                  </div>
-
-
-                  <Button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3 flex items-center justify-center"
-                    disabled={
-                      isSubmitting ||
-                      !formData.agreeToTerms ||
-                      Object.values(fieldErrors).some(Boolean)
-                    }
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <svg
-                          className="animate-spin h-5 w-5 mr-2 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                        </svg>
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="mr-2 h-5 w-5" />
-                        Submit Partnership Application
-                      </>
+                      </Button>
                     )}
-                  </Button>
+                  </div>
 
                 </form>
               </CardContent>

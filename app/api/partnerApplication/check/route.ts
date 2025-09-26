@@ -1,5 +1,5 @@
-// /app/api/partnerApplication/check/route.ts
 export const dynamic = "force-dynamic";
+
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/Partner";
 import { NextResponse } from "next/server";
@@ -10,23 +10,22 @@ export async function POST(req: Request) {
     const { field, value } = await req.json();
 
     if (!field || !value) {
-      return NextResponse.json({ error: "Missing field or value" }, { status: 400 });
+      return NextResponse.json({ exists: false }, { status: 400 });
     }
 
-    // allow only these fields for safety
-    const allowed = ["email", "phone", "gstNumber", "panNumber"];
-    if (!allowed.includes(field)) {
-      return NextResponse.json({ error: "Invalid field" }, { status: 400 });
+    let query: any = {};
+    if (field === "email") {
+      query.email = value.toLowerCase();
+    } else if (["phone", "gstNumber", "panNumber"].includes(field)) {
+      query[field] = value;
+    } else {
+      return NextResponse.json({ exists: false }, { status: 400 });
     }
 
-    const query: any = {};
-query[field] = { $regex: `^${value}$`, $options: "i" };
-const existing = await Partner.findOne(query).lean();
-
-
+    const existing = await Partner.findOne(query);
     return NextResponse.json({ exists: !!existing });
   } catch (err: any) {
-    console.error("check API error:", err);
-    return NextResponse.json({ error: err?.message || "Server error" }, { status: 500 });
+    console.error("Check uniqueness error:", err);
+    return NextResponse.json({ exists: false }, { status: 500 });
   }
 }
