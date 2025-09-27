@@ -3,7 +3,7 @@ import { VariantSchema } from "./variant.schema";
 import { ProductRatingSchema } from "./productRating.schema";
 import { FAQSchema } from "./faq.schema";
 
-export const ProductSchema = new Schema(
+export const ProductSchema = new Schema<any>(
     {
         productId: { type: String, required: true, unique: true },
         productName: { type: String, required: true },
