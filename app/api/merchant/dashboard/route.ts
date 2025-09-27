@@ -1,7 +1,7 @@
 // app/api/merchant/dashboard/route.ts
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
-import Partner from "@/models/Partner";
+import Partner from "@/models/partner";
 
 export async function GET(req: Request) {
   try {

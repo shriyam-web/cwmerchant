@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/mongodb";
-import Partner from "@/models/Partner";
+import Partner from "@/models/partner";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
