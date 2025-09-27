@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import debounce from "lodash.debounce"; // install: npm i lodash.debounce
-import { AlertCircle, CheckCircle as CheckIcon } from "lucide-react";
+import { AlertCircle, CheckCircle as CheckIcon, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
 import { Header } from '@/components/header';
@@ -111,6 +111,21 @@ const categories = [
   'Other Businesses'
 ];
 
+const indianStatesAndUTs = [
+  // States
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+  'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+  'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+  'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+
+  // Union Territories
+  'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
+];
+
+
 function SuccessScreen({ visible }: { visible: boolean }) {
   useEffect(() => {
     if (visible) {
@@ -165,9 +180,9 @@ function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
     <div className="relative w-full">
       <Combobox value={value} onChange={handleSelect}>
         <Combobox.Input
-          className="w-full border p-3 rounded-lg"
+          className="w-full border p-3 rounded-lg h-10"
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Enter your city"
+          placeholder="Enter your business city"
         />
         {filteredCities.length > 0 && (
           <Combobox.Options className="absolute left-0 right-0 bg-white border mt-1 rounded-lg shadow-lg z-50 max-h-60 overflow-auto">
@@ -186,6 +201,75 @@ function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
                       {city.slice(index + value.length)}
                     </>
                   ) : city}
+                </Combobox.Option>
+              );
+            })}
+          </Combobox.Options>
+        )}
+      </Combobox>
+    </div>
+  );
+}
+type StateAutocompleteProps = {
+  value: string;
+  onChange: (val: string) => void;
+};
+function StateAutocomplete({ value, onChange }: StateAutocompleteProps) {
+  const [query, setQuery] = useState(value || '');
+
+  useEffect(() => {
+    setQuery(value || '');
+  }, [value]);
+
+  const filteredStates = useMemo(() => {
+    if (!query) return indianStatesAndUTs;
+    const lowerVal = query.toLowerCase();
+
+    const startsWithMatches = indianStatesAndUTs.filter((state: string) =>
+      state.toLowerCase().startsWith(lowerVal)
+    );
+
+    const includesMatches = indianStatesAndUTs.filter((state: string) =>
+      !state.toLowerCase().startsWith(lowerVal) &&
+      state.toLowerCase().includes(lowerVal)
+    );
+
+    return [...startsWithMatches, ...includesMatches];
+  }, [query]);
+
+  const handleSelect = (val: string) => {
+    onChange(val);
+    setQuery(val);
+  };
+
+  return (
+    <div className="relative w-full">
+      <Combobox value={value} onChange={handleSelect}>
+        <Combobox.Input
+          className="w-full border p-3 rounded-lg h-10"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search and select state"
+          required
+        />
+        {filteredStates.length > 0 && (
+          <Combobox.Options className="absolute left-0 right-0 bg-white border mt-1 rounded-lg shadow-lg z-50 max-h-60 overflow-auto">
+            {filteredStates.map(state => {
+              const queryLower = query?.toLowerCase() || '';
+              const index = state.toLowerCase().indexOf(queryLower);
+              return (
+                <Combobox.Option
+                  key={state}
+                  value={state}
+                  className="p-2 cursor-pointer hover:bg-gray-100"
+                >
+                  {index >= 0 ? (
+                    <>
+                      {state.slice(0, index)}
+                      <span className="font-bold">{state.slice(index, index + queryLower.length)}</span>
+                      {state.slice(index + queryLower.length)}
+                    </>
+                  ) : state}
                 </Combobox.Option>
               );
             })}
@@ -214,11 +298,7 @@ const isValidURL = (url: string) => {
 
 export default function PartnerPage() {
 
-  const [showTermsModal, setShowTermsModal] = useState(false);
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [stepErrors, setStepErrors] = useState<boolean[]>([false, false, false, false, false]);
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     merchantId: '',
     legalName: '',
     displayName: '',
@@ -242,7 +322,7 @@ export default function PartnerPage() {
     businessType: '',
     yearsInBusiness: '',
     averageMonthlyRevenue: '',
-    discountOffered: '',
+
     description: '',
     website: '',
     socialLinks: {
@@ -258,7 +338,14 @@ export default function PartnerPage() {
       days: [] as string[],
     },
     agreeToTerms: false
-  });
+  };
+
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showMissingFieldsModal, setShowMissingFieldsModal] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [stepErrors, setStepErrors] = useState<boolean[]>([false, false, false, false, false]);
+  const [formData, setFormData] = useState(initialFormData);
 
   // inline uniqueness errors
 
@@ -419,7 +506,7 @@ export default function PartnerPage() {
     addSection("Business Details");
     addField("Years in Business", formData.yearsInBusiness);
     addField("Average Monthly Revenue", formData.averageMonthlyRevenue);
-    addField("Discount Offered", formData.discountOffered);
+
     addField("Business Description", formData.description);
     addField("Business Hours Open", formData.businessHours.open);
     addField("Business Hours Close", formData.businessHours.close);
@@ -434,11 +521,51 @@ export default function PartnerPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const resetForm = () => {
+    setFormData(initialFormData);
+    setFieldErrors({});
+    setStepErrors([false, false, false, false, false]);
+    setCurrentStep(0);
+    setIsSubmitted(false);
+    setShowMissingFieldsModal(false);
+  };
+
+  const showMissingFields = () => {
+    setShowMissingFieldsModal(true);
+  };
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: any) => {
+      // Check if form has any data filled
+      const hasData = Object.values(formData).some(value => {
+        if (typeof value === 'string') return value.trim() !== '';
+        if (Array.isArray(value)) return value.length > 0;
+        if (typeof value === 'object' && value !== null) {
+          return Object.values(value).some(v =>
+            v !== '' && v !== null && v !== undefined && (typeof v !== 'object' || Object.keys(v).length > 0)
+          );
+        }
+        return value !== false && value !== null && value !== undefined;
+      });
+
+      if (hasData) {
+        event.preventDefault();
+        event.returnValue = 'On refresh, all the filled in information will be lost. Perform refresh?';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [formData]);
+
   const stepFields = [
-    ['legalName', 'displayName', 'category', 'city', 'streetAddress'], // step 0
+    ['legalName', 'displayName', 'category', 'city', 'streetAddress', 'pincode', 'locality', 'state'], // step 0
     ['email', 'phone', 'whatsapp'], // step 1
     ['gstNumber', 'panNumber', 'businessType'], // step 2
-    ['yearsInBusiness', 'averageMonthlyRevenue', 'discountOffered', 'description'], // step 3
+    ['yearsInBusiness', 'averageMonthlyRevenue', 'description'], // step 3
     ['password', 'confirmPassword', 'agreeToTerms'] // step 4
   ];
 
@@ -448,6 +575,9 @@ export default function PartnerPage() {
     "category",
     "city",
     "streetAddress",
+    "pincode",
+    "locality",
+    "state",
     "email",
     "phone",
     "whatsapp",
@@ -456,7 +586,6 @@ export default function PartnerPage() {
     "businessType",
     "yearsInBusiness",
     "averageMonthlyRevenue",
-    "discountOffered",
     "description",
     "agreeToTerms",
     "password",
@@ -473,6 +602,19 @@ export default function PartnerPage() {
       return !!value;
     }) && formData.agreeToTerms;
   }, [formData, requiredFields]);
+
+  // Compute missing fields for tooltip
+  const missingFields = useMemo(() => {
+    return requiredFields.filter(field => {
+      const value = formData[field as keyof typeof formData];
+      if (field === 'confirmPassword') {
+        return !value || value !== formData.password;
+      }
+      return !value;
+    });
+  }, [formData, requiredFields]);
+
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const isCurrentStepValid = useMemo(() => {
     const currentStepFields = stepFields[currentStep];
@@ -515,11 +657,15 @@ export default function PartnerPage() {
   const handleNextStep = () => {
     if (currentStep === 4) return; // Step 4 is submit
 
-    validateCurrentStep();
+    validateCurrentStep(); // Show errors for current step but don't block navigation
 
-    if (isCurrentStepValid) {
-      setCurrentStep(currentStep + 1);
-    }
+    setCurrentStep(currentStep + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePreviousStep = () => {
+    setCurrentStep(currentStep - 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
 
@@ -541,7 +687,6 @@ export default function PartnerPage() {
       "businessType",
       "yearsInBusiness",
       "averageMonthlyRevenue",
-      "discountOffered",
       "description",
       "agreeToTerms",
       "password",
@@ -549,10 +694,10 @@ export default function PartnerPage() {
     ];
 
     const stepFields = [
-      ['legalName', 'displayName', 'category', 'city', 'streetAddress'], // step 0
+      ['legalName', 'displayName', 'category', 'city', 'streetAddress', 'pincode', 'locality', 'state'], // step 0
       ['email', 'phone', 'whatsapp'], // step 1
       ['gstNumber', 'panNumber', 'businessType'], // step 2
-      ['yearsInBusiness', 'averageMonthlyRevenue', 'discountOffered', 'description'], // step 3
+      ['yearsInBusiness', 'averageMonthlyRevenue', 'description'], // step 3
       ['password', 'confirmPassword', 'agreeToTerms'] // step 4
     ];
 
@@ -674,7 +819,7 @@ export default function PartnerPage() {
     }
 
     // if user toggles isWhatsappSame and we updated phone previously, keep whatsapp in sync
-    if (field === "isWhatsappSame" && value === true) {
+    if (field === "isWhatsappSame" && value) {
       setFormData(prev => ({ ...prev, whatsapp: prev.phone }));
     }
 
@@ -734,7 +879,7 @@ export default function PartnerPage() {
                   </Button>
 
                   <Button
-                    onClick={() => setIsSubmitted(false)}
+                    onClick={resetForm}
                     className="bg-green-500 hover:bg-green-600 w-full sm:w-auto max-w-xs"
                   >
                     Submit Another Application
@@ -805,36 +950,31 @@ export default function PartnerPage() {
                 <div className="flex items-center space-x-2">
                   {[0, 1, 2, 3, 4].map(step => (
                     <div key={step} className="flex items-center">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${currentStep >= step ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''}`}>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(step)}
+                        disabled={step > currentStep}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${currentStep >= step ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer shadow-md' : 'bg-gray-200 text-gray-600 cursor-not-allowed'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''} ${step > currentStep ? 'opacity-50' : ''}`}
+                      >
                         {step + 1}
-                      </div>
-                      {step < 4 && <div className={`w-8 h-1 ${currentStep > step ? 'bg-blue-600' : 'bg-gray-200'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''}`}></div>}
+                      </button>
+                      {step < 4 && <div className={`w-8 h-1 transition-all duration-200 ${currentStep > step ? 'bg-blue-600' : 'bg-gray-200'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''}`}></div>}
                     </div>
                   ))}
                 </div>
               </div>
 
               <CardHeader className="text-center py-10 flex flex-col items-center space-y-6">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-full bg-indigo-100 text-indigo-500">
-                    <Briefcase className="h-7 w-7" />
-                  </div>
-                  <CardTitle className="text-3xl md:text-4xl font-semibold text-indigo-600 tracking-wide">
-                    Merchant Application Form
-                  </CardTitle>
-                </div>
+                <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900">
+                  Merchant Registration Form for CityWitty Mall
+                </CardTitle>
 
                 <CardDescription className="text-md md:text-lg text-gray-600 leading-relaxed max-w-md mx-auto">
-                  Start your journey to <span className="font-medium bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient-x">getting more customers</span> for your business with CityWitty!
+                  Start your journey to getting more customers for your business with CityWitty!
                 </CardDescription>
-
 
                 <div className="h-0.5 w-24 bg-indigo-200 rounded-full"></div>
               </CardHeader>
-
-
-
-
 
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -850,20 +990,20 @@ export default function PartnerPage() {
                           <Label htmlFor="merchantId" className="text-sm font-medium text-gray-700">Merchant ID</Label>
                           <Input
                             id="merchantId"
-                            value={formData.merchantId || "Auto-generated"}
+                            value={formData.merchantId || "auto-generated"}
                             disabled
-                            className="bg-gradient-to-r from-gray-100 to-gray-200 cursor-not-allowed border-gray-300 focus:border-blue-500 shadow-sm"
+                            className="bg-gradient-to-r from-gray-100 to-gray-200 cursor-not-allowed border-gray-300 focus:border-blue-500 shadow-sm rounded-lg h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="legalName" className="text-sm font-medium text-gray-700">Legal Name *</Label>
+                          <Label htmlFor="legalName" className="text-sm font-medium text-gray-700">Legal Name <span className="text-red-500">*</span></Label>
                           <Input
                             id="legalName"
                             value={formData.legalName}
                             onChange={(e) => handleInputChange('legalName', e.target.value)}
-                            placeholder="Enter legal name"
+                            placeholder="Enter legal name of the Business"
                             required
-                            className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${fieldErrors.legalName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                            className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg h-10 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm ${fieldErrors.legalName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                           />
                           {fieldErrors.legalName && (
                             <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
@@ -872,14 +1012,14 @@ export default function PartnerPage() {
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="displayName" className="text-sm font-medium text-gray-700">Display Name *</Label>
+                          <Label htmlFor="displayName" className="text-sm font-medium text-gray-700">Display Name <span className="text-red-500">*</span></Label>
                           <Input
                             id="displayName"
                             value={formData.displayName}
                             onChange={(e) => handleInputChange('displayName', e.target.value)}
-                            placeholder="Enter display/business name"
+                            placeholder="Enter display name of the business"
                             required
-                            className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${fieldErrors.displayName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                            className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg h-10 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm ${fieldErrors.displayName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                           />
                           {fieldErrors.displayName && (
                             <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
@@ -891,7 +1031,7 @@ export default function PartnerPage() {
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label htmlFor="category">Business Category *</Label>
+                          <Label htmlFor="category">Business Category <span className="text-red-500">*</span></Label>
                           <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select category" />
@@ -904,7 +1044,7 @@ export default function PartnerPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="city">City *</Label>
+                          <Label htmlFor="city">City <span className="text-red-500">*</span></Label>
                           <CityAutocomplete
                             value={formData.city}
                             onChange={(val: string) => handleInputChange("city", val)}
@@ -914,43 +1054,51 @@ export default function PartnerPage() {
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label htmlFor="streetAddress">Street Address *</Label>
+                          <Label htmlFor="streetAddress">Street Address <span className="text-red-500">*</span></Label>
                           <Input
                             id="streetAddress"
                             value={formData.streetAddress}
                             onChange={(e) => handleInputChange('streetAddress', e.target.value)}
-                            placeholder="Enter street address"
+                            placeholder="Address line"
                             required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="pincode">Pincode</Label>
+                          <Label htmlFor="pincode">Pincode <span className="text-red-500">*</span></Label>
                           <Input
                             id="pincode"
+                            type="text"
                             value={formData.pincode}
-                            onChange={(e) => handleInputChange('pincode', e.target.value)}
-                            placeholder="Enter pincode"
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                              handleInputChange('pincode', value);
+                            }}
+                            placeholder="Enter 6-digit pincode"
+                            maxLength={6}
+                            required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label htmlFor="locality">Locality</Label>
+                          <Label htmlFor="locality">Locality <span className="text-red-500">*</span></Label>
                           <Input
                             id="locality"
                             value={formData.locality}
                             onChange={(e) => handleInputChange('locality', e.target.value)}
                             placeholder="Enter locality"
+                            required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="state">State</Label>
-                          <Input
-                            id="state"
+                          <Label htmlFor="state">State <span className="text-red-500">*</span></Label>
+                          <StateAutocomplete
                             value={formData.state}
-                            onChange={(e) => handleInputChange('state', e.target.value)}
-                            placeholder="Enter state"
+                            onChange={(val: string) => handleInputChange('state', val)}
                           />
                         </div>
                         <div className="space-y-2">
@@ -959,6 +1107,7 @@ export default function PartnerPage() {
                             id="country"
                             value={formData.country}
                             disabled
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                       </div>
@@ -974,7 +1123,7 @@ export default function PartnerPage() {
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label htmlFor="email">Business Email  *</Label>
+                          <Label htmlFor="email">Business Email <span className="text-red-500">*</span></Label>
                           <Input
                             id="email"
                             type="email"
@@ -983,6 +1132,7 @@ export default function PartnerPage() {
                             onBlur={() => formData.email && checkUniqueRemote("email", formData.email)}
                             placeholder="business@email.com"
                             required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                           {checkingField.email ? (
                             <p className="text-sm text-gray-500 mt-1">Checking email…</p>
@@ -1000,7 +1150,7 @@ export default function PartnerPage() {
                         <div className="grid md:grid-cols-2 gap-6">
                           {/* Phone Number */}
                           <div className="space-y-2">
-                            <Label htmlFor="phone">Phone Number *</Label>
+                            <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>
                             <PhoneInput
                               id="phone"
                               placeholder="Enter your number"
@@ -1026,6 +1176,7 @@ export default function PartnerPage() {
 
                           {/* WhatsApp Number */}
                           <div className="space-y-2">
+                            <Label htmlFor="whatsapp">WhatsApp Number <span className="text-red-500">*</span></Label>
                             <div className="flex items-center space-x-2 mb-2">
                               <Checkbox
                                 id="isWhatsappSame"
@@ -1036,7 +1187,7 @@ export default function PartnerPage() {
                                 }}
                               />
                               <Label htmlFor="isWhatsappSame" className="text-sm">
-                                WhatsApp same as phone? *
+                                WhatsApp same as phone?
                               </Label>
                             </div>
                             <PhoneInput
@@ -1064,7 +1215,7 @@ export default function PartnerPage() {
                           value={formData.website}
                           onChange={(e) => handleInputChange('website', e.target.value)}
                           placeholder="https://yourbusiness.com"
-                          className={formData.website && !isValidURL(formData.website) ? 'border-red-500' : ''}
+                          className={`${formData.website && !isValidURL(formData.website) ? 'border-red-500' : ''} h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm`}
                         />
                         {formData.website && !isValidURL(formData.website) && (
                           <p className="text-red-500 text-sm mt-1">Please enter a valid URL</p>
@@ -1079,6 +1230,7 @@ export default function PartnerPage() {
                             value={formData.socialLinks.linkedin}
                             onChange={(e) => handleInputChange('socialLinks.linkedin', e.target.value)}
                             placeholder="https://linkedin.com/in/yourprofile"
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                         <div className="space-y-2">
@@ -1088,6 +1240,7 @@ export default function PartnerPage() {
                             value={formData.socialLinks.twitter}
                             onChange={(e) => handleInputChange('socialLinks.twitter', e.target.value)}
                             placeholder="https://twitter.com/yourhandle"
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                         <div className="space-y-2">
@@ -1097,6 +1250,7 @@ export default function PartnerPage() {
                             value={formData.socialLinks.youtube}
                             onChange={(e) => handleInputChange('socialLinks.youtube', e.target.value)}
                             placeholder="https://youtube.com/channel/yourchannel"
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                         <div className="space-y-2">
@@ -1106,7 +1260,7 @@ export default function PartnerPage() {
                             value={formData.socialLinks.instagram}
                             onChange={(e) => handleInputChange('socialLinks.instagram', e.target.value)}
                             placeholder="https://instagram.com/yourhandle"
-                            className={!isValidURL(formData.socialLinks.instagram) && formData.socialLinks.instagram ? 'border-red-500' : ''}
+                            className={`${!isValidURL(formData.socialLinks.instagram) && formData.socialLinks.instagram ? 'border-red-500' : ''} h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm`}
                           />
                           {!isValidURL(formData.socialLinks.instagram) && formData.socialLinks.instagram && (
                             <p className="text-red-500 text-sm mt-1">Please enter a valid URL</p>
@@ -1119,6 +1273,7 @@ export default function PartnerPage() {
                             value={formData.socialLinks.facebook}
                             onChange={(e) => handleInputChange('socialLinks.facebook', e.target.value)}
                             placeholder="https://facebook.com/yourpage"
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                         </div>
                       </div>
@@ -1134,7 +1289,7 @@ export default function PartnerPage() {
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label htmlFor="gstNumber">GST Number *</Label>
+                          <Label htmlFor="gstNumber">GST Number <span className="text-red-500">*</span></Label>
                           <Input
                             id="gstNumber"
                             value={formData.gstNumber}
@@ -1142,6 +1297,7 @@ export default function PartnerPage() {
                             onBlur={() => formData.gstNumber && checkUniqueRemote("gstNumber", formData.gstNumber)}
                             placeholder="Enter GST number"
                             required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                           {checkingField.gstNumber ? (
                             <p className="text-sm text-gray-500 mt-1">Checking GST…</p>
@@ -1153,7 +1309,7 @@ export default function PartnerPage() {
 
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="panNumber">PAN Number *</Label>
+                          <Label htmlFor="panNumber">PAN Number <span className="text-red-500">*</span></Label>
                           <Input
                             id="panNumber"
                             value={formData.panNumber}
@@ -1161,6 +1317,7 @@ export default function PartnerPage() {
                             onBlur={() => formData.panNumber && checkUniqueRemote("panNumber", formData.panNumber)}
                             placeholder="Enter PAN number"
                             required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                           {checkingField.panNumber ? (
                             <p className="text-sm text-gray-500 mt-1">Checking PAN…</p>
@@ -1182,9 +1339,9 @@ export default function PartnerPage() {
                         Step 4: Business Details
                       </h3>
 
-                      <div className="grid md:grid-cols-3 gap-6">
+                      <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label htmlFor="businessType">Business Type *</Label>
+                          <Label htmlFor="businessType">Business Type <span className="text-red-500">*</span></Label>
                           <Select value={formData.businessType} onValueChange={(value) => handleInputChange('businessType', value)}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select type" />
@@ -1199,7 +1356,7 @@ export default function PartnerPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="yearsInBusiness">Years in Business *</Label>
+                          <Label htmlFor="yearsInBusiness">Years in Business <span className="text-red-500">*</span></Label>
                           <Select value={formData.yearsInBusiness} onValueChange={(value) => handleInputChange('yearsInBusiness', value)}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select years" />
@@ -1213,25 +1370,11 @@ export default function PartnerPage() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="discountOffered">Discount Offered *</Label>
-                          <Select value={formData.discountOffered} onValueChange={(value) => handleInputChange('discountOffered', value)}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select discount" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="10-15">10-15%</SelectItem>
-                              <SelectItem value="15-20">15-20%</SelectItem>
-                              <SelectItem value="20-30">20-30%</SelectItem>
-                              <SelectItem value="30-40">30-40%</SelectItem>
-                              <SelectItem value="40+">40%+</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="averageMonthlyRevenue">Average Monthly Revenue *</Label>
+                        <Label htmlFor="averageMonthlyRevenue">Average Monthly Revenue <span className="text-red-500">*</span></Label>
                         <Select value={formData.averageMonthlyRevenue} onValueChange={(value) => handleInputChange('averageMonthlyRevenue', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select revenue range" />
@@ -1247,7 +1390,7 @@ export default function PartnerPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="description">Business Description *</Label>
+                        <Label htmlFor="description">Business Description <span className="text-red-500">*</span></Label>
                         <Textarea
                           id="description"
                           value={formData.description}
@@ -1268,6 +1411,7 @@ export default function PartnerPage() {
                               type="time"
                               value={formData.businessHours.open}
                               onChange={(e) => handleInputChange('businessHours.open', e.target.value)}
+                              className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                             />
                           </div>
                           <div className="space-y-2">
@@ -1277,6 +1421,7 @@ export default function PartnerPage() {
                               type="time"
                               value={formData.businessHours.close}
                               onChange={(e) => handleInputChange('businessHours.close', e.target.value)}
+                              className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                             />
                           </div>
                         </div>
@@ -1313,7 +1458,7 @@ export default function PartnerPage() {
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2 relative">
-                          <Label htmlFor="password">Password *</Label>
+                          <Label htmlFor="password">Password <span className="text-red-500">*</span></Label>
                           <Input
                             id="password"
                             type={showPassword ? "text" : "password"}
@@ -1325,13 +1470,14 @@ export default function PartnerPage() {
                             }}
                             placeholder="Enter password"
                             required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                           <button
                             type="button"
                             className="absolute right-3 top-9 text-gray-500"
                             onClick={() => setShowPassword(!showPassword)}
                           >
-                            {showPassword ? "Hide" : "Show"}
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
 
                           {showPwdTooltip && (
@@ -1367,7 +1513,7 @@ export default function PartnerPage() {
                         </div>
 
                         <div className="space-y-2 relative">
-                          <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                          <Label htmlFor="confirmPassword">Confirm Password <span className="text-red-500">*</span></Label>
                           <Input
                             id="confirmPassword"
                             type={showConfirmPassword ? "text" : "password"}
@@ -1375,47 +1521,133 @@ export default function PartnerPage() {
                             onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                             placeholder="Confirm password"
                             required
+                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
                           <button
                             type="button"
                             className="absolute right-3 top-9 text-gray-500"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           >
-                            {showConfirmPassword ? "Hide" : "Show"}
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                        <h4 className="text-lg font-semibold">Review Your Information</h4>
+                      <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-sm">
+                        <div className="flex items-center mb-6">
+                          <div className="p-2 bg-blue-100 rounded-full mr-3">
+                            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <h4 className="text-xl font-bold text-gray-900">Review Your Information</h4>
+                        </div>
                         <div className="grid md:grid-cols-2 gap-4 text-sm">
-                          <div><strong>Merchant ID:</strong> {formData.merchantId}</div>
-                          <div><strong>Legal Name:</strong> {formData.legalName}</div>
-                          <div><strong>Display Name:</strong> {formData.displayName}</div>
-                          <div><strong>Category:</strong> {formData.category}</div>
-                          <div><strong>City:</strong> {formData.city}</div>
-                          <div><strong>Street Address:</strong> {formData.streetAddress}</div>
-                          <div><strong>Pincode:</strong> {formData.pincode}</div>
-                          <div><strong>Locality:</strong> {formData.locality}</div>
-                          <div><strong>State:</strong> {formData.state}</div>
-                          <div><strong>Country:</strong> {formData.country}</div>
-                          <div><strong>Email:</strong> {formData.email}</div>
-                          <div><strong>Phone:</strong> {formData.phone}</div>
-                          <div><strong>WhatsApp:</strong> {formData.whatsapp}</div>
-                          <div><strong>Website:</strong> {formData.website}</div>
-                          <div><strong>LinkedIn:</strong> {formData.socialLinks.linkedin}</div>
-                          <div><strong>Twitter:</strong> {formData.socialLinks.twitter}</div>
-                          <div><strong>YouTube:</strong> {formData.socialLinks.youtube}</div>
-                          <div><strong>Instagram:</strong> {formData.socialLinks.instagram}</div>
-                          <div><strong>Facebook:</strong> {formData.socialLinks.facebook}</div>
-                          <div><strong>GST Number:</strong> {formData.gstNumber}</div>
-                          <div><strong>PAN Number:</strong> {formData.panNumber}</div>
-                          <div><strong>Business Type:</strong> {formData.businessType}</div>
-                          <div><strong>Years in Business:</strong> {formData.yearsInBusiness}</div>
-                          <div><strong>Average Monthly Revenue:</strong> {formData.averageMonthlyRevenue}</div>
-                          <div><strong>Discount Offered:</strong> {formData.discountOffered}</div>
-                          <div><strong>Description:</strong> {formData.description}</div>
-                          <div><strong>Business Hours:</strong> {formData.businessHours.open} - {formData.businessHours.close}, {formData.businessHours.days.join(', ')}</div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Merchant ID:</span>
+                            <span className="text-gray-900">{formData.merchantId}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Legal Name:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.legalName}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Display Name:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.displayName}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Category:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.category}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">City:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.city}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Street Address:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.streetAddress}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Pincode:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.pincode}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Locality:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.locality}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">State:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.state}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Country:</span>
+                            <span className="text-gray-900">{formData.country}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Email:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.email}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Phone:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.phone}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">WhatsApp:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.whatsapp}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Website:</span>
+                            <span className="text-gray-900">{formData.website}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">LinkedIn:</span>
+                            <span className="text-gray-900">{formData.socialLinks.linkedin}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Twitter:</span>
+                            <span className="text-gray-900">{formData.socialLinks.twitter}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">YouTube:</span>
+                            <span className="text-gray-900">{formData.socialLinks.youtube}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Instagram:</span>
+                            <span className="text-gray-900">{formData.socialLinks.instagram}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Facebook:</span>
+                            <span className="text-gray-900">{formData.socialLinks.facebook}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">GST Number:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.gstNumber}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">PAN Number:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.panNumber}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Business Type:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.businessType}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Years in Business:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.yearsInBusiness}</span>
+                          </div>
+                          <div className="flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Average Monthly Revenue:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.averageMonthlyRevenue}</span>
+                          </div>
+
+                          <div className="col-span-2 flex justify-between py-2 border-b border-gray-200">
+                            <span className="font-medium text-gray-700">Description:<span className="text-red-500">*</span></span>
+                            <span className="text-gray-900">{formData.description}</span>
+                          </div>
+                          <div className="col-span-2 flex justify-between py-2">
+                            <span className="font-medium text-gray-700">Business Hours:</span>
+                            <span className="text-gray-900">{formData.businessHours.open} - {formData.businessHours.close}, {formData.businessHours.days.join(', ')}</span>
+                          </div>
                         </div>
                       </div>
 
@@ -1428,23 +1660,25 @@ export default function PartnerPage() {
                             required
                           />
                           <Label htmlFor="terms" className="text-sm">
-                            I agree to {' '}
+                            I confirm that all the information provided above is true and correct to the best of my knowledge <span className="text-red-500">*</span>.
+                            I have read and agree to the {' '}
                             <a
                               href="#"
                               className="text-blue-600 hover:underline"
                               onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}
                             >
                               Terms & Conditions
-                            </a>
-                            {' '}and{' '}
+                            </a>{' '}and{' '}
                             <a
                               href="#"
                               className="text-blue-600 hover:underline"
                               onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}
                             >
                               Privacy Policy
-                            </a>
+                            </a>{' '}
+                            of the CityWitty Merchant Hub.
                           </Label>
+
                         </div>
                       </div>
                     </div>
@@ -1452,41 +1686,66 @@ export default function PartnerPage() {
 
                   <div className="flex justify-between mt-8">
                     {currentStep > 0 && (
-                      <Button type="button" variant="outline" onClick={() => setCurrentStep(currentStep - 1)}>
+                      <Button type="button" variant="outline" onClick={handlePreviousStep}>
                         Previous
                       </Button>
                     )}
                     <div></div>
                     {currentStep < 4 ? (
-                      <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                      <Button type="button" onClick={handleNextStep}>
                         Next
                       </Button>
                     ) : (
-                      <Button
-                        type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 text-lg py-3 flex items-center justify-center"
-                        disabled={isSubmitting || !isFormValid}
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <svg
-                              className="animate-spin h-5 w-5 mr-2 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                            </svg>
-                            Submitting...
-                          </>
-                        ) : (
-                          <>
-                            <Send className="mr-2 h-5 w-5" />
-                            Submit Partnership Application
-                          </>
+                      <div className="relative inline-block" onClick={(e) => {
+                        if (!isFormValid && !isSubmitting) {
+                          e.preventDefault();
+                          showMissingFields();
+                          setShowTooltip(false);
+                        }
+                      }}>
+                        <Button
+                          type="submit"
+                          className="bg-blue-600 hover:bg-blue-700 text-lg py-3 flex items-center justify-center disabled:opacity-50"
+                          disabled={isSubmitting || !isFormValid}
+                          onMouseEnter={() => !isFormValid && setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <svg
+                                className="animate-spin h-5 w-5 mr-2 text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                              </svg>
+                              Submitting...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="mr-2 h-5 w-5" />
+                              Submit Partnership Application
+                            </>
+                          )}
+                        </Button>
+
+                        {showTooltip && missingFields.length > 0 && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-lg z-50 max-w-xs text-sm text-gray-700 whitespace-nowrap">
+                            <div className="flex items-center gap-1 mb-1">
+                              <AlertCircle className="w-4 h-4 text-red-500" />
+                              <span>Missing required fields:</span>
+                            </div>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              {missingFields.map(field => (
+                                <li key={field}>{fieldLabel(field) || field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</li>
+                              ))}
+                            </ul>
+                            <div className="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-gray-300 absolute bottom-0 left-1/2 transform -translate-x-1/2"></div>
+                          </div>
                         )}
-                      </Button>
+                      </div>
                     )}
                   </div>
 
@@ -1540,6 +1799,19 @@ export default function PartnerPage() {
       <Modal open={showPrivacyModal} onClose={() => setShowPrivacyModal(false)} title="Privacy Policy">
         <PrivacyPolicyPage />
       </Modal>
+
+      <Modal open={showMissingFieldsModal} onClose={() => setShowMissingFieldsModal(false)} title="Missing Required Fields">
+        <div className="space-y-4">
+          <p className="text-gray-700">Please fill in the following required fields before submitting:</p>
+          <ul className="list-disc list-inside space-y-1 text-sm">
+            {missingFields.map((field) => (
+              <li key={field} className="text-gray-800">{fieldLabel(field) || field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</li>
+            ))}
+          </ul>
+        </div>
+      </Modal>
+
+
 
     </main>
   );

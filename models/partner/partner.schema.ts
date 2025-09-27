@@ -32,7 +32,7 @@ export const PartnerSchema = new Schema<IPartner>(
         businessType: { type: String, required: true },
         yearsInBusiness: { type: String, required: true },
         averageMonthlyRevenue: { type: String, required: true },
-        discountOffered: { type: String, required: true },
+        discountOffered: { type: String },
         description: { type: String, required: true },
         website: { type: String },
         socialLinks: {
@@ -78,6 +78,7 @@ export const PartnerSchema = new Schema<IPartner>(
             enum: ["pending", "active", "suspended", "inactive"],
             default: "pending",
         },
+        suspensionReason: { type: String }, // <-- new field added
 
         purchasedPackage: {
             variantName: { type: String },
