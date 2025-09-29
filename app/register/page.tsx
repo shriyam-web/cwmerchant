@@ -1,7 +1,7 @@
 // app/register/page.tsx
 'use client';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import debounce from "lodash.debounce"; // install: npm i lodash.debounce
+import debounce from "lodash.debounce";
 import { AlertCircle, CheckCircle as CheckIcon, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
@@ -35,7 +35,6 @@ import {
 import { Navbar } from '@/components/navbar';
 import PrivacyPolicyPage from "../privacy-policy/page";
 import TermsPage from "../terms/page";
-
 
 const benefits = [
   {
@@ -77,9 +76,6 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
     </div>
   );
 }
-
-
-
 
 const categories = [
   'Fashion & Clothing',
@@ -128,7 +124,6 @@ const indianStatesAndUTs = [
   'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
 ];
 
-
 function SuccessScreen({ visible }: { visible: boolean }) {
   useEffect(() => {
     if (visible) {
@@ -148,7 +143,6 @@ function SuccessScreen({ visible }: { visible: boolean }) {
 const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
-
 
 type CityAutocompleteProps = {
   value: string;
@@ -175,9 +169,6 @@ function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const handleSelect = (val: string) => {
     onChange(val); // update parent
   };
-
-
-
 
   return (
     <div className="relative w-full">
@@ -284,20 +275,10 @@ function StateAutocomplete({ value, onChange }: StateAutocompleteProps) {
 }
 const isValidURL = (url: string) => {
   if (!url) return false;
-
-  // Regex explanation:
-  // ^(https?:\/\/)?       -> optional http:// or https://
-  // ([\w-]+\.)+[\w-]{2,}  -> domain and TLD (sub.domain.com)
-  // (:\d+)?               -> optional port number
-  // (\/[^\s]*)?           -> optional path, query, or fragment
   const pattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(:\d+)?(\/[^\s]*)?$/i;
 
   return pattern.test(url);
 };
-
-
-
-
 
 export default function PartnerPage() {
 
@@ -356,11 +337,6 @@ export default function PartnerPage() {
   const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
 
   const [formData, setFormData] = useState(initialFormData);
-
-  // inline uniqueness errors
-
-
-  // pending-check flags (to show loader if needed)
 
   const [showPwdTooltip, setShowPwdTooltip] = useState(false);
   const pwdTooltipTimer = useRef<number | null>(null);
@@ -484,7 +460,7 @@ export default function PartnerPage() {
     // --- Title ---
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
-    doc.text("CityWitty Merchant Registration Form Preview", 10, 15);
+    doc.text("CityWitty Merchant Hub Registration Confirmation", 10, 15);
 
     let y = 25; // starting y position
 
@@ -555,11 +531,11 @@ export default function PartnerPage() {
     addSection("Business Details");
     addField("Years in Business", formData.yearsInBusiness);
     addField("Average Monthly Revenue", formData.averageMonthlyRevenue);
-
     addField("Business Description", formData.description);
     addField("Business Hours Open", formData.businessHours.open);
     addField("Business Hours Close", formData.businessHours.close);
     addField("Business Days", formData.businessHours.days.join(', '));
+
 
     // Save PDF
     doc.save(`${formData.displayName || 'CityWitty_Application'}.pdf`);
@@ -832,7 +808,6 @@ export default function PartnerPage() {
         password: hashedPassword,
       };
 
-
       // Submit to API
       const response = await fetch('/api/partnerApplication', {
         method: 'POST',
@@ -845,7 +820,6 @@ export default function PartnerPage() {
         console.log('Submitted:', resData);
         setFormData(prev => ({ ...prev, merchantId: resData.merchantId }));
         setIsSubmitted(true);
-
 
         // Scroll to top so success screen is visible
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -861,10 +835,6 @@ export default function PartnerPage() {
       setIsSubmitting(false);
     }
   };
-
-
-
-
 
   const handleInputChange = (field: string, value: any) => {
     if (field.includes('.')) {
@@ -942,9 +912,6 @@ export default function PartnerPage() {
     }
   };
 
-
-
-
   if (isSubmitted) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -991,11 +958,7 @@ export default function PartnerPage() {
       </main>
     );
   }
-
   return (
-
-
-
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* <Header /> */}
       <Navbar />
@@ -1031,9 +994,6 @@ export default function PartnerPage() {
           </div>
         </div>
       </section>
-
-
-
 
       {/* Application Form */}
       <section className="py-16 bg-white">
@@ -1306,7 +1266,6 @@ export default function PartnerPage() {
                             </p>
                           </div>
                         </div>
-
                       </div>
 
                       <div className="space-y-2">
@@ -1427,7 +1386,6 @@ export default function PartnerPage() {
                               <AlertCircle className="w-4 h-4" /> {fieldErrors.panNumber}
                             </p>
                           ) : null}
-
                         </div>
                       </div>
                     </div>
@@ -1471,7 +1429,6 @@ export default function PartnerPage() {
                             </SelectContent>
                           </Select>
                         </div>
-
                       </div>
 
                       <div className="space-y-2">
@@ -1937,9 +1894,6 @@ export default function PartnerPage() {
           </ul>
         </div>
       </Modal>
-
-
-
     </main>
   );
 }

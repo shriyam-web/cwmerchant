@@ -45,6 +45,48 @@ export async function GET(req: Request) {
         changeType: partner.visibility ? "positive" : "negative",
         icon: "Eye",
       },
+      {
+        title: "Purchased Package",
+        value: partner.purchasedPackage?.variantName || "None",
+        change: partner.purchasedPackage?.expiryDate ? `Expires ${new Date(partner.purchasedPackage.expiryDate).toLocaleDateString()}` : "",
+        changeType: "neutral",
+        icon: "Gift",
+      },
+      {
+        title: "Total Earnings",
+        value: `₹${partner.totalEarnings}`,
+        change: "",
+        changeType: "neutral",
+        icon: "DollarSign",
+      },
+      {
+        title: "Monthly Revenue",
+        value: `₹${partner.averageMonthlyRevenue || 0}`,
+        change: "+5.1%",
+        changeType: "positive",
+        icon: "TrendingUp",
+      },
+      {
+        title: "Active Offers",
+        value: partner.products.length, // Assuming offers are tied to products
+        change: "+1 this month",
+        changeType: "positive",
+        icon: "AlertTriangle",
+      },
+      {
+        title: "Total Customers",
+        value: "150",
+        change: "+10 this month",
+        changeType: "positive",
+        icon: "Users",
+      },
+      {
+        title: "Orders Fulfilled",
+        value: "245",
+        change: "+15%",
+        changeType: "positive",
+        icon: "CheckCircle",
+      },
     ];
 
     console.log("Stats to send:", stats);
