@@ -1,7 +1,7 @@
 
 // app/merchant-packages/page.tsx
 // "use client";
-
+// import { CheckCircle, XCircle } from "lucide-react";
 // import { motion } from "framer-motion";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -139,14 +139,14 @@ export default function MerchantPackagesPage() {
                 "CityWitty Assured badge",
                 "Print media promotions",
                 "Google Reviews",
-                "Influencer Promotion (Barter)",
+                "✅green Influencer Promotion (Barter)",
 
 
 
-                "High Priority Support",
+                "✅green High Priority Support",
 
 
-                "PR / Reputation management",
+                "✅green PR / Reputation management",
                 "❌ Offline marketing activities",
                 "❌ Dedicated Growth manager",
                 "❌ Podcast",
@@ -174,15 +174,15 @@ export default function MerchantPackagesPage() {
                 "CityWitty Assured badge",
                 "Print media promotions",
                 "Google Reviews",
-                "Influencer Promotion (Barter)",
+                "✅green Influencer Promotion (Barter)",
 
 
-                "High Priority Support",
-                
-                "PR / Reputation management",
-                "Offline marketing activities",
-                "Dedicated growth manager",
-                "Podcast",
+                "✅green High Priority Support",
+
+                "✅green PR / Reputation management",
+                "✅green Offline marketing activities",
+                "✅green Dedicated growth manager",
+                "✅green Podcast",
             ],
             popular: false,
         },
@@ -224,6 +224,9 @@ export default function MerchantPackagesPage() {
                             <PricingCard key={plan.name} plan={plan} />
                         ))}
                     </div>
+
+
+
                 </div>
             </section>
 

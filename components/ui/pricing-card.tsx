@@ -70,18 +70,30 @@ export default function PricingCard({ plan }: PricingCardProps) {
             {/* Features */}
             <ul className="text-gray-700 space-y-4 text-left flex-1 mb-8">
                 {plan.features.map((feature) => {
-                    const isExcluded = feature.startsWith("❌");
+                    let icon;
+                    let textClass = "text-gray-800";
+                    let label = feature;
+
+                    if (feature.startsWith("❌")) {
+                        icon = <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />;
+                        label = feature.replace("❌ ", "");
+                        textClass = "text-gray-500 ";
+                    } else if (feature.startsWith("✅green")) {
+                        icon = <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />;
+                        label = feature.replace("✅green ", "");
+                        textClass = "text-gray-800 ";
+                    } else {
+                        icon = <CheckCircle className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" />;
+                    }
+
                     return (
-                        <li key={feature} className="flex items-start gap-3">
-                            {isExcluded ? (
-                                <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
-                            ) : (
-                                <CheckCircle className="w-6 h-6 text-indigo-500 flex-shrink-0 mt-1" />
-                            )}
-                            <span>{feature.replace("❌ ", "")}</span>
+                        <li key={feature} className={`flex items-start gap-3 ${textClass}`}>
+                            {icon}
+                            <span>{label}</span>
                         </li>
                     );
                 })}
+
             </ul>
 
             {/* CTA */}
