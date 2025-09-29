@@ -12,6 +12,7 @@ import { CheckCircle, XCircle } from "lucide-react";
 import PricingCard from "@/components/ui/pricing-card";
 
 import { Eye, Users, Megaphone, ShieldCheck, BarChart3, Headset } from "lucide-react";
+import CityWittyAssured from "@/components/ui/CityWittyAssured";
 
 export const metadata: Metadata = {
     title: "Merchant Packages | CityWitty Privilege Card",
@@ -128,7 +129,7 @@ export default function MerchantPackagesPage() {
             description: "Grow your presence and engagement on social media",
             features: [
                 "Upto 4x Sales Growth Expected",
-                "8 Creatives Graphics + 2 Reels Per Month (Better Social Media Reach On LinkedIn, Facebook, Instagram and Youtube as well as Engagement Tracking)",
+                "8 Creatives Graphics + 2 Reels Per Month (Better Social Media Reach On LinkedIn, Facebook, Instagram & Youtube As Well As Engagement Tracking)",
                 "Responsive Website Upto 15 Pages With Admin Panel",
                 "AI Friendly SEO",
                 "20 Products Listing On CityWitty Merchant Store",
@@ -136,16 +137,11 @@ export default function MerchantPackagesPage() {
                 "Digital Business Card + QR Standee",
                 "Higher Visibility Listing On CityWitty Online Store",
                 "CityWitty Verified Seller Badge",
-                "CityWitty Assured Badge",
+                "CityWitty Assured Badge ",
                 "Print Media Promotions",
                 "Google Reviews",
                 "✅green Influencer Promotion (Barter)",
-
-
-
                 "✅green High Priority Support",
-
-
                 "✅green PR / Reputation Management",
                 "❌ Offline Marketing Activities",
                 "❌ Dedicated Growth Manager",
@@ -179,9 +175,9 @@ export default function MerchantPackagesPage() {
 
                 "✅green High Priority Support",
 
-                "✅green PR / Reputation management",
-                "✅green Offline marketing activities",
-                "✅green Dedicated growth manager",
+                "✅green PR / Reputation Management",
+                "✅green Offline Marketing Activities",
+                "✅green Dedicated Growth Manager",
                 "✅green Podcast",
             ],
             popular: false,
@@ -192,8 +188,13 @@ export default function MerchantPackagesPage() {
         <main className="min-h-screen bg-gray-50">
             <Navbar />
             <br />
+
+
             {/* Hero Section */}
             <section className="py-10 pt-20 bg-gradient-to-r from-indigo-50 to-purple-50">
+
+
+
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
                     <h1 className="text-4xl font-bold text-gray-900 mb-6">
                         Choose the Right Merchant Package
@@ -237,7 +238,7 @@ export default function MerchantPackagesPage() {
                 </div>
             </section>
 
-
+            {/* <CityWittyAssured /> */}
 
             {/* Benefits Section */}
             <section
