@@ -1,21 +1,11 @@
-# TODO: Implement Form Reset and Missing Fields Popup
+# Implementation Plan for 12-Hour Format Business Hours
 
-## Current Progress
-- [x] Schema updated: discountOffered made optional in models/partner/partner.schema.ts
-- [x] Dev server restarted (user confirmed)
-- [x] Placeholder styling verified and complete
-- [x] Added initialFormData constant
-- [x] Added resetForm function
-- [x] Updated "Submit Another Application" button to call resetForm
-- [x] Added showMissingFieldsModal state
-- [x] Added showMissingFields function
-- [x] Wrapped submit button with onClick to show modal if invalid
-- [x] Added Missing Fields Modal with list of missing fields
-- [x] Made all step numbers clickable for navigation
+## Steps:
 
-## Pending Steps
-- [ ] Test implementation: Use browser_action to verify reset on "Submit Another", popup on submit click when invalid, successful submission without errors, and step navigation
-
-## Next Steps After Completion
-- Verify full form flow: Fill/submit/reset, check console for no errors, test step navigation.
-- Attempt completion once all verified.
+- [ ] Update the initialFormData to include sub-states for open and close time components (openHour, openMinute, openPeriod, closeHour, closeMinute, closePeriod).
+- [ ] Add a useEffect hook to compute and update the full 12-hour time strings (businessHours.open and businessHours.close) whenever the sub-states change.
+- [ ] Define a TimePicker functional component using Select for hours (1-12), minutes (00-59), and AM/PM.
+- [ ] Replace the native time Input elements in step 3 of the form with TimePicker components for open and close times.
+- [ ] Verify validation, review section display, and PDF generation use the new 12-hour format strings correctly.
+- [ ] Test the form: Select various times, ensure computation works, validation triggers if incomplete, and no errors in console.
+- [ ] Update this TODO with completion status after each step.

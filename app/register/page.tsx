@@ -339,6 +339,12 @@ export default function PartnerPage() {
       open: '',
       close: '',
       days: [] as string[],
+      openHour: '',
+      openMinute: '',
+      openPeriod: '',
+      closeHour: '',
+      closeMinute: '',
+      closePeriod: '',
     },
     agreeToTerms: false
   };
@@ -376,6 +382,30 @@ export default function PartnerPage() {
     special: false
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | undefined>>({});
+
+  useEffect(() => {
+    let newOpen = formData.businessHours.open;
+    let newClose = formData.businessHours.close;
+
+    if (formData.businessHours.openHour && formData.businessHours.openMinute && formData.businessHours.openPeriod) {
+      newOpen = `${formData.businessHours.openHour.padStart(2, '0')}:${formData.businessHours.openMinute} ${formData.businessHours.openPeriod}`;
+    }
+
+    if (formData.businessHours.closeHour && formData.businessHours.closeMinute && formData.businessHours.closePeriod) {
+      newClose = `${formData.businessHours.closeHour.padStart(2, '0')}:${formData.businessHours.closeMinute} ${formData.businessHours.closePeriod}`;
+    }
+
+    if (newOpen !== formData.businessHours.open || newClose !== formData.businessHours.close) {
+      setFormData(prev => ({
+        ...prev,
+        businessHours: {
+          ...prev.businessHours,
+          open: newOpen,
+          close: newClose
+        }
+      }));
+    }
+  }, [formData.businessHours.openHour, formData.businessHours.openMinute, formData.businessHours.openPeriod, formData.businessHours.closeHour, formData.businessHours.closeMinute, formData.businessHours.closePeriod]);
 
   const checkPasswordRules = (pwd: string) => {
     const checks = {
