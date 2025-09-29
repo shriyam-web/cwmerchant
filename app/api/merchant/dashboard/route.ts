@@ -71,7 +71,7 @@ export async function GET(req: Request) {
 
     const response = {
       merchant: {
-        applicationId: partner.applicationId,
+        merchantId: partner.merchantId,
         businessName: partner.businessName,
         ownerName: partner.ownerName,
         email: partner.email,
@@ -99,7 +99,7 @@ export async function GET(req: Request) {
         storeImages: partner.storeImages || [],
         mapLocation: partner.mapLocation || "",
         tags: partner.tags || [],
-         status: partner.status || "pending", // ✅ yeh line add karo
+        status: partner.status || "pending", // ✅ yeh line add karo
       },
       stats,
       requests,

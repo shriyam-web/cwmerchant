@@ -365,7 +365,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const profileFields: string[] = [
-    "applicationId", //1
+    "merchantId", //1
     "businessName", //2
     "ownerName", //3
     "email", //4
@@ -393,7 +393,7 @@ export default function Dashboard() {
     "tags", //26
   ];
   const humanReadableFields: Record<string, string> = {
-    applicationId: "Application ID",
+    merchantId: "MERCHANT ID",
     businessName: "Business Name",
     ownerName: "Owner Name",
     email: "Email Address",
