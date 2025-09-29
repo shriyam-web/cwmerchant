@@ -1,6 +1,6 @@
-
 // app/merchant-packages/page.tsx
 // "use client";
+
 // import { CheckCircle, XCircle } from "lucide-react";
 // import { motion } from "framer-motion";
 import { Navbar } from "@/components/navbar";
@@ -224,8 +224,15 @@ export default function MerchantPackagesPage() {
                             <PricingCard key={plan.name} plan={plan} />
                         ))}
                     </div>
-
-
+                    <p className="text-center text-gray-600 mt-12">
+                        For Enterprise Pricing contact us at{" "}
+                        <a
+                            href="mailto:support.merchant@citywitty.com"
+                            className="text-indigo-600 hover:underline"
+                        >
+                            support.merchant@citywitty.com
+                        </a>
+                    </p>
 
                 </div>
             </section>
