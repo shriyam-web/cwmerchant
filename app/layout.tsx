@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Citywitty Merchant Hub - Grow Your Business with Premium Customers',
+    default: 'CityWitty Merchant Hub - Grow Your Business with Premium Customers',
     template: '%s | Citywitty Merchant Hub'
   },
   description: 'Join Citywitty Merchant Hub and connect with premium customers. Boost your sales, manage your business, and grow with India\'s leading discount card platform.',
