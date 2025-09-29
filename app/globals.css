@@ -102,3 +102,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Prevent scroll jumps when dropdowns open */
+* {
+  scroll-margin: 0;
+  scroll-behavior: auto;
+}
+
+/* Prevent dropdowns from disabling page scroll */
+body[data-radix-scroll-lock] {
+  overflow: auto !important;
+}

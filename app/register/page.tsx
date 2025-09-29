@@ -64,12 +64,15 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 mt-16 pt-20 pb-20">
-      <div className="bg-white rounded-lg w-11/12 max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 mt-16 pt-20 pb-20" onClick={onClose}>
+      <div className="bg-white rounded-lg w-11/12 max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
         <button className="absolute top-3 p-3 right-3 text-gray-500 hover:text-gray-700" onClick={onClose} > ✕ </button>
 
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <div>{children}</div>
+        <div className="mt-4 flex justify-end">
+          <Button onClick={onClose} variant="outline">Close</Button>
+        </div>
       </div>
     </div>
   );
@@ -344,7 +347,8 @@ export default function PartnerPage() {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showMissingFieldsModal, setShowMissingFieldsModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [stepErrors, setStepErrors] = useState<boolean[]>([false, false, false, false, false]);
+  const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
+
   const [formData, setFormData] = useState(initialFormData);
 
   // inline uniqueness errors
@@ -354,6 +358,7 @@ export default function PartnerPage() {
 
   const [showPwdTooltip, setShowPwdTooltip] = useState(false);
   const pwdTooltipTimer = useRef<number | null>(null);
+  const [showCopyPasteTooltip, setShowCopyPasteTooltip] = useState({ password: false, confirmPassword: false });
 
   const [checkingField, setCheckingField] = useState<{
     email?: boolean;
@@ -382,6 +387,17 @@ export default function PartnerPage() {
     };
     setPwdChecks(checks);
     return checks;
+  };
+
+  const handlePreventCopyPaste = (field: 'password' | 'confirmPassword') => {
+    const handler = (e: React.ClipboardEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      setShowCopyPasteTooltip(prev => ({ ...prev, [field]: true }));
+      setTimeout(() => {
+        setShowCopyPasteTooltip(prev => ({ ...prev, [field]: false }));
+      }, 3000);
+    };
+    return handler;
   };
 
   // Debounced API call to check field uniqueness
@@ -419,6 +435,9 @@ export default function PartnerPage() {
     if (f === "phone") return "Phone Number";
     if (f === "gstNumber") return "GST Number";
     if (f === "panNumber") return "PAN Number";
+    if (f === "businessHours.open") return "Open Time";
+    if (f === "businessHours.close") return "Close Time";
+    if (f === "businessHours.days") return "Days Open";
     return f;
   };
 
@@ -524,7 +543,6 @@ export default function PartnerPage() {
   const resetForm = () => {
     setFormData(initialFormData);
     setFieldErrors({});
-    setStepErrors([false, false, false, false, false]);
     setCurrentStep(0);
     setIsSubmitted(false);
     setShowMissingFieldsModal(false);
@@ -564,8 +582,8 @@ export default function PartnerPage() {
   const stepFields = [
     ['legalName', 'displayName', 'category', 'city', 'streetAddress', 'pincode', 'locality', 'state'], // step 0
     ['email', 'phone', 'whatsapp'], // step 1
-    ['gstNumber', 'panNumber', 'businessType'], // step 2
-    ['yearsInBusiness', 'averageMonthlyRevenue', 'description'], // step 3
+    ['gstNumber', 'panNumber'], // step 2
+    ['businessType', 'yearsInBusiness', 'averageMonthlyRevenue', 'description', 'businessHours.open', 'businessHours.close', 'businessHours.days'], // step 3
     ['password', 'confirmPassword', 'agreeToTerms'] // step 4
   ];
 
@@ -600,21 +618,48 @@ export default function PartnerPage() {
         return value && value === formData.password;
       }
       return !!value;
-    }) && formData.agreeToTerms;
+    }) && formData.agreeToTerms && formData.businessHours.open && formData.businessHours.close && formData.businessHours.days.length > 0;
   }, [formData, requiredFields]);
 
   // Compute missing fields for tooltip
   const missingFields = useMemo(() => {
-    return requiredFields.filter(field => {
+    const missing = requiredFields.filter(field => {
       const value = formData[field as keyof typeof formData];
       if (field === 'confirmPassword') {
         return !value || value !== formData.password;
       }
       return !value;
     });
+    if (!formData.businessHours.open) missing.push('businessHours.open');
+    if (!formData.businessHours.close) missing.push('businessHours.close');
+    if (formData.businessHours.days.length === 0) missing.push('businessHours.days');
+    return missing;
   }, [formData, requiredFields]);
 
   const [showTooltip, setShowTooltip] = useState(false);
+
+  // Compute completed steps
+  const completedSteps = useMemo(() => {
+    return stepFields.map(stepFields => stepFields.every(field => {
+      if (field === 'businessHours.days') {
+        return formData.businessHours.days.length > 0;
+      }
+      if (field.includes('.')) {
+        const parts = field.split('.');
+        let val: any = formData;
+        for (const part of parts) {
+          val = val[part];
+        }
+        return !!val;
+      }
+      return !!(formData as any)[field];
+    }));
+  }, [formData, stepFields]);
+
+  // Compute incomplete steps (visited but not completed)
+  const incompleteSteps = useMemo(() => {
+    return stepFields.map((_, index) => visitedSteps.has(index) && !completedSteps[index]);
+  }, [visitedSteps, completedSteps]);
 
   const isCurrentStepValid = useMemo(() => {
     const currentStepFields = stepFields[currentStep];
@@ -627,7 +672,26 @@ export default function PartnerPage() {
     let hasErrors = false;
 
     currentStepFields.forEach((field: string) => {
-      if (!formData[field as keyof typeof formData]) {
+      if (field === 'businessHours.days') {
+        if (formData.businessHours.days.length === 0) {
+          newFieldErrors[field] = 'At least one day must be selected';
+          hasErrors = true;
+        } else {
+          delete newFieldErrors[field];
+        }
+      } else if (field.includes('.')) {
+        const parts = field.split('.');
+        let val = formData;
+        for (const part of parts) {
+          val = (val as Record<string, any>)[part];
+        }
+        if (!val) {
+          newFieldErrors[field] = 'This field is required';
+          hasErrors = true;
+        } else {
+          delete newFieldErrors[field];
+        }
+      } else if (!formData[field as keyof typeof formData]) {
         newFieldErrors[field] = 'This field is required';
         hasErrors = true;
       } else {
@@ -636,22 +700,6 @@ export default function PartnerPage() {
     });
 
     setFieldErrors(newFieldErrors);
-    setStepErrors(prev => {
-      const updated = [...prev];
-      updated[currentStep] = hasErrors;
-      return updated;
-    });
-
-    if (hasErrors) {
-      // Blink step if errors
-      setTimeout(() => {
-        setStepErrors(prev => {
-          const updated = [...prev];
-          updated[currentStep] = false;
-          return updated;
-        });
-      }, 1000);
-    }
   }, [currentStep, formData, fieldErrors, stepFields]);
 
   const handleNextStep = () => {
@@ -659,11 +707,13 @@ export default function PartnerPage() {
 
     validateCurrentStep(); // Show errors for current step but don't block navigation
 
+    setVisitedSteps(prev => new Set(prev).add(currentStep + 1));
     setCurrentStep(currentStep + 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePreviousStep = () => {
+    setVisitedSteps(prev => new Set(prev).add(currentStep - 1));
     setCurrentStep(currentStep - 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -696,36 +746,44 @@ export default function PartnerPage() {
     const stepFields = [
       ['legalName', 'displayName', 'category', 'city', 'streetAddress', 'pincode', 'locality', 'state'], // step 0
       ['email', 'phone', 'whatsapp'], // step 1
-      ['gstNumber', 'panNumber', 'businessType'], // step 2
-      ['yearsInBusiness', 'averageMonthlyRevenue', 'description'], // step 3
+      ['gstNumber', 'panNumber'], // step 2
+      ['businessType', 'yearsInBusiness', 'averageMonthlyRevenue', 'description', 'businessHours.open', 'businessHours.close', 'businessHours.days'], // step 3
       ['password', 'confirmPassword', 'agreeToTerms'] // step 4
     ];
 
     let hasErrors = false;
     const newFieldErrors: any = {};
-    const newStepErrors = [false, false, false, false, false];
 
     requiredFields.forEach(field => {
       if (!formData[field as keyof typeof formData]) {
         newFieldErrors[field] = 'This field is required';
         hasErrors = true;
-        const stepIndex = stepFields.findIndex(step => step.includes(field));
-        if (stepIndex !== -1) newStepErrors[stepIndex] = true;
       }
     });
+
+    if (!formData.businessHours.open) {
+      newFieldErrors['businessHours.open'] = 'This field is required';
+      hasErrors = true;
+    }
+
+    if (!formData.businessHours.close) {
+      newFieldErrors['businessHours.close'] = 'This field is required';
+      hasErrors = true;
+    }
+
+    if (formData.businessHours.days.length === 0) {
+      newFieldErrors['businessHours.days'] = 'At least one day must be selected';
+      hasErrors = true;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       newFieldErrors.confirmPassword = 'Passwords do not match';
       hasErrors = true;
-      newStepErrors[4] = true;
     }
 
     setFieldErrors(newFieldErrors);
-    setStepErrors(newStepErrors);
 
     if (hasErrors) {
-      const firstErrorStep = newStepErrors.findIndex(e => e);
-      if (firstErrorStep !== -1) setCurrentStep(firstErrorStep);
       return;
     }
 
@@ -803,6 +861,14 @@ export default function PartnerPage() {
       // simple client-side format gating (optional)
       if (field === "email" && !/\S+@\S+\.\S+/.test(value)) {
         setFieldErrors(prev => ({ ...prev, [field]: "Invalid email format" }));
+        return;
+      }
+      if (field === "gstNumber" && value.length !== 15) {
+        setFieldErrors(prev => ({ ...prev, [field]: "GST Number must be 15 characters" }));
+        return;
+      }
+      if (field === "panNumber" && value.length !== 10) {
+        setFieldErrors(prev => ({ ...prev, [field]: "PAN Number must be 10 characters" }));
         return;
       }
       // trigger server uniqueness check
@@ -953,12 +1019,11 @@ export default function PartnerPage() {
                       <button
                         type="button"
                         onClick={() => setCurrentStep(step)}
-                        disabled={step > currentStep}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${currentStep >= step ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer shadow-md' : 'bg-gray-200 text-gray-600 cursor-not-allowed'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''} ${step > currentStep ? 'opacity-50' : ''}`}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${completedSteps[step] ? 'bg-green-600 text-white hover:bg-green-700 cursor-pointer shadow-md' : incompleteSteps[step] ? 'bg-red-600 text-white hover:bg-red-700 cursor-pointer shadow-md' : currentStep === step ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer shadow-md' : 'bg-gray-300 text-gray-700 hover:bg-gray-400 cursor-pointer'}`}
                       >
                         {step + 1}
                       </button>
-                      {step < 4 && <div className={`w-8 h-1 transition-all duration-200 ${currentStep > step ? 'bg-blue-600' : 'bg-gray-200'} ${stepErrors[step] ? 'animate-pulse bg-red-200' : ''}`}></div>}
+                      {step < 4 && <div className={`w-8 h-1 transition-all duration-200 ${completedSteps[step] ? 'bg-green-600' : incompleteSteps[step] ? 'bg-red-600' : 'bg-gray-200'}`}></div>}
                     </div>
                   ))}
                 </div>
@@ -1096,10 +1161,16 @@ export default function PartnerPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="state">State <span className="text-red-500">*</span></Label>
-                          <StateAutocomplete
-                            value={formData.state}
-                            onChange={(val: string) => handleInputChange('state', val)}
-                          />
+                          <Select value={formData.state} onValueChange={(value) => handleInputChange('state', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select state" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {indianStatesAndUTs.map(state => (
+                                <SelectItem key={state} value={state}>{state}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="country">Country</Label>
@@ -1192,7 +1263,7 @@ export default function PartnerPage() {
                             </div>
                             <PhoneInput
                               id="whatsapp"
-                              placeholder="Enter WhatsApp number"
+                              placeholder="WhatsApp number"
                               defaultCountry="IN"
                               value={formData.whatsapp}
                               onChange={(value) => handleInputChange('whatsapp', value || '')}
@@ -1315,7 +1386,7 @@ export default function PartnerPage() {
                             value={formData.panNumber}
                             onChange={(e) => handleInputChange('panNumber', e.target.value)}
                             onBlur={() => formData.panNumber && checkUniqueRemote("panNumber", formData.panNumber)}
-                            placeholder="Enter PAN number"
+                            placeholder="Enter PAN number of Business Owner"
                             required
                             className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                           />
@@ -1405,7 +1476,7 @@ export default function PartnerPage() {
                         <Label>Business Hours</Label>
                         <div className="grid md:grid-cols-2 gap-6">
                           <div className="space-y-2">
-                            <Label htmlFor="businessHoursOpen">Open Time</Label>
+                            <Label htmlFor="businessHoursOpen">Open Time <span className="text-red-500">*</span></Label>
                             <Input
                               id="businessHoursOpen"
                               type="time"
@@ -1415,7 +1486,7 @@ export default function PartnerPage() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="businessHoursClose">Close Time</Label>
+                            <Label htmlFor="businessHoursClose">Close Time <span className="text-red-500">*</span></Label>
                             <Input
                               id="businessHoursClose"
                               type="time"
@@ -1426,7 +1497,7 @@ export default function PartnerPage() {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label>Days Open</Label>
+                          <Label>Days Open <span className="text-red-500">*</span></Label>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
                               <div key={day} className="flex items-center space-x-2">
@@ -1468,6 +1539,9 @@ export default function PartnerPage() {
                             onBlur={() => {
                               setTimeout(() => setShowPwdTooltip(false), 400);
                             }}
+                            onCopy={handlePreventCopyPaste('password')}
+                            onPaste={handlePreventCopyPaste('password')}
+                            onCut={handlePreventCopyPaste('password')}
                             placeholder="Enter password"
                             required
                             className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
@@ -1479,36 +1553,50 @@ export default function PartnerPage() {
                           >
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
-
                           {showPwdTooltip && (
                             <div className="absolute left-0 mt-2 w-80 p-3 bg-white border rounded shadow-lg z-50 text-sm">
                               <div className="flex items-center justify-between mb-2">
                                 <strong>Password requirements</strong>
-                                <span className="text-gray-500 text-xs">Strength</span>
+                                {(() => {
+                                  const passedCount = Object.values(pwdChecks).filter(Boolean).length;
+                                  const strengthLevel = passedCount === 0 ? 'No password' : passedCount === 1 ? 'Weak' : passedCount <= 3 ? 'Medium' : passedCount === 4 ? 'Strong' : 'Very Strong';
+                                  const strengthColor = passedCount === 0 ? 'text-gray-500' : passedCount === 1 ? 'text-red-600' : passedCount <= 3 ? 'text-yellow-600' : passedCount === 4 ? 'text-blue-600' : 'text-green-600';
+                                  return (
+                                    <span className="text-gray-500 text-xs">
+                                      <span className={`${strengthColor} font-medium`}>{strengthLevel} password</span> Strength
+                                    </span>
+                                  );
+                                })()}
                               </div>
                               <ul className="space-y-1">
                                 <li className="flex items-center gap-2">
-                                  {pwdChecks.length ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  {pwdChecks.length ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
                                   <span>At least 8 characters</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                  {pwdChecks.uppercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  {pwdChecks.uppercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
                                   <span>One uppercase letter (A–Z)</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                  {pwdChecks.lowercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  {pwdChecks.lowercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
                                   <span>One lowercase letter (a–z)</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                  {pwdChecks.number ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  {pwdChecks.number ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
                                   <span>One number (0–9)</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                  {pwdChecks.special ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block" />}
+                                  {pwdChecks.special ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
                                   <span>One special character (!@#$...)</span>
                                 </li>
                               </ul>
                             </div>
+                          )}
+                          {showCopyPasteTooltip.password && (
+                            <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4" />
+                              Copy-paste is not allowed for security reasons.
+                            </p>
                           )}
                         </div>
 
@@ -1519,6 +1607,9 @@ export default function PartnerPage() {
                             type={showConfirmPassword ? "text" : "password"}
                             value={formData.confirmPassword}
                             onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                            onCopy={handlePreventCopyPaste('confirmPassword')}
+                            onPaste={handlePreventCopyPaste('confirmPassword')}
+                            onCut={handlePreventCopyPaste('confirmPassword')}
                             placeholder="Confirm password"
                             required
                             className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
@@ -1530,6 +1621,12 @@ export default function PartnerPage() {
                           >
                             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
+                          {showCopyPasteTooltip.confirmPassword && (
+                            <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4" />
+                              Copy-paste is not allowed for security reasons.
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -1545,7 +1642,7 @@ export default function PartnerPage() {
                         <div className="grid md:grid-cols-2 gap-4 text-sm">
                           <div className="flex justify-between py-2 border-b border-gray-200">
                             <span className="font-medium text-gray-700">Merchant ID:</span>
-                            <span className="text-gray-900">{formData.merchantId}</span>
+                            <span className="text-gray-900">Will be auto generated Upon Submission</span>
                           </div>
                           <div className="flex justify-between py-2 border-b border-gray-200">
                             <span className="font-medium text-gray-700">Legal Name:<span className="text-red-500">*</span></span>
@@ -1645,7 +1742,7 @@ export default function PartnerPage() {
                             <span className="text-gray-900">{formData.description}</span>
                           </div>
                           <div className="col-span-2 flex justify-between py-2">
-                            <span className="font-medium text-gray-700">Business Hours:</span>
+                            <span className="font-medium text-gray-700">Business Hours:<span className="text-red-500">*</span></span>
                             <span className="text-gray-900">{formData.businessHours.open} - {formData.businessHours.close}, {formData.businessHours.days.join(', ')}</span>
                           </div>
                         </div>
@@ -1816,5 +1913,3 @@ export default function PartnerPage() {
     </main>
   );
 }
-
-

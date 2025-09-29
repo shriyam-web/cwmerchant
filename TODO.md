@@ -11,10 +11,11 @@
 - [x] Added showMissingFields function
 - [x] Wrapped submit button with onClick to show modal if invalid
 - [x] Added Missing Fields Modal with list of missing fields
+- [x] Made all step numbers clickable for navigation
 
 ## Pending Steps
-- [ ] Test implementation: Use browser_action to verify reset on "Submit Another", popup on submit click when invalid, successful submission without errors
+- [ ] Test implementation: Use browser_action to verify reset on "Submit Another", popup on submit click when invalid, successful submission without errors, and step navigation
 
 ## Next Steps After Completion
-- Verify full form flow: Fill/submit/reset, check console for no errors.
+- Verify full form flow: Fill/submit/reset, check console for no errors, test step navigation.
 - Attempt completion once all verified.
