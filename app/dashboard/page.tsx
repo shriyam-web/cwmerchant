@@ -48,6 +48,65 @@ interface Request {
   status: "approved" | "pending" | "rejected";
 }
 
+// Extended Merchant interface for dashboard with all profile fields
+interface ExtendedMerchant {
+  id: string;
+  email: string;
+  businessName: string;
+  role: "merchant";
+  status: "active" | "pending" | "suspended" | "inactive";
+  merchantId?: string;
+  legalName?: string;
+  displayName?: string;
+  emailVerified?: boolean;
+  phone?: string;
+  category?: string;
+  city?: string;
+  streetAddress?: string;
+  pincode?: string;
+  locality?: string;
+  state?: string;
+  country?: string;
+  whatsapp?: string;
+  gstNumber?: string;
+  panNumber?: string;
+  businessType?: string;
+  yearsInBusiness?: number;
+  averageMonthlyRevenue?: number;
+  description?: string;
+  website?: string;
+  socialLinks?: {
+    linkedin?: string;
+    twitter?: string;
+    youtube?: string;
+    instagram?: string;
+    facebook?: string;
+  };
+  businessHours?: {
+    open?: string;
+    close?: string;
+    days?: string[];
+  };
+  agreeToTerms?: boolean;
+  tags?: string[];
+  purchasedPackage?: {
+    variantName?: string;
+  };
+  paymentMethodAccepted?: string[];
+  minimumOrderValue?: number;
+  bankDetails?: {
+    bankName?: string;
+    accountHolderName?: string;
+    accountNumber?: string;
+    ifscCode?: string;
+    branchName?: string;
+    upiId?: string;
+  };
+  logo?: string;
+  storeImages?: string[];
+  mapLocation?: string;
+}
+
 export default function Dashboard() {
   const { merchant, setMerchant, loadingProfile } = useMerchantAuth();
 
@@ -56,55 +115,77 @@ export default function Dashboard() {
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [showAllMissingFields, setShowAllMissingFields] = useState<boolean>(false);
 
   useEffect(() => {
     setSidebarOpen(window.innerWidth >= 1024);
   }, []);
 
   const profileFields: string[] = [
-    "merchantId", //1
-    "businessName", //2
-    "ownerName", //3
-    "email", //4
-    "phone", //5
-    "category", //6
-    "city", //7
-    "address", //8
-    "whatsapp", //9
-    "gstNumber", //10 
-    "panNumber", //11
-    "businessType", //12
-    "yearsInBusiness",//13
-    "averageMonthlyRevenue", //14
-    "discountOffered", //15
-    "description", //16
-    "website", //17
-    "socialLinks.linkedin", //18
-    "socialLinks.twitter", //19
-    "socialLinks.youtube", //20
-    "socialLinks.instagram", //21
-    "socialLinks.facebook", //22
-    "logo", //23
-    "storeImages", //24
-    "mapLocation", //25
-    "tags", //26
+    "merchantId",
+    "legalName",
+    "displayName",
+    "email",
+    "emailVerified",
+    "phone",
+    "category",
+    "city",
+    "streetAddress",
+    "pincode",
+    "locality",
+    "state",
+    "country",
+    "whatsapp",
+    "gstNumber",
+    "panNumber",
+    "businessType",
+    "yearsInBusiness",
+    "averageMonthlyRevenue",
+    "description",
+    "website",
+    "socialLinks.linkedin",
+    "socialLinks.twitter",
+    "socialLinks.youtube",
+    "socialLinks.instagram",
+    "socialLinks.facebook",
+    "businessHours.open",
+    "businessHours.close",
+    "businessHours.days",
+    "agreeToTerms",
+    "tags",
+    "purchasedPackage.variantName",
+    "paymentMethodAccepted",
+    "minimumOrderValue",
+    "bankDetails.bankName",
+    "bankDetails.accountHolderName",
+    "bankDetails.accountNumber",
+    "bankDetails.ifscCode",
+    "bankDetails.branchName",
+    "bankDetails.upiId",
+    "logo",
+    "storeImages",
+    "mapLocation",
   ];
   const humanReadableFields: Record<string, string> = {
     merchantId: "Merchant Id",
-    businessName: "Business Name",
-    ownerName: "Owner Name",
+    legalName: "Legal Name",
+    displayName: "Display Name",
     email: "Email Address",
+    emailVerified: "Email Verified",
     phone: "Phone Number",
     category: "Category",
     city: "City",
-    address: "Address",
+    streetAddress: "Street Address",
+    pincode: "Pincode",
+    locality: "Locality",
+    state: "State",
+    country: "Country",
     whatsapp: "WhatsApp Number",
     gstNumber: "GST Number",
     panNumber: "PAN Number",
     businessType: "Business Type",
     yearsInBusiness: "Years in Business",
     averageMonthlyRevenue: "Average Monthly Revenue",
-    discountOffered: "Discount Offered",
     description: "Business Description",
     website: "Website",
     "socialLinks.linkedin": "LinkedIn Profile",
@@ -112,33 +193,93 @@ export default function Dashboard() {
     "socialLinks.youtube": "YouTube Channel",
     "socialLinks.instagram": "Instagram Profile",
     "socialLinks.facebook": "Facebook Profile",
-    logo: "Store Logo",
-    storeImages: "Store Images",
-    mapLocation: "Store Location",
+    "businessHours.open": "Business Hours Open",
+    "businessHours.close": "Business Hours Close",
+    "businessHours.days": "Business Days",
+    agreeToTerms: "Agree to Terms",
     tags: "Tags",
+    "purchasedPackage.variantName": "Purchased Package",
+    paymentMethodAccepted: "Payment Methods Accepted",
+    minimumOrderValue: "Minimum Order Value",
+    "bankDetails.bankName": "Bank Name",
+    "bankDetails.accountHolderName": "Account Holder Name",
+    "bankDetails.accountNumber": "Account Number",
+    "bankDetails.ifscCode": "IFSC Code",
+    "bankDetails.branchName": "Branch Name",
+    "bankDetails.upiId": "UPI ID",
+    logo: "Logo",
+    storeImages: "Store Images",
+    mapLocation: "Map Location",
   };
 
   // Only booleans that are required
-  const requiredBooleans = ["agreeToTerms"];
+  const requiredBooleans = ["agreeToTerms", "emailVerified"];
 
   // Helper to get nested values safely
   const getNestedValue = (obj: any, path: string) =>
     path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
 
-  const missingFields = useMemo(() => {
+  const missingFields: string[] = useMemo(() => {
     if (!merchant) return [];
 
-    return profileFields.filter((field) => {
-      const value = getNestedValue(merchant, field);
+    const extendedMerchant = merchant as ExtendedMerchant;
 
-      if (value === undefined || value === null) return true;
-      if (Array.isArray(value)) return value.length === 0;
-      if (typeof value === "string") return value.trim() === "";
-      if (typeof value === "boolean" && requiredBooleans.includes(field) && value === false) return true;
-      if (typeof value === "number" && isNaN(value)) return true;
+    // Custom check for storeImages count and logo presence
+    const missing: string[] = [];
 
-      return false;
-    });
+    for (const field of profileFields) {
+      const value = getNestedValue(extendedMerchant, field);
+
+      if (value === undefined || value === null) {
+        missing.push(field);
+        continue;
+      }
+      if (Array.isArray(value) && value.length === 0) {
+        missing.push(field);
+        continue;
+      }
+      if (typeof value === "string" && value.trim() === "") {
+        missing.push(field);
+        continue;
+      }
+      if (typeof value === "boolean" && requiredBooleans.includes(field) && value === false) {
+        missing.push(field);
+        continue;
+      }
+      if (typeof value === "number" && (isNaN(value) || (field === "minimumOrderValue" && value === 0))) {
+        missing.push(field);
+        continue;
+      }
+    }
+
+    // Additional check for storeImages count (if storeImages is array and length is 0, already counted)
+    // Check logo presence
+    if (!extendedMerchant.logo || extendedMerchant.logo.trim() === "") {
+      if (!missing.includes("logo")) missing.push("logo");
+    }
+
+    // Check mapLocation presence
+    if (!extendedMerchant.mapLocation || extendedMerchant.mapLocation.trim() === "") {
+      if (!missing.includes("mapLocation")) missing.push("mapLocation");
+    }
+
+    // Check bankDetails fields presence
+    const bankFields = [
+      "bankDetails.bankName",
+      "bankDetails.accountHolderName",
+      "bankDetails.accountNumber",
+      "bankDetails.ifscCode",
+      "bankDetails.branchName",
+      "bankDetails.upiId",
+    ];
+    for (const bf of bankFields) {
+      const val = getNestedValue(extendedMerchant, bf);
+      if (val === undefined || val === null || (typeof val === "string" && val.trim() === "")) {
+        if (!missing.includes(bf)) missing.push(bf);
+      }
+    }
+
+    return missing;
   }, [merchant]);
 
   const profileCompletion = useMemo(() => {
@@ -209,14 +350,14 @@ export default function Dashboard() {
         return <DigitalSupport />;
       default:
         return (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Hero Welcome Section */}
-            <Card className="mb-8 bg-white shadow-xl border-0 transition-all duration-300 hover:shadow-2xl">
+            <Card className="mb-8 bg-white  border-0 transition-all duration-300 ">
               <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      Welcome back, {merchant.businessName}!
+                      Welcome back, {(merchant as ExtendedMerchant).displayName || merchant.businessName}!
                     </h3>
                     <p className="text-gray-600 mb-4">
                       Your store is currently{" "}
@@ -235,7 +376,7 @@ export default function Dashboard() {
                     </p>
                     <p className="text-gray-500">Manage your business efficiently with quick actions below.</p>
                   </div>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-row gap-3 items-center ml-auto">
                     <Button
                       onClick={() => setActiveTab("products")}
                       className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105"
@@ -275,7 +416,7 @@ export default function Dashboard() {
                         <p className="text-sm text-gray-600">Track your business growth and key metrics</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                       <Badge
                         className={`px-3 py-1 text-xs font-semibold rounded-full ${status === "active"
                           ? "bg-green-100 text-green-800 border border-green-200"
@@ -296,31 +437,33 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   {stats.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                       {stats.slice(0, 4).map((stat, idx) => (
                         <div
                           key={idx}
-                          className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 hover:scale-105"
+                          className="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 hover:scale-105 text-left"
                         >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-                              {iconMap[stat.icon] || <Gift className="h-5 w-5 text-blue-600" />}
+                          <div className="flex flex-col justify-center mb-2 sm:mb-3 gap-1">
+                            <div className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex-shrink-0">
+                              {iconMap[stat.icon] || <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />}
                             </div>
-                            {stat.change && (
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900">{stat.value}</div>
+                            <div className="text-xs text-gray-600 font-medium line-clamp-2 overflow-hidden break-words">{stat.title}</div>
+                          </div>
+                          {stat.change && (
+                            <div className="mt-2 flex justify-start">
                               <div
-                                className={`text-xs font-semibold px-2 py-1 rounded-full ${stat.change.startsWith("+")
+                                className={`text-xs font-semibold px-1.5 sm:px-2 py-1 rounded-full whitespace-nowrap ${stat.change.startsWith("+")
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
                                   }`}
                               >
                                 {stat.change}
                               </div>
-                            )}
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                            <div className="text-sm text-gray-600 font-medium">{stat.title}</div>
-                          </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -377,7 +520,7 @@ export default function Dashboard() {
                             Missing Fields ({missingFields.length})
                           </p>
                           <div className="flex flex-wrap gap-1">
-                            {missingFields.slice(0, 5).map((field) => (
+                            {(showAllMissingFields ? missingFields : missingFields.slice(0, 5)).map((field) => (
                               <Badge
                                 key={field}
                                 variant="outline"
@@ -386,9 +529,22 @@ export default function Dashboard() {
                                 {humanReadableFields[field] || field}
                               </Badge>
                             ))}
-                            {missingFields.length > 5 && (
-                              <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
+                            {missingFields.length > 5 && !showAllMissingFields && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
+                                onClick={() => setShowAllMissingFields(true)}
+                              >
                                 +{missingFields.length - 5} more
+                              </Badge>
+                            )}
+                            {showAllMissingFields && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
+                                onClick={() => setShowAllMissingFields(false)}
+                              >
+                                Show less
                               </Badge>
                             )}
                           </div>
@@ -415,17 +571,6 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
             </div>
-
-            {/* Performance Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Analytics</CardTitle>
-                <CardDescription>Monthly and daily performance overview</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PerformanceChart />
-              </CardContent>
-            </Card>
 
             {/* Recent Purchase Requests */}
             <Card className="bg-white border-0 shadow-lg">
@@ -464,69 +609,67 @@ export default function Dashboard() {
                     {requests.slice(0, 5).map((request) => (
                       <div
                         key={request.id}
-                        className="bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                        className="bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm md:text-lg flex-shrink-0">
                               {request.customer.charAt(0).toUpperCase()}
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900 text-lg">{request.customer}</h4>
-                              <div className="flex items-center gap-4 text-sm text-gray-600">
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-semibold text-gray-900 text-base md:text-lg truncate">{request.customer}</h4>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
                                 <span className="flex items-center gap-1">
-                                  <Menu className="h-4 w-4" />
-                                  {request.time}
+                                  <Menu className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                  <span className="truncate">{request.time}</span>
                                 </span>
                                 <span className="flex items-center gap-1">
-                                  <DollarSign className="h-4 w-4" />
-                                  ₹{typeof request.amount === 'number' ? request.amount.toLocaleString() : request.amount}
+                                  <DollarSign className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                  <span className="font-medium">₹{typeof request.amount === 'number' ? request.amount.toLocaleString() : request.amount}</span>
                                 </span>
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3">
                             <Badge
-                              className={`px-3 py-1 text-xs font-semibold rounded-full ${request.status === "approved"
-                                  ? "bg-green-100 text-green-800 border border-green-200"
-                                  : request.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-                                    : "bg-red-100 text-red-800 border border-red-200"
+                              className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-full self-start sm:self-center ${request.status === "approved"
+                                ? "bg-green-100 text-green-800 border border-green-200"
+                                : request.status === "pending"
+                                  ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                                  : "bg-red-100 text-red-800 border border-red-200"
                                 }`}
                             >
                               {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                             </Badge>
-                            {request.status === "pending" && (
-                              <div className="flex gap-2">
-                                <Button
-                                  size="sm"
-                                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:scale-105"
-                                  onClick={() => {
-                                    // Handle approve action
-                                    setRequests(prev => prev.map(r =>
-                                      r.id === request.id ? { ...r, status: "approved" as const } : r
-                                    ));
-                                  }}
-                                >
-                                  <CheckCircle className="h-4 w-4 mr-1" />
-                                  Approve
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:scale-105"
-                                  onClick={() => {
-                                    // Handle reject action
-                                    setRequests(prev => prev.map(r =>
-                                      r.id === request.id ? { ...r, status: "rejected" as const } : r
-                                    ));
-                                  }}
-                                >
-                                  <AlertTriangle className="h-4 w-4 mr-1" />
-                                  Reject
-                                </Button>
-                              </div>
-                            )}
+                            <div className="flex gap-2 self-stretch sm:self-center">
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 md:px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1 sm:flex-none"
+                                onClick={() => {
+                                  // Handle approve action
+                                  setRequests(prev => prev.map(r =>
+                                    r.id === request.id ? { ...r, status: "approved" as const } : r
+                                  ));
+                                }}
+                              >
+                                <CheckCircle className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-red-300 text-red-600 hover:bg-red-50 px-3 md:px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1 sm:flex-none"
+                                onClick={() => {
+                                  // Handle decline action
+                                  setRequests(prev => prev.map(r =>
+                                    r.id === request.id ? { ...r, status: "rejected" as const } : r
+                                  ));
+                                }}
+                              >
+                                <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                                Decline
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -540,6 +683,17 @@ export default function Dashboard() {
                     )}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+
+            {/* Performance Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Analytics</CardTitle>
+                <CardDescription>Monthly and daily performance overview</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PerformanceChart />
               </CardContent>
             </Card>
           </div>
@@ -564,7 +718,7 @@ export default function Dashboard() {
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-        <div className="flex-1 lg:ml-64 p-4 md:p-8">
+        <div className="flex-1 lg:ml-64 pt-2 md:pt-4 pb-4 md:pb-8 px-4 md:px-8">
           {/* Menu Button */}
           <div className="flex items-center justify-between mb-4 lg:hidden">
             <Button
@@ -573,21 +727,21 @@ export default function Dashboard() {
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               <Menu className="h-5 w-5 mr-1" />
-              {sidebarOpen ? 'Collapse' : 'Expand'}
+              {sidebarOpen ? 'Collapse' : 'Menu'}
             </Button>
           </div>
 
           {/* Dynamic Title and Description based on active tab */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <div className="mb-6 md:mb-8">
+            {/* <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
               {activeTab === "overview" && "Dashboard Overview"}
               {activeTab === "offers" && "Offers Management"}
               {activeTab === "products" && "Products Management"}
               {activeTab === "requests" && "Purchase Requests"}
               {activeTab === "profile" && "Profile Settings"}
               {activeTab === "support" && "Digital Support"}
-            </h1>
-            <p className="text-lg text-gray-700">
+            </h1> */}
+            {/* <p className="text-base md:text-lg text-gray-700">
               {activeTab === "overview" &&
                 "Welcome back! Here's what's happening with your business today."}
               {activeTab === "offers" &&
@@ -600,7 +754,7 @@ export default function Dashboard() {
                 "Manage your business profile and settings."}
               {activeTab === "support" &&
                 "Request digital marketing materials and support."}
-            </p>
+            </p> */}
           </div>
 
           {renderMainContent()}

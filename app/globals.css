@@ -113,3 +113,29 @@
 body[data-radix-scroll-lock] {
   overflow: auto !important;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-corner {
+  background: #f0f0f0;
+}

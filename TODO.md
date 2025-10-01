@@ -1,9 +1,10 @@
-# Dashboard UI Enhancement Tasks
+# Scrollbar Customization Task
 
-- [ ] Add hero welcome section with merchant name, status, and quick action buttons
-- [ ] Enhance stats cards with gradients, hover effects, larger icons, and better spacing
-- [ ] Change background to subtle gradient (from-blue-50 to-indigo-100)
-- [ ] Add animations and transitions to interactive elements
-- [ ] Improve typography with larger font sizes and bold weights
-- [ ] Ensure responsive design works well on all devices
-- [ ] Test UI changes and verify responsiveness
+## Completed
+- Added custom global scrollbar styles in `app/globals.css` with gradient colors, rounded corners, and hover effects.
+- Updated `components/ui/scroll-area.tsx` ScrollArea component scrollbar thumb to use gradient background and smooth transition on hover.
+
+## Next Steps
+- Run the Next.js development server using `npm run dev`.
+- Open the website in a browser and verify the new scrollbar styles.
+- Collect user feedback and adjust styles if necessary.
