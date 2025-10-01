@@ -92,6 +92,7 @@ interface Merchant {
   id: string;
   email: string;
   businessName: string;
+  displayName?: string;
   role: "merchant";
   status: "active" | "pending" | "suspended" | "inactive";
 }
@@ -127,9 +128,13 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
   const [loadingProfile, setLoadingProfile] = useState(true);
 
 
-  const fetchMerchantProfile = async (token: string) => {
+  const fetchMerchantProfile = async (token: string, merchantId?: string) => {
     try {
-      const res = await fetch("/api/merchant/dashboard", {
+      let url = "/api/merchant/dashboard";
+      if (merchantId) {
+        url += `?merchantId=${merchantId}`;
+      }
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -185,7 +190,13 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (token) {
-      fetchMerchantProfile(token).finally(() => setLoadingProfile(false));
+      // Pass merchantId as query param to fetchMerchantProfile
+      const merchantId = storedMerchant ? JSON.parse(storedMerchant).id : null;
+      if (merchantId) {
+        fetchMerchantProfile(token, merchantId).finally(() => setLoadingProfile(false));
+      } else {
+        setLoadingProfile(false);
+      }
     } else {
       setLoadingProfile(false);
     }
@@ -268,7 +279,6 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
     <MerchantAuthContext.Provider
       value={{ merchant, setMerchant, loading, loadingProfile, error, login, register, logout }}
     >
-
       {children}
     </MerchantAuthContext.Provider>
   );

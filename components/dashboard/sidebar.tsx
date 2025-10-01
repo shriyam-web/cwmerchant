@@ -42,7 +42,8 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
   const { merchant, logout } = useMerchantAuth(); // ✅ Auth context
   const [merchantInfo, setMerchantInfo] = useState<any>(null);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
-  const [emoji, setEmoji] = useState('😊');
+  const [emoji, setEmoji] = useState('😟');
+
 
   useEffect(() => {
     if (merchant) {
