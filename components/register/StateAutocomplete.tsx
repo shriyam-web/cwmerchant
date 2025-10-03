@@ -1,5 +1,20 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Combobox } from "@headlessui/react";
+import { useState } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 const indianStatesAndUTs = [
     // States
@@ -21,67 +36,51 @@ type StateAutocompleteProps = {
 };
 
 export default function StateAutocomplete({ value, onChange }: StateAutocompleteProps) {
-    const [query, setQuery] = useState(value || '');
-
-    useEffect(() => {
-        setQuery(value || '');
-    }, [value]);
-
-    const filteredStates = useMemo(() => {
-        if (!query) return indianStatesAndUTs;
-        const lowerVal = query.toLowerCase();
-
-        const startsWithMatches = indianStatesAndUTs.filter((state: string) =>
-            state.toLowerCase().startsWith(lowerVal)
-        );
-
-        const includesMatches = indianStatesAndUTs.filter((state: string) =>
-            !state.toLowerCase().startsWith(lowerVal) &&
-            state.toLowerCase().includes(lowerVal)
-        );
-
-        return [...startsWithMatches, ...includesMatches];
-    }, [query]);
-
-    const handleSelect = (val: string) => {
-        onChange(val);
-        setQuery(val);
-    };
+    const [open, setOpen] = useState(false);
 
     return (
-        <div className="relative w-full">
-            <Combobox value={value} onChange={handleSelect}>
-                <Combobox.Input
-                    className="w-full border p-3 rounded-lg h-10"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search and select state"
-                    required
-                />
-                {filteredStates.length > 0 && (
-                    <Combobox.Options className="absolute left-0 right-0 bg-white border mt-1 rounded-lg shadow-lg z-50 max-h-60 overflow-auto">
-                        {filteredStates.map(state => {
-                            const queryLower = query?.toLowerCase() || '';
-                            const index = state.toLowerCase().indexOf(queryLower);
-                            return (
-                                <Combobox.Option
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between h-10"
+                >
+                    {value
+                        ? indianStatesAndUTs.find((state) => state === value)
+                        : "Select state..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0">
+                <Command>
+                    <CommandInput placeholder="Search state..." />
+                    <CommandList>
+                        <CommandEmpty>No state found.</CommandEmpty>
+                        <CommandGroup>
+                            {indianStatesAndUTs.map((state) => (
+                                <CommandItem
                                     key={state}
                                     value={state}
-                                    className="p-2 cursor-pointer hover:bg-gray-100"
+                                    onSelect={(currentValue) => {
+                                        onChange(currentValue === value ? "" : currentValue);
+                                        setOpen(false);
+                                    }}
                                 >
-                                    {index >= 0 ? (
-                                        <>
-                                            {state.slice(0, index)}
-                                            <span className="font-bold">{state.slice(index, index + queryLower.length)}</span>
-                                            {state.slice(index + queryLower.length)}
-                                        </>
-                                    ) : state}
-                                </Combobox.Option>
-                            );
-                        })}
-                    </Combobox.Options>
-                )}
-            </Combobox>
-        </div>
+                                    <Check
+                                        className={cn(
+                                            "mr-2 h-4 w-4",
+                                            value === state ? "opacity-100" : "opacity-0"
+                                        )}
+                                    />
+                                    {state}
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
     );
 }

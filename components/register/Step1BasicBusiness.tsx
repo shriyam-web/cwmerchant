@@ -160,10 +160,25 @@ export default function Step1BasicBusiness({ formData, handleInputChange, fieldE
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="state">State <span className="text-red-500">*</span></Label>
-                    <StateAutocomplete
-                        value={formData.state}
-                        onChange={(val: string) => handleInputChange('state', val)}
-                    />
+                    <Select value={formData.state} onValueChange={(val) => handleInputChange('state', val)}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {[
+                                'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+                                'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+                                'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+                                'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+                                'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+                                'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+                                'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+                                'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
+                            ].map(state => (
+                                <SelectItem key={state} value={state}>{state}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="country">Country</Label>
