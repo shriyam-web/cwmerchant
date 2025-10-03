@@ -33,36 +33,28 @@ const validateSocialMediaURL = (platform: string, url: string) => {
     try {
         const parsedUrl = new URL(fullUrl);
         const hostname = parsedUrl.hostname.toLowerCase();
-        const expectedDomain = getDomain(platform);
-        if (platform === 'twitter' || platform === 'x') {
-            if (hostname === 'x.com' || hostname === 'twitter.com') {
-                return null;
-            }
-            return `Invalid Twitter URL. Expected domain: x.com or twitter.com`;
-        } else if (platform === 'youtube') {
-            if (hostname === 'youtube.com' || hostname === 'www.youtube.com' || hostname === 'youtu.be') {
-                return null;
-            }
-            return `Invalid YouTube URL. Expected domain: youtube.com, www.youtube.com, or youtu.be`;
-        } else if (hostname === expectedDomain) {
+        const pathname = parsedUrl.pathname.toLowerCase();
+        const fullUrlString = hostname + pathname;
+
+        // Simple check: just verify the platform name is present in the URL
+        if (platform === 'linkedin' && fullUrlString.includes('linkedin')) {
+            return null;
+        } else if ((platform === 'twitter' || platform === 'x') && (fullUrlString.includes('x') || fullUrlString.includes('twitter'))) {
+            return null;
+        } else if (platform === 'youtube' && fullUrlString.includes('youtube')) {
+            return null;
+        } else if (platform === 'instagram' && fullUrlString.includes('instagram')) {
+            return null;
+        } else if (platform === 'facebook' && fullUrlString.includes('facebook')) {
             return null;
         }
-        return `Invalid ${platform} URL. Expected domain: ${expectedDomain}`;
+        return `Invalid ${platform} URL. URL must contain "${platform}"`;
     } catch (e) {
         return `Invalid URL format`;
     }
 };
 
-const getDomain = (platform: string) => {
-    switch (platform) {
-        case 'linkedin': return 'linkedin.com';
-        case 'twitter': return 'x.com';
-        case 'youtube': return 'youtube.com';
-        case 'instagram': return 'instagram.com';
-        case 'facebook': return 'facebook.com';
-        default: return '';
-    }
-};
+
 
 export const usePartnerRegistration = () => {
     const initialFormData = {
