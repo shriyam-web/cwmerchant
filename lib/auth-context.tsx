@@ -97,7 +97,6 @@ interface Merchant {
   status: "active" | "pending" | "suspended" | "inactive";
 }
 
-
 interface MerchantRegisterData {
   email: string;
   password: string;
@@ -111,11 +110,12 @@ interface MerchantAuthContextType {
   loading: boolean;
   loadingProfile: boolean;
   error: string | null;
+  profileRemovedNotice: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (formData: MerchantRegisterData) => Promise<boolean>;
   logout: () => void;
+  clearProfileRemovedNotice: () => void;
 }
-
 
 const MerchantAuthContext = createContext<MerchantAuthContextType | undefined>(
   undefined
@@ -126,7 +126,7 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
-
+  const [profileRemovedNotice, setProfileRemovedNotice] = useState(false);
 
   const fetchMerchantProfile = async (token: string, merchantId?: string) => {
     try {
@@ -144,6 +144,13 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
         // Invalid token → logout
         logout();
         setError("Session expired. Please login again.");
+        return;
+      }
+
+      if (res.status === 404) {
+        // Profile deleted → logout with notice
+        logout();
+        setProfileRemovedNotice(true);
         return;
       }
 
@@ -177,9 +184,37 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Poll merchant existence by email every 30 seconds
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
 
+    const checkMerchantExists = async (email: string) => {
+      try {
+        const res = await fetch("/api/partnerApplication/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ field: "email", value: email }),
+        });
+        const data = await res.json();
+        if (!data.exists) {
+          logout();
+          setProfileRemovedNotice(true);
+        }
+      } catch (err) {
+        console.error("Error checking merchant existence:", err);
+      }
+    };
 
+    if (merchant?.email) {
+      intervalId = setInterval(() => {
+        checkMerchantExists(merchant.email);
+      }, 30000);
+    }
 
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [merchant]);
 
   useEffect(() => {
     const token = localStorage.getItem("merchantToken");
@@ -201,12 +236,6 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
       setLoadingProfile(false);
     }
   }, []);
-
-
-
-
-
-
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -240,9 +269,6 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-
-
-
   const register = async (formData: MerchantRegisterData) => {
     setLoading(true);
     setError(null);
@@ -274,10 +300,24 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("merchant"); // add this
   };
 
+  const clearProfileRemovedNotice = () => {
+    setProfileRemovedNotice(false);
+  };
 
   return (
     <MerchantAuthContext.Provider
-      value={{ merchant, setMerchant, loading, loadingProfile, error, login, register, logout }}
+      value={{
+        merchant,
+        setMerchant,
+        loading,
+        loadingProfile,
+        error,
+        profileRemovedNotice,
+        login,
+        register,
+        logout,
+        clearProfileRemovedNotice,
+      }}
     >
       {children}
     </MerchantAuthContext.Provider>

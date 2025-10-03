@@ -16,6 +16,8 @@ export async function POST(req: Request) {
     let query: any = {};
     if (field === "email") {
       query.email = value.toLowerCase();
+    } else if (field === "merchantSlug") {
+      query.merchantSlug = value.toLowerCase();
     } else if (["phone", "gstNumber", "panNumber"].includes(field)) {
       query[field] = value;
     } else {
@@ -23,7 +25,23 @@ export async function POST(req: Request) {
     }
 
     const existing = await Partner.findOne(query);
-    return NextResponse.json({ exists: !!existing });
+    const exists = !!existing;
+
+    if (exists && field === "merchantSlug") {
+      // Generate suggestions
+      const baseSlug = value.toLowerCase();
+      const suggestions: string[] = [];
+      for (let i = 1; i <= 5 && suggestions.length < 3; i++) {
+        const suggestedSlug = `${baseSlug}${i}`;
+        const suggestedExists = await Partner.findOne({ merchantSlug: suggestedSlug });
+        if (!suggestedExists) {
+          suggestions.push(suggestedSlug);
+        }
+      }
+      return NextResponse.json({ exists: true, suggestions });
+    }
+
+    return NextResponse.json({ exists });
   } catch (err: any) {
     console.error("Check uniqueness error:", err);
     return NextResponse.json({ exists: false }, { status: 500 });

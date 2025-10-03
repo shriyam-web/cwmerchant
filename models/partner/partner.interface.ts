@@ -5,6 +5,7 @@ export interface IPartner extends Document {
     merchantId: string;
     legalName: string;
     displayName: string;
+    merchantSlug?: string;
     email: string;
     emailVerified?: boolean;
     phone: string;
@@ -29,7 +30,7 @@ export interface IPartner extends Document {
     website?: string;
     socialLinks?: {
         linkedin?: string;
-        twitter?: string;
+        x?: string;
         youtube?: string;
         instagram?: string;
         facebook?: string;

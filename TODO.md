@@ -1,10 +1,15 @@
-# Scrollbar Customization Task
+# Partner Registration Step 2 Fixes
 
-## Completed
-- Added custom global scrollbar styles in `app/globals.css` with gradient colors, rounded corners, and hover effects.
-- Updated `components/ui/scroll-area.tsx` ScrollArea component scrollbar thumb to use gradient background and smooth transition on hover.
+## Issues to Fix
+- [ ] Slug uniqueness check not working properly - UI not responding
+- [ ] Email uniqueness check missing or not working
+- [ ] Social media section layout and validation issues
+- [ ] validateSocialMediaURL showing "Invalid URL" for empty fields
 
-## Next Steps
-- Run the Next.js development server using `npm run dev`.
-- Open the website in a browser and verify the new scrollbar styles.
-- Collect user feedback and adjust styles if necessary.
+## Tasks
+- [ ] Fix slug uniqueness check in hooks/usePartnerRegistration.ts
+- [ ] Fix email uniqueness check in hooks/usePartnerRegistration.ts
+- [ ] Improve validateSocialMediaURL function in hooks/usePartnerRegistration.ts
+- [ ] Redesign social media section in Step2ContactInfo.tsx
+- [ ] Fix phone/whatsapp validation display in Step2ContactInfo.tsx
+- [ ] Test all fixes work correctly

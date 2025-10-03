@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useMerchantAuth } from "@/lib/auth-context";
+import ProfileRemovedNotice from "@/components/ui/ProfileRemovedNotice";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { OffersManagement } from "@/components/dashboard/offers-management";
@@ -108,7 +109,7 @@ interface ExtendedMerchant {
 }
 
 export default function Dashboard() {
-  const { merchant, setMerchant, loadingProfile } = useMerchantAuth();
+  const { merchant, setMerchant, loadingProfile, profileRemovedNotice, clearProfileRemovedNotice } = useMerchantAuth();
 
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [stats, setStats] = useState<Stat[]>([]);
@@ -709,6 +710,11 @@ export default function Dashboard() {
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
+      )}
+
+      {/* Profile Removed Notice */}
+      {profileRemovedNotice && (
+        <ProfileRemovedNotice onClose={clearProfileRemovedNotice} />
       )}
 
       <div className="flex">
