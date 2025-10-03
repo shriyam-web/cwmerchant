@@ -24,7 +24,7 @@ export default function Step3LegalInfo({ formData, handleInputChange, fieldError
                         value={formData.gstNumber}
                         onChange={(e) => {
                             if (e.target.value.length <= 15) {
-                                handleInputChange('gstNumber', e.target.value);
+                                handleInputChange('gstNumber', e.target.value.toUpperCase());
                             }
                         }}
                         onBlur={() => formData.gstNumber && checkingField.gstNumber}
@@ -47,7 +47,7 @@ export default function Step3LegalInfo({ formData, handleInputChange, fieldError
                         value={formData.panNumber}
                         onChange={(e) => {
                             if (e.target.value.length <= 10) {
-                                handleInputChange('panNumber', e.target.value);
+                                handleInputChange('panNumber', e.target.value.toUpperCase());
                             }
                         }}
                         onBlur={() => formData.panNumber && checkingField.panNumber}

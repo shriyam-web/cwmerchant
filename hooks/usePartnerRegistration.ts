@@ -268,7 +268,135 @@ export const usePartnerRegistration = () => {
     useEffect(() => {
         const suggestions = generateSuggestedSlugs(formData.displayName, formData.city, formData.locality, formData.category, formData.state);
         setSuggestedSlugs(suggestions);
+
+        // Show warning if not all step 1 fields are filled for better username suggestions
+        const step1Fields = [formData.displayName, formData.city, formData.locality, formData.category, formData.state];
+        const allStep1Filled = step1Fields.every(field => field && field.trim() !== '');
+        if (!allStep1Filled && currentStep === 2) {
+            setFieldErrors(prev => ({ ...prev, merchantSlug: "Fill Up all the fields in step 1 to get better username suggestions" }));
+        } else {
+            setFieldErrors(prev => {
+                if (prev.merchantSlug === "Fill Up all the fields in step 1 to get better username suggestions") {
+                    const newErrors = { ...prev };
+                    delete newErrors.merchantSlug;
+                    return newErrors;
+                }
+                return prev;
+            });
+        }
     }, [formData.displayName, formData.city, formData.locality, formData.category, formData.state, regenerateTrigger, currentStep, generateSuggestedSlugs]);
+
+    // Handle pre-filled data validation and auto-capitalization
+    useEffect(() => {
+        const newFieldErrors = { ...fieldErrors };
+        let hasChanges = false;
+
+        // Auto-capitalize GST and PAN if they're pre-filled in lowercase
+        if (formData.gstNumber && formData.gstNumber !== formData.gstNumber.toUpperCase()) {
+            setFormData(prev => ({ ...prev, gstNumber: prev.gstNumber.toUpperCase() }));
+            hasChanges = true;
+        }
+
+        if (formData.panNumber && formData.panNumber !== formData.panNumber.toUpperCase()) {
+            setFormData(prev => ({ ...prev, panNumber: prev.panNumber.toUpperCase() }));
+            hasChanges = true;
+        }
+
+        // Validate pre-filled GST number
+        if (formData.gstNumber) {
+            if (formData.gstNumber.length > 0 && formData.gstNumber.length < 15) {
+                newFieldErrors.gstNumber = "GST Number must be exactly 15 characters";
+            } else if (formData.gstNumber.length === 15 && !isValidGST(formData.gstNumber)) {
+                newFieldErrors.gstNumber = "Invalid GST format. Should be: 2 digits + 5 letters + 4 digits + 1 letter + 1 digit + 1 letter + 1 digit (e.g., 22AAAAA0000A1Z5)";
+            } else if (formData.gstNumber.length === 15 && isValidGST(formData.gstNumber)) {
+                delete newFieldErrors.gstNumber;
+            } else if (formData.gstNumber.length > 15) {
+                newFieldErrors.gstNumber = "GST Number cannot exceed 15 characters";
+            }
+        }
+
+        // Validate pre-filled PAN number
+        if (formData.panNumber) {
+            if (formData.panNumber.length > 0 && formData.panNumber.length < 10) {
+                newFieldErrors.panNumber = "PAN Number must be exactly 10 characters";
+            } else if (formData.panNumber.length === 10 && !isValidPAN(formData.panNumber)) {
+                newFieldErrors.panNumber = "Invalid PAN format. Should be: 5 letters + 4 digits + 1 letter (e.g., AAAAA0000A)";
+            } else if (formData.panNumber.length === 10 && isValidPAN(formData.panNumber)) {
+                delete newFieldErrors.panNumber;
+            } else if (formData.panNumber.length > 10) {
+                newFieldErrors.panNumber = "PAN Number cannot exceed 10 characters";
+            }
+        }
+
+        // Only update fieldErrors if there are actual changes
+        if (JSON.stringify(newFieldErrors) !== JSON.stringify(fieldErrors)) {
+            setFieldErrors(newFieldErrors);
+        }
+
+        // Prevent infinite re-renders by only running when formData changes for these specific fields
+    }, [formData.gstNumber, formData.panNumber]);
+
+    // Handle pre-filled email validation immediately (without debounce delay)
+    useEffect(() => {
+        const checkEmailUniqueness = async (email: string) => {
+            if (!email || !isValidEmail(email)) return;
+
+            try {
+                setCheckingField(prev => ({ ...prev, email: true }));
+                setCheckedField(prev => ({ ...prev, email: false }));
+
+                const res = await fetch("/api/partnerApplication/check", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ field: "email", value: email })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    setFieldErrors(prev => {
+                        const currentError = prev.email;
+                        if (data.exists) {
+                            return { ...prev, email: `Email ID already registered` };
+                        } else {
+                            // if there is a current error (like format error), keep it
+                            if (currentError && currentError !== `Email ID already registered`) {
+                                return prev;
+                            } else {
+                                return { ...prev, email: undefined };
+                            }
+                        }
+                    });
+                } else {
+                    setFieldErrors(prev => {
+                        const currentError = prev.email;
+                        if (currentError && currentError !== `Email ID already registered`) {
+                            return prev;
+                        } else {
+                            return { ...prev, email: undefined };
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("checkEmail error", err);
+                setFieldErrors(prev => {
+                    const currentError = prev.email;
+                    if (currentError && currentError !== `Email ID already registered`) {
+                        return prev;
+                    } else {
+                        return { ...prev, email: undefined };
+                    }
+                });
+            } finally {
+                setCheckingField(prev => ({ ...prev, email: false }));
+                setCheckedField(prev => ({ ...prev, email: true }));
+            }
+        };
+
+        // Only check if email is pre-filled and valid format
+        if (formData.email && isValidEmail(formData.email)) {
+            checkEmailUniqueness(formData.email);
+        }
+    }, [formData.email]);
 
     // password health tooltip
     const [pwdChecks, setPwdChecks] = useState({
@@ -343,10 +471,14 @@ export const usePartnerRegistration = () => {
                     setFieldErrors(prev => {
                         const currentError = prev[field];
                         if (data.exists) {
-                            setSuggestedSlugs(data.suggestions || []);
+                            if (field !== "email") {
+                                setSuggestedSlugs(data.suggestions || []);
+                            }
                             return { ...prev, [field]: `${fieldLabel(field)} already registered` };
                         } else {
-                            setSuggestedSlugs([]);
+                            if (field !== "email") {
+                                setSuggestedSlugs([]);
+                            }
                             // if there is a current error (like format error), keep it
                             if (currentError && currentError !== `${fieldLabel(field)} already registered`) {
                                 return prev;
@@ -357,7 +489,9 @@ export const usePartnerRegistration = () => {
                     });
                 } else {
                     // server returned error
-                    setSuggestedSlugs([]);
+                    if (field !== "email") {
+                        setSuggestedSlugs([]);
+                    }
                     setFieldErrors(prev => {
                         const currentError = prev[field];
                         if (currentError && currentError !== `${fieldLabel(field)} already registered`) {
@@ -946,25 +1080,33 @@ export const usePartnerRegistration = () => {
                 }
             }
             if (field === "gstNumber") {
-                if (!isValidGST(value)) {
-                    setFieldErrors(prev => ({ ...prev, [field]: "GST Number must be 15 characters (e.g., 22AAAAA0000A1Z5)" }));
-                } else if (fieldErrors[field]?.startsWith("GST Number must be")) {
+                if (value.length > 0 && value.length < 15) {
+                    setFieldErrors(prev => ({ ...prev, [field]: "GST Number must be exactly 15 characters" }));
+                } else if (value.length === 15 && !isValidGST(value)) {
+                    setFieldErrors(prev => ({ ...prev, [field]: "Invalid GST format. Should be: 2 digits + 5 letters + 4 digits + 1 letter + 1 digit + 1 letter + 1 digit (e.g., 22AAAAA0000A1Z5)" }));
+                } else if (value.length === 15 && isValidGST(value)) {
                     setFieldErrors(prev => {
                         const newErrors = { ...prev };
                         delete newErrors[field];
                         return newErrors;
                     });
+                } else if (value.length > 15) {
+                    setFieldErrors(prev => ({ ...prev, [field]: "GST Number cannot exceed 15 characters" }));
                 }
             }
             if (field === "panNumber") {
-                if (!isValidPAN(value)) {
-                    setFieldErrors(prev => ({ ...prev, [field]: "PAN Number must be 10 characters (e.g., AAAAA0000A)" }));
-                } else if (fieldErrors[field]?.startsWith("PAN Number must be")) {
+                if (value.length > 0 && value.length < 10) {
+                    setFieldErrors(prev => ({ ...prev, [field]: "PAN Number must be exactly 10 characters" }));
+                } else if (value.length === 10 && !isValidPAN(value)) {
+                    setFieldErrors(prev => ({ ...prev, [field]: "Invalid PAN format. Should be: 5 letters + 4 digits + 1 letter (e.g., AAAAA0000A)" }));
+                } else if (value.length === 10 && isValidPAN(value)) {
                     setFieldErrors(prev => {
                         const newErrors = { ...prev };
                         delete newErrors[field];
                         return newErrors;
                     });
+                } else if (value.length > 10) {
+                    setFieldErrors(prev => ({ ...prev, [field]: "PAN Number cannot exceed 10 characters" }));
                 }
             }
             if (field === "merchantSlug") {
