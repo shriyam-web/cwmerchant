@@ -39,6 +39,11 @@ const validateSocialMediaURL = (platform: string, url: string) => {
                 return null;
             }
             return `Invalid Twitter URL. Expected domain: x.com or twitter.com`;
+        } else if (platform === 'youtube') {
+            if (hostname === 'youtube.com' || hostname === 'www.youtube.com' || hostname === 'youtu.be') {
+                return null;
+            }
+            return `Invalid YouTube URL. Expected domain: youtube.com, www.youtube.com, or youtu.be`;
         } else if (hostname === expectedDomain) {
             return null;
         }
@@ -259,11 +264,11 @@ export const usePartnerRegistration = () => {
         formDataRef.current = formData;
     }, [formData]);
 
-    // Generate suggested slugs whenever displayName, city, locality, category, or state changes
+    // Generate suggested slugs whenever displayName, city, locality, category, or state changes, or when step changes
     useEffect(() => {
         const suggestions = generateSuggestedSlugs(formData.displayName, formData.city, formData.locality, formData.category, formData.state);
         setSuggestedSlugs(suggestions);
-    }, [formData.displayName, formData.city, formData.locality, formData.category, formData.state, regenerateTrigger, generateSuggestedSlugs]);
+    }, [formData.displayName, formData.city, formData.locality, formData.category, formData.state, regenerateTrigger, currentStep, generateSuggestedSlugs]);
 
     // password health tooltip
     const [pwdChecks, setPwdChecks] = useState({

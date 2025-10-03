@@ -35,8 +35,9 @@ export default function Step2ContactInfo({ formData, handleInputChange, fieldErr
                         id="merchantSlug"
                         value={formData.merchantSlug}
                         placeholder="Select a username from suggestions"
-                        disabled
-                        className="h-10 p-3 w-full border rounded placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm bg-gray-100 cursor-not-allowed"
+                        disabled={suggestedSlugs.length > 0}
+                        onChange={(e) => handleInputChange('merchantSlug', e.target.value)}
+                        className={`h-10 p-3 w-full border rounded placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm ${suggestedSlugs.length > 0 ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                     />
                     {formData.merchantSlug && (
                         <button
