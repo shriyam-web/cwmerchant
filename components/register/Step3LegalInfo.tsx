@@ -22,7 +22,11 @@ export default function Step3LegalInfo({ formData, handleInputChange, fieldError
                     <Input
                         id="gstNumber"
                         value={formData.gstNumber}
-                        onChange={(e) => handleInputChange('gstNumber', e.target.value)}
+                        onChange={(e) => {
+                            if (e.target.value.length <= 15) {
+                                handleInputChange('gstNumber', e.target.value);
+                            }
+                        }}
                         onBlur={() => formData.gstNumber && checkingField.gstNumber}
                         placeholder="Enter GST number"
                         required
@@ -41,7 +45,11 @@ export default function Step3LegalInfo({ formData, handleInputChange, fieldError
                     <Input
                         id="panNumber"
                         value={formData.panNumber}
-                        onChange={(e) => handleInputChange('panNumber', e.target.value)}
+                        onChange={(e) => {
+                            if (e.target.value.length <= 10) {
+                                handleInputChange('panNumber', e.target.value);
+                            }
+                        }}
                         onBlur={() => formData.panNumber && checkingField.panNumber}
                         placeholder="Enter PAN number of Business Owner"
                         required

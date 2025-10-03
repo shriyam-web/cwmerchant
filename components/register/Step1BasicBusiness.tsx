@@ -2,8 +2,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertCircle } from "lucide-react";
-import CityAutocomplete from './CityAutocomplete.tsx';
-import StateAutocomplete from './StateAutocomplete.tsx';
+import CityAutocomplete from './CityAutocomplete';
+import StateAutocomplete from './StateAutocomplete';
 
 interface Step1Props {
     formData: any;
