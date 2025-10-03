@@ -65,9 +65,9 @@ export default function Step5AccountSetup({
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                     {showPwdTooltip && (
-                        <div className="absolute left-0 mt-2 w-80 p-3 bg-white border rounded shadow-lg z-50 text-sm">
-                            <div className="flex items-center justify-between mb-2">
-                                <strong>Password requirements</strong>
+                        <div className="absolute left-0 mt-2 w-full max-w-xs sm:max-w-sm p-3 bg-white border rounded shadow-lg z-50 text-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                                <strong className="mb-1 sm:mb-0">Password requirements</strong>
                                 {(() => {
                                     const passedCount = Object.values(pwdChecks).filter(Boolean).length;
                                     const strengthLevel = passedCount === 0 ? 'No password' : passedCount === 1 ? 'Weak' : passedCount <= 3 ? 'Medium' : passedCount === 4 ? 'Strong' : 'Very Strong';
@@ -81,23 +81,23 @@ export default function Step5AccountSetup({
                             </div>
                             <ul className="space-y-1">
                                 <li className="flex items-center gap-2">
-                                    {pwdChecks.length ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
+                                    {pwdChecks.length ? <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" /> : <span className="w-4 h-4 inline-block flex-shrink-0">•</span>}
                                     <span>At least 8 characters</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    {pwdChecks.uppercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
+                                    {pwdChecks.uppercase ? <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" /> : <span className="w-4 h-4 inline-block flex-shrink-0">•</span>}
                                     <span>One uppercase letter (A–Z)</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    {pwdChecks.lowercase ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
+                                    {pwdChecks.lowercase ? <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" /> : <span className="w-4 h-4 inline-block flex-shrink-0">•</span>}
                                     <span>One lowercase letter (a–z)</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    {pwdChecks.number ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
+                                    {pwdChecks.number ? <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" /> : <span className="w-4 h-4 inline-block flex-shrink-0">•</span>}
                                     <span>One number (0–9)</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    {pwdChecks.special ? <CheckIcon className="w-4 h-4 text-green-600" /> : <span className="w-4 h-4 inline-block">•</span>}
+                                    {pwdChecks.special ? <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" /> : <span className="w-4 h-4 inline-block flex-shrink-0">•</span>}
                                     <span>One special character (!@#$...)</span>
                                 </li>
                             </ul>
@@ -166,9 +166,9 @@ export default function Step5AccountSetup({
                     </div>
                     <h4 className="text-xl font-bold text-gray-900">Review Your Information</h4>
                 </div>
-                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div className="space-y-3 text-sm">
                     <div className="py-2 border-b border-gray-200">
-                        <div className="flex flex-col sm:flex-row sm:justify-between">
+                        <div className="flex flex-col gap-1">
                             <span className="font-medium text-gray-700">Merchant ID:</span>
                             <span className="text-gray-900 break-words">Will be auto generated Upon Submission</span>
                         </div>

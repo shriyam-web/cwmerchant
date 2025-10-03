@@ -1101,6 +1101,24 @@ export const usePartnerRegistration = () => {
                     setFieldErrors(prev => ({ ...prev, [field]: "PAN Number cannot exceed 10 characters" }));
                 }
             }
+            if (field === "phone" || field === "whatsapp") {
+                // For phone numbers, check if it's a valid international format
+                // The react-phone-number-input component handles validation internally
+                // We just need to ensure a value is provided
+                if (value && value.trim() !== '') {
+                    // Extract digits only to count them
+                    const digitsOnly = value.replace(/\D/g, '');
+                    // Allow 10 digits (Indian mobile) or 12-13 digits (with country code)
+                    const isValidLength = digitsOnly.length === 10 || digitsOnly.length === 12 || digitsOnly.length === 13;
+                    if (!isValidLength) {
+                        setFieldErrors(prev => ({ ...prev, [field]: "Please enter a valid phone number" }));
+                    } else {
+                        setFieldErrors(prev => ({ ...prev, [field]: undefined }));
+                    }
+                } else {
+                    setFieldErrors(prev => ({ ...prev, [field]: undefined }));
+                }
+            }
             if (field === "merchantSlug") {
                 if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
                     setFieldErrors(prev => ({ ...prev, [field]: "Profile Slug can only contain letters, numbers, underscores, and hyphens" }));
