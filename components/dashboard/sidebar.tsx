@@ -58,7 +58,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
     { id: 'offers', label: 'Offers', icon: Gift, badge: '3' },
     { id: 'products', label: 'CW Products', icon: Package, badge: null },
-    { id: 'offline-products', label: 'Store Product', icon: Package, badge: null },
+    { id: 'offline-products', label: 'In-Store Product', icon: Package, badge: null },
     { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: '5' },
     { id: 'profile', label: 'Profile Settings', icon: Settings, badge: null },
     { id: 'support', label: 'Digital Support', icon: HelpCircle, badge: null }
