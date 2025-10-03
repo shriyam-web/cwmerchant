@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   try {
     await dbConnect();
