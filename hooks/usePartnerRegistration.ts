@@ -978,12 +978,6 @@ export const usePartnerRegistration = () => {
         setIsSubmitting(true);
 
         try {
-            // Import bcryptjs dynamically to avoid SSR issues in Next.js
-            const bcrypt = (await import('bcryptjs')).default;
-
-            // Hash the password
-            const hashedPassword = await bcrypt.hash(formData.password, 10); // 10 salt rounds
-
             // Maps for converting string values to numbers
             const yearsInBusinessMap: Record<string, number> = {
                 "0-1": 0.5,
@@ -1004,7 +998,6 @@ export const usePartnerRegistration = () => {
             // Create payload without confirmPassword and convert values
             const { confirmPassword, ...tempPayload } = {
                 ...formData,
-                password: hashedPassword,
                 yearsInBusiness: yearsInBusinessMap[formData.yearsInBusiness] || 0,
                 averageMonthlyRevenue: revenueMap[formData.averageMonthlyRevenue] || 0,
             };

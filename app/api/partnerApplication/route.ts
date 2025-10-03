@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic"; // ⬅️ Ensures route runs dynamically
 
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
+import bcrypt from "bcryptjs";
 
 import { NextResponse } from "next/server";
 
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
     const merchantId = "CW-" + Math.random().toString(36).substring(2, 9).toUpperCase();
 
     data.merchantId = merchantId;
-    data.status = "pending"; // Default status for new applications
+    data.status = "active"; // Default status for new applications
 
     // 📩 Normalize Email and Merchant Slug
     if (data.email) {
@@ -48,6 +49,12 @@ export async function POST(req: Request) {
     }
     if (data.merchantSlug) {
       data.merchantSlug = data.merchantSlug.toLowerCase();
+    }
+
+    // 🔐 Hash Password
+    if (data.password) {
+      const saltRounds = 10;
+      data.password = await bcrypt.hash(data.password, saltRounds);
     }
 
     // 💾 Save New Partner

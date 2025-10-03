@@ -56,6 +56,7 @@ const PartnerSchema: Schema = new Schema({
   displayName: { type: String },
   merchantSlug: { type: String, unique: true },
   email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },  // Added password field
   emailVerified: { type: Boolean, default: false },
   phone: { type: String },
   category: { type: String },

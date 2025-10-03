@@ -248,9 +248,9 @@ export default function Step2ContactInfo({ formData, handleInputChange, fieldErr
                             value={formData.socialLinks.instagram}
                             onChange={(e) => handleInputChange('socialLinks.instagram', e.target.value)}
                             placeholder="https://instagram.com/yourhandle"
-                            className={`${formData.socialLinks.instagram && !formData.socialLinks.instagram.includes('instagram.com') ? 'border-red-500' : ''} h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm`}
+                            className={`${formData.socialLinks.instagram && !formData.socialLinks.instagram.toLowerCase().includes('instagram.com') ? 'border-red-500' : ''} h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm`}
                         />
-                        {formData.socialLinks.instagram && !formData.socialLinks.instagram.includes('instagram.com') && (
+                        {formData.socialLinks.instagram && !formData.socialLinks.instagram.toLowerCase().includes('instagram.com') && (
                             <p className="text-red-500 text-sm">Invalid Instagram URL. Expected domain: instagram.com</p>
                         )}
                     </div>
@@ -266,9 +266,9 @@ export default function Step2ContactInfo({ formData, handleInputChange, fieldErr
                             value={formData.socialLinks.facebook}
                             onChange={(e) => handleInputChange('socialLinks.facebook', e.target.value)}
                             placeholder="https://facebook.com/yourpage"
-                            className={`${formData.socialLinks.facebook && !formData.socialLinks.facebook.includes('facebook.com') ? 'border-red-500' : ''} h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm`}
+                            className={`${formData.socialLinks.facebook && !formData.socialLinks.facebook.toLowerCase().includes('facebook.com') ? 'border-red-500' : ''} h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm`}
                         />
-                        {formData.socialLinks.facebook && !formData.socialLinks.facebook.includes('facebook.com') && (
+                        {formData.socialLinks.facebook && !formData.socialLinks.facebook.toLowerCase().includes('facebook.com') && (
                             <p className="text-red-500 text-sm">Invalid Facebook URL. Expected domain: facebook.com</p>
                         )}
                     </div>

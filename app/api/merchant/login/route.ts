@@ -3,7 +3,6 @@ import Partner from "@/models/partner";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
 export async function POST(req: Request) {
   try {
     await dbConnect();
@@ -59,7 +58,7 @@ export async function POST(req: Request) {
       merchant: {
         id: partner._id.toString(),
         email: partner.email,
-        businessName: partner.businessName,
+        businessName: partner.displayName || partner.legalName,
         role: "merchant",
         status: partner.status,
       },
