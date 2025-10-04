@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     const merchantId = "CW-" + Math.random().toString(36).substring(2, 9).toUpperCase();
 
     data.merchantId = merchantId;
-    data.status = "active"; // Default status for new applications
+    data.status = "pending"; // Default status for new applications
 
     // 📩 Normalize Email and Merchant Slug
     if (data.email) {

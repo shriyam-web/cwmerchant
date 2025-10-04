@@ -57,6 +57,7 @@ export interface IPartner extends Document {
     averageRating?: number;
     tags?: string[];
     status: "pending" | "active" | "suspended" | "inactive";
+    
     suspensionReason?: string; // <-- new field added
 
     purchasedPackage?: {
