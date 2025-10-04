@@ -38,9 +38,9 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-6">
               <div className="w-15 h-10 rounded-xl flex items-center justify-center overflow-hidden">
-                <img src="/logo.png" alt="Citywitty Logo" className="w-full h-full object-contain" />
+                <img src="/logo2.png" alt="Merchant Hub Logo" className="w-32 h-16 object-contain" />
               </div>
-              <img src="/logo2.png" alt="Merchant Hub Logo" className="w-32 h-16 object-contain" />
+
             </Link>
             <p className="text-gray-600 mb-2 leading-relaxed">
               Empowering merchants across India to grow their business with premium customers

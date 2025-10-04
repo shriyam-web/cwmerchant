@@ -93,6 +93,7 @@ interface Merchant {
   email: string;
   businessName: string;
   displayName?: string;
+  merchantSlug?: string;
   role: "merchant";
   status: "active" | "pending" | "suspended" | "inactive";
 }

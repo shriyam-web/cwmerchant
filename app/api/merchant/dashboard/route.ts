@@ -28,15 +28,15 @@ export async function GET(req: Request) {
     const stats = [
       {
         title: "Total Products",
-        value: partner.products.length,
+        value: partner.products?.length || 0,
         change: "+2 this week",
         changeType: "positive",
         icon: "Gift",
       },
       {
         title: "Average Rating",
-        value: partner.averageRating.toFixed(1),
-        change: `${partner.ratings.length} reviews`,
+        value: partner.averageRating?.toFixed(1) || "0.0",
+        change: `${partner.ratings?.length || 0} reviews`,
         changeType: "neutral",
         icon: "Star",
       },
@@ -56,7 +56,7 @@ export async function GET(req: Request) {
       },
       {
         title: "Total Earnings",
-        value: `₹${partner.totalEarnings}`,
+        value: `₹${partner.totalEarnings || 0}`,
         change: "",
         changeType: "neutral",
         icon: "DollarSign",
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
       },
       {
         title: "Active Offers",
-        value: partner.products.length, // Assuming offers are tied to products
+        value: partner.products?.length || 0, // Assuming offers are tied to products
         change: "+1 this month",
         changeType: "positive",
         icon: "AlertTriangle",
@@ -118,6 +118,8 @@ export async function GET(req: Request) {
         merchantId: partner.merchantId,
         legalName: partner.legalName || "",
         displayName: partner.displayName,
+        businessName: partner.displayName || partner.legalName,
+        merchantSlug: partner.merchantSlug,
         email: partner.email,
         emailVerified: partner.emailVerified,
         phone: partner.phone,

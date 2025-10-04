@@ -91,14 +91,14 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 {/* avatar: never shrink */}
                 <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center border-4 border-white hover:scale-105 transform transition-transform duration-300">
                   <span className="text-white font-extrabold text-xl select-none">
-                    {merchantInfo.displayName?.charAt(0) || "M"}
+                    {(merchantInfo.displayName || merchantInfo.businessName)?.charAt(0) || "M"}
                   </span>
                 </div>
 
                 {/* text area: allow truncation (min-w-0 required inside flex) */}
                 <div className="min-w-0 flex-1">
                   <div className="font-bold text-gray-900 text-lg truncate tracking-wide">
-                    {merchantInfo.displayName}
+                    {merchantInfo.displayName || merchantInfo.businessName}
                   </div>
                   <div className="text-xs text-gray-600 truncate italic tracking-wide">
                     {merchantInfo.email}
@@ -145,6 +145,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 variant="outline"
                 size="sm"
                 className="w-full justify-start bg-white/40 border-slate-200 hover:bg-white hover:border-blue-300 transition-all duration-200 rounded-lg py-2 text-sm"
+                onClick={() => merchantInfo.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchantInfo.merchantSlug}`, '_blank')}
               >
                 <Eye className="h-4 w-4 mr-2 text-slate-600" />
                 <span className="font-medium text-slate-700">Preview Shop</span>

@@ -1,4 +1,4 @@
-# Fix Merchant Login 500 Error
+s# Fix Merchant Login 500 Error
 
 ## Tasks
 - [x] Add password field to Partner schema (models/partner/partner.schema.ts)

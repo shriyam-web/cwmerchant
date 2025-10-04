@@ -430,7 +430,12 @@ export default function Dashboard() {
                       >
                         {status?.charAt(0).toUpperCase() + status?.slice(1) || "Unknown"}
                       </Badge>
-                      <Button variant="outline" size="sm" className="border-blue-200 text-blue-600 hover:bg-blue-50">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                        onClick={() => merchant.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchant.merchantSlug}`, '_blank')}
+                      >
                         <Eye className="h-4 w-4 mr-2" /> Preview
                       </Button>
                     </div>
