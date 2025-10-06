@@ -22,8 +22,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
     }
 
-    console.log("Partner object fetched from DB:", partner);
-
     // Example stats
     const stats = [
       {
@@ -91,8 +89,6 @@ export async function GET(req: Request) {
       },
     ];
 
-    console.log("Stats to send:", stats);
-
     // Recent Requests (demo)
     const requests = [
       {
@@ -110,8 +106,6 @@ export async function GET(req: Request) {
         time: "5 hours ago",
       },
     ];
-
-    console.log("Requests to send:", requests);
 
     const response = {
       merchant: {
@@ -160,8 +154,6 @@ export async function GET(req: Request) {
       stats,
       requests,
     };
-
-    console.log("Final API response:", response);
 
     return NextResponse.json(response);
   } catch (err) {

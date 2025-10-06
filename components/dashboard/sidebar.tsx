@@ -35,9 +35,11 @@ interface DashboardSidebarProps {
   onTabChange: (tab: string) => void;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  merchantStatus: string;
+  isTourRunning: boolean;
 }
 
-export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSidebarOpen }: DashboardSidebarProps) {
+export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSidebarOpen, merchantStatus, isTourRunning }: DashboardSidebarProps) {
   const router = useRouter();
   const { merchant, logout } = useMerchantAuth(); // ✅ Auth context
   const [merchantInfo, setMerchantInfo] = useState<any>(null);
@@ -114,14 +116,21 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
+              // Allow opening tabs for tour even if disabled
+              const isDisabled = merchantStatus === "pending" && item.id !== "profile" && item.id !== "overview";
+              const allowOpenForTour = merchantStatus === "pending" && isTourRunning;
               return (
                 <button
                   key={item.id}
-                  onClick={() => onTabChange(item.id)}
+                  onClick={() => {
+                    if (!isDisabled || allowOpenForTour) {
+                      onTabChange(item.id);
+                    }
+                  }}
                   className={`w-full flex items-center space-x-3 px-3 py-2.5 mb-2 rounded-lg transition-all duration-200 group relative ${isActive
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md border-l-4 border-l-blue-500'
                     : 'text-slate-700 bg-white/60 border border-slate-200/40 border-l-2 border-l-slate-300 shadow-sm hover:shadow-md hover:bg-white/70 hover:text-slate-900 hover:scale-105'
-                    }`}
+                    } ${isDisabled && !allowOpenForTour ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
 
                   <Icon className={`h-5 w-5 transition-all duration-200 transform ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-600 group-hover:scale-110 group-hover:bg-blue-100 group-hover:rounded-full'
@@ -146,6 +155,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 size="sm"
                 className="w-full justify-start bg-white/40 border-slate-200 hover:bg-white hover:border-blue-300 transition-all duration-200 rounded-lg py-2 text-sm"
                 onClick={() => merchantInfo.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchantInfo.merchantSlug}`, '_blank')}
+                disabled={merchantStatus === "pending"}
               >
                 <Eye className="h-4 w-4 mr-2 text-slate-600" />
                 <span className="font-medium text-slate-700">Preview Shop</span>
@@ -155,6 +165,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 variant="outline"
                 size="sm"
                 className="w-full justify-start bg-white/40 border-slate-200 hover:bg-white hover:border-blue-300 transition-all duration-200 rounded-lg py-2 text-sm"
+                disabled={merchantStatus === "pending"}
               >
                 <Bell className="h-4 w-4 mr-2 text-slate-600" />
                 <span className="font-medium text-slate-700">Notifications</span>

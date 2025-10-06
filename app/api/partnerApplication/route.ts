@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     await dbConnect(); // ✅ Connect to MongoDB
     const data = await req.json();
 
-    // 🔎 Duplicate Check (Email, Phone, GST, PAN, Merchant Slug)
+    // 🔎 Duplicate Check (Email, Phone, GST, PAN, Merchant Slug, Username)
     const existingPartner = await Partner.findOne({
       $or: [
         { email: data.email?.toLowerCase() },
@@ -20,6 +20,7 @@ export async function POST(req: Request) {
         { gstNumber: data.gstNumber },
         { panNumber: data.panNumber },
         { merchantSlug: data.merchantSlug?.toLowerCase() },
+        // { username: data.username?.toLowerCase() },
       ],
     });
 
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
       else if (existingPartner.gstNumber === data.gstNumber) conflictField = "GST Number";
       else if (existingPartner.panNumber === data.panNumber) conflictField = "PAN Number";
       else if (existingPartner.merchantSlug === data.merchantSlug?.toLowerCase()) conflictField = "Merchant Slug";
+      // else if (existingPartner.username === data.username?.toLowerCase()) conflictField = "Username";
 
       return NextResponse.json(
         { error: `${conflictField} already exists. Please use a different one.` },
@@ -43,12 +45,15 @@ export async function POST(req: Request) {
     data.merchantId = merchantId;
     data.status = "pending"; // Default status for new applications
 
-    // 📩 Normalize Email and Merchant Slug
+    // 📩 Normalize Email, Merchant Slug, and Username
     if (data.email) {
       data.email = data.email.toLowerCase();
     }
     if (data.merchantSlug) {
       data.merchantSlug = data.merchantSlug.toLowerCase();
+    }
+    if (data.username) {
+      data.username = data.username.toLowerCase();
     }
 
     // 🔐 Hash Password

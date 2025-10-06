@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Camera, Save, Eye, ExternalLink } from 'lucide-react';
 
 export function ProfileSettings() {
-  const [profile, setProfile] = useState({
+  const initialProfileData = {
     businessName: 'Raj Electronics Store',
     ownerName: 'Rajesh Kumar',
     email: 'rajesh@rajstore.com',
@@ -36,11 +36,17 @@ export function ProfileSettings() {
     website: 'https://rajstore.com',
     facebook: 'https://facebook.com/rajstore',
     instagram: 'https://instagram.com/rajstore'
-  });
+  };
+
+  const [profile, setProfile] = useState(initialProfileData);
+  const [initialProfile, setInitialProfile] = useState(initialProfileData);
+
+  const hasChanges = JSON.stringify(profile) !== JSON.stringify(initialProfile);
 
   const handleSave = () => {
     // Handle profile save
     console.log('Profile saved:', profile);
+    setInitialProfile(profile);
   };
 
   return (
@@ -50,17 +56,11 @@ export function ProfileSettings() {
           <h2 className="text-2xl font-bold text-gray-900">Profile Settings</h2>
           <p className="text-gray-600">Manage your business profile and settings</p>
         </div>
-        <div className="flex space-x-2">
-          <Button variant="outline">
-            <Eye className="h-4 w-4 mr-2" />
-            Preview Shop
-            <ExternalLink className="h-4 w-4 ml-2" />
-          </Button>
-          <Button onClick={handleSave} className="bg-gradient-to-r from-blue-600 to-indigo-600">
-            <Save className="h-4 w-4 mr-2" />
-            Save Changes
-          </Button>
-        </div>
+        <Button variant="outline">
+          <Eye className="h-4 w-4 mr-2" />
+          Preview Shop
+          <ExternalLink className="h-4 w-4 ml-2" />
+        </Button>
       </div>
 
       <Tabs defaultValue="basic" className="w-full">
@@ -99,7 +99,7 @@ export function ProfileSettings() {
                   <Input
                     id="businessName"
                     value={profile.businessName}
-                    onChange={(e) => setProfile({...profile, businessName: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, businessName: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -108,7 +108,7 @@ export function ProfileSettings() {
                   <Input
                     id="ownerName"
                     value={profile.ownerName}
-                    onChange={(e) => setProfile({...profile, ownerName: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, ownerName: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -118,7 +118,7 @@ export function ProfileSettings() {
                     id="email"
                     type="email"
                     value={profile.email}
-                    onChange={(e) => setProfile({...profile, email: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -127,7 +127,7 @@ export function ProfileSettings() {
                   <Input
                     id="phone"
                     value={profile.phone}
-                    onChange={(e) => setProfile({...profile, phone: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -138,7 +138,7 @@ export function ProfileSettings() {
                 <Textarea
                   id="description"
                   value={profile.description}
-                  onChange={(e) => setProfile({...profile, description: e.target.value})}
+                  onChange={(e) => setProfile({ ...profile, description: e.target.value })}
                   className="mt-1"
                   rows={4}
                 />
@@ -158,17 +158,17 @@ export function ProfileSettings() {
                 <Input
                   id="gst"
                   value={profile.gst}
-                  onChange={(e) => setProfile({...profile, gst: e.target.value})}
+                  onChange={(e) => setProfile({ ...profile, gst: e.target.value })}
                   className="mt-1"
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="address">Business Address</Label>
                 <Textarea
                   id="address"
                   value={profile.address}
-                  onChange={(e) => setProfile({...profile, address: e.target.value})}
+                  onChange={(e) => setProfile({ ...profile, address: e.target.value })}
                   className="mt-1"
                   rows={3}
                 />
@@ -180,7 +180,7 @@ export function ProfileSettings() {
                   <Input
                     id="city"
                     value={profile.city}
-                    onChange={(e) => setProfile({...profile, city: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, city: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -189,7 +189,7 @@ export function ProfileSettings() {
                   <Input
                     id="state"
                     value={profile.state}
-                    onChange={(e) => setProfile({...profile, state: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, state: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -198,7 +198,7 @@ export function ProfileSettings() {
                   <Input
                     id="pincode"
                     value={profile.pincode}
-                    onChange={(e) => setProfile({...profile, pincode: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, pincode: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -210,7 +210,7 @@ export function ProfileSettings() {
                   <Input
                     id="website"
                     value={profile.website}
-                    onChange={(e) => setProfile({...profile, website: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, website: e.target.value })}
                     placeholder="https://"
                     className="mt-1"
                   />
@@ -220,7 +220,7 @@ export function ProfileSettings() {
                   <Input
                     id="facebook"
                     value={profile.facebook}
-                    onChange={(e) => setProfile({...profile, facebook: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, facebook: e.target.value })}
                     placeholder="https://facebook.com/"
                     className="mt-1"
                   />
@@ -230,7 +230,7 @@ export function ProfileSettings() {
                   <Input
                     id="instagram"
                     value={profile.instagram}
-                    onChange={(e) => setProfile({...profile, instagram: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, instagram: e.target.value })}
                     placeholder="https://instagram.com/"
                     className="mt-1"
                   />
@@ -252,7 +252,7 @@ export function ProfileSettings() {
                   <Input
                     id="accountHolderName"
                     value={profile.accountHolderName}
-                    onChange={(e) => setProfile({...profile, accountHolderName: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, accountHolderName: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -261,7 +261,7 @@ export function ProfileSettings() {
                   <Input
                     id="bankName"
                     value={profile.bankName}
-                    onChange={(e) => setProfile({...profile, bankName: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, bankName: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -270,7 +270,7 @@ export function ProfileSettings() {
                   <Input
                     id="accountNumber"
                     value={profile.accountNumber}
-                    onChange={(e) => setProfile({...profile, accountNumber: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, accountNumber: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -279,7 +279,7 @@ export function ProfileSettings() {
                   <Input
                     id="ifscCode"
                     value={profile.ifscCode}
-                    onChange={(e) => setProfile({...profile, ifscCode: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, ifscCode: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -301,7 +301,7 @@ export function ProfileSettings() {
                     id="openTime"
                     type="time"
                     value={profile.openTime}
-                    onChange={(e) => setProfile({...profile, openTime: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, openTime: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -311,7 +311,7 @@ export function ProfileSettings() {
                     id="closeTime"
                     type="time"
                     value={profile.closeTime}
-                    onChange={(e) => setProfile({...profile, closeTime: e.target.value})}
+                    onChange={(e) => setProfile({ ...profile, closeTime: e.target.value })}
                     className="mt-1"
                   />
                 </div>
@@ -320,6 +320,18 @@ export function ProfileSettings() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Save Changes Button */}
+      <div className="flex justify-end mt-6">
+        <Button
+          onClick={handleSave}
+          disabled={!hasChanges}
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save className="h-4 w-4 mr-2" />
+          Save Changes
+        </Button>
+      </div>
     </div>
   );
 }

@@ -28,18 +28,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // ❌ Status check
-    if (partner.status !== "active") {
-      let message = "Your account is not active. Contact support.";
-      if (partner.status === "pending") {
-        message = "Your account is pending approval. Please wait up to 48 hours.";
-      } else if (partner.status === "suspended") {
-        message = "Your account has been suspended due to policy violations. Contact support.";
-      } else if (partner.status === "rejected") {
-        message = "Your account application has been rejected. Contact support for details.";
-      }
-
-      return NextResponse.json({ error: message }, { status: 403 });
+    // ❌ Status check - only block suspended and rejected
+    if (partner.status === "suspended") {
+      return NextResponse.json({ error: "Your account has been suspended due to policy violations. Contact support." }, { status: 403 });
+    } else if (partner.status === "rejected") {
+      return NextResponse.json({ error: "Your account application has been rejected. Contact support for details." }, { status: 403 });
     }
 
     // ✅ Success → Generate JWT

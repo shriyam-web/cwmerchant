@@ -3,13 +3,16 @@
 import { useState, useEffect, useMemo } from "react";
 import { useMerchantAuth } from "@/lib/auth-context";
 import ProfileRemovedNotice from "@/components/ui/ProfileRemovedNotice";
+import WelcomePendingModal from "@/components/ui/WelcomePendingModal";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { OffersManagement } from "@/components/dashboard/offers-management";
 import { ProductsManagement } from "@/components/dashboard/products-management";
 import { PurchaseRequests } from "@/components/dashboard/purchase-requests";
 import { ProfileSettings } from "@/components/dashboard/profile-settings";
-import { DigitalSupport } from "@/components/dashboard/digital-support";
+import DigitalSupport from "@/components/dashboard/digital-support";
+import { SupportWidget } from "@/components/dashboard/support-widget";
+import Joyride, { Step } from "react-joyride";
 import {
   Card,
   CardHeader,
@@ -117,6 +120,15 @@ export default function Dashboard() {
   const [loading, setLoading] = useState<boolean>(true);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [showAllMissingFields, setShowAllMissingFields] = useState<boolean>(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const [tourSteps, setTourSteps] = useState<Step[]>([]);
+
+  useEffect(() => {
+    if (tourSteps.length > 0) {
+      setRunTour(true);
+    }
+  }, [tourSteps]);
 
   useEffect(() => {
     setSidebarOpen(window.innerWidth >= 1024);
@@ -302,7 +314,15 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    if (!merchant) return; // login ke baad hi
+    if (!merchant?.id) {
+      setLoading(false); // set loading to false if no id
+      return; // login ke baad hi aur id hai toh
+    }
+
+    // Show welcome modal on every login if status is pending
+    if (merchant.status === "pending") {
+      setShowWelcomeModal(true);
+    }
 
     const fetchDashboard = async () => {
       setLoading(true);
@@ -331,6 +351,88 @@ export default function Dashboard() {
     fetchDashboard();
   }, [merchant?.id]); // only refetch if merchant id changes
 
+  // Tour functions
+  const startTour = () => {
+    setTourSteps(getFullTourSteps());
+    setRunTour(true);
+  };
+
+  const getFullTourSteps = (): Step[] => [
+    { target: "#tour-welcome", content: "Welcome to your dashboard! This is the overview where you'll see your business performance and quick actions." },
+    { target: "#tour-performance", content: "Here you'll track your store's performance with key metrics and analytics." },
+    { target: "#tour-profile-completion", content: "Complete your profile to unlock all dashboard features." },
+    { target: "body", content: "Fill in all your business details here. Complete information helps you get approved faster.", placement: "center" },
+    { target: "body", content: "Once approved, you'll be able to create and manage special offers and promotions for your customers.", placement: "center" },
+    { target: "body", content: "Once approved, you'll be able to add and manage your CW products here.", placement: "center" },
+    { target: "body", content: "Once approved, you'll be able to add and manage your in-store products here.", placement: "center" },
+    { target: "body", content: "Once approved, you'll be able to review and approve customer purchase requests here.", placement: "center" },
+    { target: "body", content: "Once approved, you'll be able to request digital marketing materials and support here.", placement: "center" },
+  ];
+
+  const getTourSteps = (tab: string): Step[] => {
+    switch (tab) {
+      case "overview":
+        return [
+          {
+            target: "#tour-welcome",
+            content: "Welcome to your dashboard! This is the overview where you'll see your business performance and quick actions once approved.",
+          },
+          {
+            target: "#tour-performance",
+            content: "Here you'll track your store's performance with key metrics and analytics after approval.",
+          },
+          {
+            target: "#tour-profile-completion",
+            content: "Complete your profile to unlock all dashboard features and get approved.",
+          },
+        ];
+      case "profile":
+        return [
+          {
+            target: "#tour-profile-settings",
+            content: "Fill in all your business details here. Complete information helps you get approved faster.",
+          },
+        ];
+      case "offers":
+        return [
+          {
+            target: "#tour-unavailable",
+            content: "Once approved, you'll be able to create and manage special offers and promotions for your customers.",
+          },
+        ];
+      case "products":
+        return [
+          {
+            target: "#tour-unavailable",
+            content: "Once approved, you'll be able to add and manage your products and services here.",
+          },
+        ];
+      case "offline-products":
+        return [
+          {
+            target: "#tour-unavailable",
+            content: "Once approved, you'll be able to add and manage your in-store products here.",
+          },
+        ];
+      case "requests":
+        return [
+          {
+            target: "#tour-unavailable",
+            content: "Once approved, you'll be able to review and approve customer purchase requests here.",
+          },
+        ];
+      case "support":
+        return [
+          {
+            target: "#tour-unavailable",
+            content: "Once approved, you'll be able to request digital marketing materials and support here.",
+          },
+        ];
+      default:
+        return [];
+    }
+  };
+
 
   if (loadingProfile || loading) return <div className="p-8">Loading...</div>;
   if (!merchant) return <div className="p-8">No merchant found.</div>;
@@ -338,10 +440,220 @@ export default function Dashboard() {
   const renderMainContent = () => {
     const { status } = merchant;
 
+    const renderProfileCompletionCard = () => (
+      <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}`}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            {missingFields.length > 0 ? (
+              <>
+                <AlertTriangle className="h-5 w-5 text-orange-600" />
+                Complete Your Profile
+              </>
+            ) : (
+              <>
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                Profile Complete
+              </>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {missingFields.length > 0 ? (
+              <>
+                <p className="text-sm text-gray-700">
+                  Complete your profile to unlock full features and increase visibility.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Profile Completion</span>
+                    <span className="font-medium">{profileCompletion}%</span>
+                  </div>
+                  <Progress value={profileCompletion} className="h-3" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                    Missing Fields ({missingFields.length})
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {(showAllMissingFields ? missingFields : missingFields.slice(0, 5)).map((field) => (
+                      <Badge
+                        key={field}
+                        variant="outline"
+                        className="text-xs border-orange-300 text-orange-700 bg-orange-100"
+                      >
+                        {humanReadableFields[field] || field}
+                      </Badge>
+                    ))}
+                    {missingFields.length > 5 && !showAllMissingFields && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
+                        onClick={() => setShowAllMissingFields(true)}
+                      >
+                        +{missingFields.length - 5} more
+                      </Badge>
+                    )}
+                    {showAllMissingFields && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
+                        onClick={() => setShowAllMissingFields(false)}
+                      >
+                        Show less
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100" onClick={() => setActiveTab("profile")}>
+                  Complete Profile
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-gray-700">
+                  Your profile is fully complete! All features are unlocked.
+                </p>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium text-green-700">100% Complete</span>
+                </div>
+                <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100" onClick={() => setActiveTab("profile")}>
+                  Update Profile
+                </Button>
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+
+    if (status === "pending") {
+      if (activeTab === "overview") {
+        return (
+          <div className="space-y-6">
+            {/* Hero Welcome Section */}
+            <Card id="tour-welcome" className="mb-8 bg-white border-0 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      Welcome back, {(merchant as ExtendedMerchant).displayName || merchant.businessName}!
+                    </h3>
+                    <div className="text-gray-600 mb-4">
+                      Your store is currently{" "}
+                      <Badge className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                        pending
+                      </Badge>
+                    </div>
+                    <p className="text-gray-500">Complete your profile to unlock full features.</p>
+                  </div>
+                  <div className="flex flex-row gap-3 items-center ml-auto">
+                    <Button disabled className="bg-gray-400">
+                      Add Product
+                    </Button>
+                    <Button disabled variant="outline">
+                      Create Offer
+                    </Button>
+                    <Button disabled variant="outline">
+                      View Requests
+                    </Button>
+                    <Button variant="outline" onClick={startTour}>
+                      Take Dashboard Tour
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Store Status + Stats */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card id="tour-performance" className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Activity className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">Store Performance</h3>
+                        <p className="text-sm text-gray-600">Available after approval</p>
+                      </div>
+                    </div>
+                    <Badge className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">
+                      Pending
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div id="tour-unavailable" className="text-center py-12">
+                    <div className="mx-auto w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+                      <Activity className="h-10 w-10 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Performance Tracking Unavailable</h3>
+                    <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                      Complete your profile and wait for approval to start tracking performance.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Profile Completion Card */}
+              {renderProfileCompletionCard()}
+            </div>
+          </div>
+        );
+      } else if (activeTab === "profile") {
+        return <div id="tour-profile-settings"><ProfileSettings /></div>;
+      } else {
+        if (runTour) {
+          // During tour, show actual features for educational purposes
+          switch (activeTab) {
+            case "offers":
+              return <div id="tour-offers"><OffersManagement /></div>;
+            case "products":
+              return <div id="tour-products"><ProductsManagement /></div>;
+            case "offline-products":
+              return <div id="tour-offline-products"><ProductsManagement /></div>;
+            case "requests":
+              return <div id="tour-requests"><PurchaseRequests /></div>;
+            case "support":
+              return <div id="tour-support"><DigitalSupport merchant={merchant} /></div>;
+            default:
+              return (
+                <div id="tour-unavailable" className="text-center py-12">
+                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mb-6">
+                    <AlertTriangle className="h-10 w-10 text-yellow-600" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Unavailable</h3>
+                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                    This feature will be available once your profile is approved. Please complete your profile and wait for administrator approval.
+                  </p>
+                </div>
+              );
+          }
+        } else {
+          return (
+            <div id="tour-unavailable" className="text-center py-12">
+              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mb-6">
+                <AlertTriangle className="h-10 w-10 text-yellow-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Unavailable</h3>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                This feature will be available once your profile is approved. Please complete your profile and wait for administrator approval.
+              </p>
+            </div>
+          );
+        }
+      }
+    }
+
     switch (activeTab) {
       case "offers":
         return <OffersManagement />;
       case "products":
+        return <ProductsManagement />;
+      case "offline-products":
         return <ProductsManagement />;
       case "requests":
         return <PurchaseRequests />;
@@ -353,7 +665,7 @@ export default function Dashboard() {
         return (
           <div className="space-y-6">
             {/* Hero Welcome Section */}
-            <Card className="mb-8 bg-white  border-0 transition-all duration-300 ">
+            <Card id="tour-welcome" className="mb-8 bg-white  border-0 transition-all duration-300 ">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                   <div>
@@ -365,11 +677,9 @@ export default function Dashboard() {
                       <Badge
                         className={`text-sm px-3 py-1 rounded-full ${status === "active"
                           ? "bg-green-100 text-green-700"
-                          : status === "pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : status === "suspended"
-                              ? "bg-red-100 text-red-700"
-                              : "bg-gray-100 text-gray-600"
+                          : status === "suspended"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-gray-100 text-gray-600"
                           }`}
                       >
                         {status || "unknown"}
@@ -381,6 +691,7 @@ export default function Dashboard() {
                     <Button
                       onClick={() => setActiveTab("products")}
                       className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105"
+                      disabled={status !== "active"}
                     >
                       Add Product
                     </Button>
@@ -388,6 +699,7 @@ export default function Dashboard() {
                       onClick={() => setActiveTab("offers")}
                       variant="outline"
                       className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 hover:scale-105"
+                      disabled={status !== "active"}
                     >
                       Create Offer
                     </Button>
@@ -395,8 +707,17 @@ export default function Dashboard() {
                       onClick={() => setActiveTab("requests")}
                       variant="outline"
                       className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 hover:scale-105"
+                      disabled={status !== "active"}
                     >
                       View Requests
+                    </Button>
+                    <Button
+                      onClick={startTour}
+                      variant="outline"
+                      className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-300 hover:scale-105"
+                      disabled={status !== "active"}
+                    >
+                      Take Dashboard Tour
                     </Button>
                   </div>
                 </div>
@@ -405,7 +726,7 @@ export default function Dashboard() {
 
             {/* Store Status + Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
+              <Card id="tour-performance" className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -421,11 +742,9 @@ export default function Dashboard() {
                       <Badge
                         className={`px-3 py-1 text-xs font-semibold rounded-full ${status === "active"
                           ? "bg-green-100 text-green-800 border border-green-200"
-                          : status === "pending"
-                            ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-                            : status === "suspended"
-                              ? "bg-red-100 text-red-800 border border-red-200"
-                              : "bg-gray-100 text-gray-800 border border-gray-200"
+                          : status === "suspended"
+                            ? "bg-red-100 text-red-800 border border-red-200"
+                            : "bg-gray-100 text-gray-800 border border-gray-200"
                           }`}
                       >
                         {status?.charAt(0).toUpperCase() + status?.slice(1) || "Unknown"}
@@ -435,6 +754,7 @@ export default function Dashboard() {
                         size="sm"
                         className="border-blue-200 text-blue-600 hover:bg-blue-50"
                         onClick={() => merchant.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchant.merchantSlug}`, '_blank')}
+                      // disabled={status === "pending"}
                       >
                         <Eye className="h-4 w-4 mr-2" /> Preview
                       </Button>
@@ -491,7 +811,7 @@ export default function Dashboard() {
               </Card>
 
               {/* Profile Completion / Missing Info */}
-              <Card className={`${missingFields.length > 0 ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}`}>
+              <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     {missingFields.length > 0 ? (
@@ -722,12 +1042,17 @@ export default function Dashboard() {
         <ProfileRemovedNotice onClose={clearProfileRemovedNotice} />
       )}
 
+      {/* Welcome Pending Modal */}
+      <WelcomePendingModal isOpen={showWelcomeModal} onClose={() => { setShowWelcomeModal(false); setTourSteps(getFullTourSteps()); setRunTour(true); }} />
+
       <div className="flex">
         <DashboardSidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
+          merchantStatus={merchant.status}
+          isTourRunning={runTour}
         />
         <div className="flex-1 lg:ml-64 pt-2 md:pt-4 pb-4 md:pb-8 px-4 md:px-8">
           {/* Menu Button */}
@@ -741,6 +1066,21 @@ export default function Dashboard() {
               {sidebarOpen ? 'Collapse' : 'Menu'}
             </Button>
           </div>
+
+          {/* Pending Account Banner */}
+          {merchant.status === "pending" && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start">
+                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
+                <div>
+                  <h3 className="text-sm font-medium text-yellow-800">Account Pending Approval</h3>
+                  <p className="text-sm text-yellow-700 mt-1">
+                    You are only allowed to fill in the missing details. Changes you make won't be live until the administrator reviews it. Please fill in the info and be patient up to 48 hours. You'll receive an email once your profile goes live.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Dynamic Title and Description based on active tab */}
           <div className="mb-6 md:mb-8">
@@ -771,6 +1111,52 @@ export default function Dashboard() {
           {renderMainContent()}
         </div>
       </div>
+
+      {/* Support Widget */}
+      <SupportWidget />
+
+      {/* Joyride Tour */}
+      <Joyride
+        steps={tourSteps}
+        run={runTour}
+        continuous={true}
+        showProgress={true}
+        showSkipButton={true}
+        hideCloseButton={true}
+        locale={{ skip: "Close Tour" }}
+        callback={(data) => {
+          const { index, status, type } = data;
+          if (status === "finished" || status === "skipped") {
+            setRunTour(false);
+          } else if (type === "step:before") {
+            setTimeout(() => {
+              if (index === 0 || index === 1 || index === 2) {
+                setActiveTab("overview");
+              } else if (index === 3) {
+                setActiveTab("profile");
+              } else if (index === 4) {
+                setActiveTab("offers");
+              } else if (index === 5) {
+                setActiveTab("products");
+              } else if (index === 6) {
+                setActiveTab("offline-products");
+              } else if (index === 7) {
+                setActiveTab("requests");
+              } else if (index === 8) {
+                setActiveTab("support");
+              }
+            }, 500);
+          }
+        }}
+        styles={{
+          options: {
+            primaryColor: "#3b82f6",
+            textColor: "#374151",
+            backgroundColor: "#ffffff",
+            overlayColor: "rgba(0, 0, 0, 0.5)",
+          },
+        }}
+      />
     </div>
   );
 }

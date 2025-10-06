@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IPartner extends Document {
   merchantId: string;
+  username?: string;
   legalName?: string;
   displayName?: string;
   merchantSlug?: string;
@@ -52,6 +53,8 @@ export interface IPartner extends Document {
 
 const PartnerSchema: Schema = new Schema({
   merchantId: { type: String, required: true, unique: true },
+  // username: { type: String, unique: true },
+  username: { type: String },
   legalName: { type: String },
   displayName: { type: String },
   merchantSlug: { type: String, unique: true },
