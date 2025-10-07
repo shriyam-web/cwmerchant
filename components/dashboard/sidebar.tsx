@@ -91,11 +91,19 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
             <div className="p-3 mb-4">
               <div className="flex items-center space-x-3">
                 {/* avatar: never shrink */}
-                <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center border-4 border-white hover:scale-105 transform transition-transform duration-300">
-                  <span className="text-white font-extrabold text-xl select-none">
-                    {(merchantInfo.displayName || merchantInfo.businessName)?.charAt(0) || "M"}
-                  </span>
-                </div>
+                {merchantInfo.logo ? (
+                  <img
+                    src={merchantInfo.logo}
+                    alt="Merchant Logo"
+                    className="flex-shrink-0 w-14 h-14 rounded-full border-4 border-white object-contain hover:scale-105 transform transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center border-4 border-white hover:scale-105 transform transition-transform duration-300">
+                    <span className="text-white font-extrabold text-xl select-none">
+                      {(merchantInfo.displayName || merchantInfo.businessName)?.charAt(0) || "M"}
+                    </span>
+                  </div>
+                )}
 
                 {/* text area: allow truncation (min-w-0 required inside flex) */}
                 <div className="min-w-0 flex-1">
@@ -130,7 +138,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                   className={`w-full flex items-center space-x-3 px-3 py-2.5 mb-2 rounded-lg transition-all duration-200 group relative ${isActive
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md border-l-4 border-l-blue-500'
                     : 'text-slate-700 bg-white/60 border border-slate-200/40 border-l-2 border-l-slate-300 shadow-sm hover:shadow-md hover:bg-white/70 hover:text-slate-900 hover:scale-105'
-                    } ${isDisabled && !allowOpenForTour ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    } ${isDisabled && !allowOpenForTour ? 'opacity-50 cursor-not-allowed' : ''} ${item.id === 'profile' ? 'allow-during-tour' : ''}`}
                 >
 
                   <Icon className={`h-5 w-5 transition-all duration-200 transform ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-600 group-hover:scale-110 group-hover:bg-blue-100 group-hover:rounded-full'

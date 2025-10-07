@@ -101,6 +101,15 @@ const PartnerSchema: Schema = new Schema({
   qrcodeLink: { type: String },
   storeImages: [{ type: String }],
   mapLocation: { type: String },
+  logo: { type: String },
+  bankDetails: {
+    bankName: { type: String },
+    accountHolderName: { type: String },
+    accountNumber: { type: String },
+    ifscCode: { type: String },
+    branchName: { type: String },
+    upiId: { type: String },
+  },
   status: { type: String, default: "pending" },
 });
 

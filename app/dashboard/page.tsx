@@ -12,6 +12,7 @@ import { PurchaseRequests } from "@/components/dashboard/purchase-requests";
 import { ProfileSettings } from "@/components/dashboard/profile-settings";
 import DigitalSupport from "@/components/dashboard/digital-support";
 import { SupportWidget } from "@/components/dashboard/support-widget";
+import { Toaster } from "@/components/ui/sonner";
 import Joyride, { Step } from "react-joyride";
 import {
   Card,
@@ -31,7 +32,7 @@ import {
   Star,
   AlertTriangle,
   Menu,
-  DollarSign,
+  IndianRupee,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -81,7 +82,7 @@ interface ExtendedMerchant {
   website?: string;
   socialLinks?: {
     linkedin?: string;
-    twitter?: string;
+    x?: string;
     youtube?: string;
     instagram?: string;
     facebook?: string;
@@ -157,7 +158,7 @@ export default function Dashboard() {
     "description",
     "website",
     "socialLinks.linkedin",
-    "socialLinks.twitter",
+    "socialLinks.x",
     "socialLinks.youtube",
     "socialLinks.instagram",
     "socialLinks.facebook",
@@ -166,7 +167,6 @@ export default function Dashboard() {
     "businessHours.days",
     "agreeToTerms",
     "tags",
-    "purchasedPackage.variantName",
     "paymentMethodAccepted",
     "minimumOrderValue",
     "bankDetails.bankName",
@@ -202,7 +202,7 @@ export default function Dashboard() {
     description: "Business Description",
     website: "Website",
     "socialLinks.linkedin": "LinkedIn Profile",
-    "socialLinks.twitter": "Twitter Profile",
+    "socialLinks.x": "X Profile",
     "socialLinks.youtube": "YouTube Channel",
     "socialLinks.instagram": "Instagram Profile",
     "socialLinks.facebook": "Facebook Profile",
@@ -306,7 +306,7 @@ export default function Dashboard() {
     Gift: <Gift className="h-6 w-6 text-blue-500" />,
     Star: <Star className="h-6 w-6 text-yellow-500" />,
     Eye: <Eye className="h-6 w-6 text-green-500" />,
-    DollarSign: <DollarSign className="h-6 w-6 text-green-500" />,
+    DollarSign: <IndianRupee className="h-6 w-6 text-green-500" />,
     TrendingUp: <TrendingUp className="h-6 w-6 text-purple-500" />,
     AlertTriangle: <AlertTriangle className="h-6 w-6 text-orange-500" />,
     Users: <Users className="h-6 w-6 text-indigo-500" />,
@@ -505,7 +505,7 @@ export default function Dashboard() {
                     )}
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100" onClick={() => setActiveTab("profile")}>
+                <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 allow-during-tour" onClick={() => setActiveTab("profile")}>
                   Complete Profile
                 </Button>
               </>
@@ -518,7 +518,7 @@ export default function Dashboard() {
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span className="text-sm font-medium text-green-700">100% Complete</span>
                 </div>
-                <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100" onClick={() => setActiveTab("profile")}>
+                <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100 allow-during-tour" onClick={() => setActiveTab("profile")}>
                   Update Profile
                 </Button>
               </>
@@ -565,6 +565,26 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* No Package Card */}
+            {!((merchant as ExtendedMerchant).purchasedPackage?.variantName) && (
+              <Card className="border-red-500 bg-red-50 mb-6">
+                <CardContent className="p-4">
+                  <div className="flex items-start">
+                    <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-red-800">No Active Merchant Plan</h3>
+                      <p className="text-sm text-red-700 mt-1">
+                        You don't have any active merchant plan, purchase now to take your business to heights.
+                      </p>
+                      <Button variant="outline" size="sm" className="mt-2 border-red-300 text-red-700 hover:bg-red-100">
+                        Purchase Now
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Store Status + Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -723,6 +743,23 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* No Package Card */}
+            {!((merchant as ExtendedMerchant).purchasedPackage?.variantName) && (
+              <Card className="border-red-500 bg-red-50 mb-6">
+                <CardContent className="p-4">
+                  <div className="flex items-start">
+                    <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-red-800">No Active Merchant Plan</h3>
+                      <p className="text-sm text-red-700 mt-1">
+                        You don't have any active merchant plan, purchase now to take your business to heights.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Store Status + Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -950,7 +987,7 @@ export default function Dashboard() {
                                   <span className="truncate">{request.time}</span>
                                 </span>
                                 <span className="flex items-center gap-1">
-                                  <DollarSign className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                  <IndianRupee className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
                                   <span className="font-medium">₹{typeof request.amount === 'number' ? request.amount.toLocaleString() : request.amount}</span>
                                 </span>
                               </div>
@@ -1073,11 +1110,14 @@ export default function Dashboard() {
               <div className="flex items-start">
                 <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
                 <div>
-                  <h3 className="text-sm font-medium text-yellow-800">Account Pending Approval</h3>
+                  <h3 className="text-sm font-medium text-yellow-800">Incomplete Account Information</h3>
                   <p className="text-sm text-yellow-700 mt-1">
-                    You are only allowed to fill in the missing details. Changes you make won't be live until the administrator reviews it. Please fill in the info and be patient up to 48 hours. You'll receive an email once your profile goes live.
+                    Your account details are incomplete. Please fill in the missing information and submit for review.
+                    The administrator will verify and approve your updates within 48 hours.
+                    You’ll receive an email once your profile is approved and live.
                   </p>
                 </div>
+
               </div>
             </div>
           )}
@@ -1115,6 +1155,9 @@ export default function Dashboard() {
       {/* Support Widget */}
       <SupportWidget />
 
+      {/* Toaster for notifications */}
+      <Toaster />
+
       {/* Joyride Tour */}
       <Joyride
         steps={tourSteps}
@@ -1123,6 +1166,8 @@ export default function Dashboard() {
         showProgress={true}
         showSkipButton={true}
         hideCloseButton={true}
+        disableOverlayClose={true}
+        disableCloseOnEsc={true}
         locale={{ skip: "Close Tour" }}
         callback={(data) => {
           const { index, status, type } = data;
@@ -1157,6 +1202,26 @@ export default function Dashboard() {
           },
         }}
       />
+
+      {/* Block pointer events during tour */}
+      {runTour && (
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            body * {
+              pointer-events: none !important;
+            }
+            .react-joyride__beacon,
+            .react-joyride__spotlight,
+            .react-joyride__tooltip,
+            .react-joyride__tooltip * {
+              pointer-events: auto !important;
+            }
+            .allow-during-tour {
+              pointer-events: auto !important;
+            }
+          `
+        }} />
+      )}
     </div>
   );
 }

@@ -83,13 +83,13 @@ export default function Step4BusinessDetails({ formData, handleInputChange, fiel
                 <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="businessHoursOpen">Open Time <span className="text-red-500">*</span></Label>
-                        <Input
-                            id="businessHoursOpen"
-                            type="time"
-                            value={formData.businessHours.open}
-                            onChange={(e) => handleInputChange('businessHours.open', e.target.value)}
-                            className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
-                        />
+                    <Input
+                        id="businessHoursOpen"
+                        type="time"
+                        value={formData.businessHours.open}
+                        onChange={(e) => handleInputChange('businessHours', { ...formData.businessHours, open: e.target.value })}
+                        className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
+                    />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="businessHoursClose">Close Time <span className="text-red-500">*</span></Label>
@@ -97,7 +97,7 @@ export default function Step4BusinessDetails({ formData, handleInputChange, fiel
                             id="businessHoursClose"
                             type="time"
                             value={formData.businessHours.close}
-                            onChange={(e) => handleInputChange('businessHours.close', e.target.value)}
+                            onChange={(e) => handleInputChange('businessHours', { ...formData.businessHours, close: e.target.value })}
                             className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                         />
                     </div>
@@ -111,14 +111,8 @@ export default function Step4BusinessDetails({ formData, handleInputChange, fiel
                                     id={`day-${day}`}
                                     checked={formData.businessHours.days.includes(day)}
                                     onCheckedChange={(checked) => {
-                                        const newDaysSet = new Set(formData.businessHours.days);
-                                        if (checked) {
-                                            newDaysSet.add(day);
-                                        } else {
-                                            newDaysSet.delete(day);
-                                        }
-                                        const newDays = Array.from(newDaysSet);
-                                        handleInputChange('businessHours.days', newDays);
+                                        const newDays = checked ? [...formData.businessHours.days, day] : formData.businessHours.days.filter((d: string) => d !== day);
+                                        handleInputChange('businessHours', { ...formData.businessHours, days: newDays });
                                     }}
                                 />
                                 <Label htmlFor={`day-${day}`}>{day}</Label>

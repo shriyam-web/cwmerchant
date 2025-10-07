@@ -162,7 +162,11 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Status-based messages
-      if (data.merchant.status !== "active") {
+      if (data.merchant.status === "inactive") {
+        logout();
+        setProfileRemovedNotice(true);
+        return;
+      } else if (data.merchant.status !== "active") {
         let message = "Your account is not active. Please contact support.";
         if (data.merchant.status === "pending") {
           message = "Your account is pending approval. Please wait up to 48 hours.";
@@ -185,37 +189,7 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Poll merchant existence by email every 30 seconds
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
 
-    const checkMerchantExists = async (email: string) => {
-      try {
-        const res = await fetch("/api/partnerApplication/check", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ field: "email", value: email }),
-        });
-        const data = await res.json();
-        if (!data.exists) {
-          logout();
-          setProfileRemovedNotice(true);
-        }
-      } catch (err) {
-        console.error("Error checking merchant existence:", err);
-      }
-    };
-
-    if (merchant?.email) {
-      intervalId = setInterval(() => {
-        checkMerchantExists(merchant.email);
-      }, 30000);
-    }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [merchant]);
 
   useEffect(() => {
     const token = localStorage.getItem("merchantToken");

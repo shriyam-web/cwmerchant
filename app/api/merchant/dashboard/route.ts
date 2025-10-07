@@ -109,6 +109,7 @@ export async function GET(req: Request) {
 
     const response = {
       merchant: {
+        id: partner._id.toString(),
         merchantId: partner.merchantId,
         legalName: partner.legalName || "",
         displayName: partner.displayName,
@@ -135,7 +136,7 @@ export async function GET(req: Request) {
         website: partner.website || "",
         socialLinks: {
           linkedin: partner.socialLinks?.linkedin || "",
-          twitter: partner.socialLinks?.twitter || "",
+          x: partner.socialLinks?.x || "",
           youtube: partner.socialLinks?.youtube || "",
           instagram: partner.socialLinks?.instagram || "",
           facebook: partner.socialLinks?.facebook || "",
@@ -149,6 +150,8 @@ export async function GET(req: Request) {
         qrcodeLink: partner.qrcodeLink || "",
         storeImages: partner.storeImages || [],
         mapLocation: partner.mapLocation || "",
+        logo: partner.logo || "",
+        bankDetails: partner.bankDetails || {},
         status: partner.status || "pending",
       },
       stats,

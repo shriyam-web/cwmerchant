@@ -18,8 +18,12 @@ export default function WelcomePendingModal({ isOpen, onClose }: WelcomePendingM
             Let the magic begin!
           </DialogTitle>
           <DialogDescription className="text-left">
-            Your account is pending approval. In the meantime, you can fill in the details and please wait up to 48 hours for profile approval. You'll receive an email confirmation once your profile goes live.
+            👋 Welcome! Your account is currently pending approval. <br /><br />
+            Please complete your profile details 📝 and allow up to 48 hours ⏳ for administrator review. <br /><br />
+            Once approved, you’ll receive an email confirmation 📩 and your profile will go live. ✅
           </DialogDescription>
+
+
         </DialogHeader>
         <div className="flex justify-end">
           <Button onClick={onClose}>Got it</Button>
