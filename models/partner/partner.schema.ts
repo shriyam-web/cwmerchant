@@ -12,7 +12,7 @@ import { BranchLocationSchema } from './branchLocation.schema';
 
 
 
-const PartnerSchema: Schema = new Schema({
+const PartnerSchema = new Schema<IPartner>({
   merchantId: { type: String, required: true, unique: true },
   username: { type: String },
   legalName: { type: String, required: true },
