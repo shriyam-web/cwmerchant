@@ -236,7 +236,7 @@ export function ProfileSettings() {
       const data = await response.json();
 
       if (response.ok) {
-        setProfile({ ...profile, logo: data.url });
+        setProfile((prevProfile) => ({ ...prevProfile, logo: data.url }));
         toast.success('Logo uploaded successfully!');
       } else {
         toast.error(data.error || 'Failed to upload logo');
@@ -283,7 +283,10 @@ export function ProfileSettings() {
       const data = await response.json();
 
       if (response.ok) {
-        setProfile({ ...profile, storeImages: [...profile.storeImages, ...data.urls] });
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          storeImages: [...prevProfile.storeImages, ...data.urls]
+        }));
         toast.success('Store images uploaded successfully!');
       } else {
         toast.error(data.error || 'Failed to upload store images');
@@ -296,9 +299,35 @@ export function ProfileSettings() {
     }
   };
 
-  const removeStoreImage = (index: number) => {
-    const newImages = profile.storeImages.filter((_, i) => i !== index);
-    setProfile({ ...profile, storeImages: newImages });
+  const removeStoreImage = async (index: number) => {
+    const imageUrl = profile.storeImages[index];
+
+    try {
+      // Delete from Cloudinary
+      const response = await fetch('/api/delete-image', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageUrl }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Remove from state after successful deletion from Cloudinary
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          storeImages: prevProfile.storeImages.filter((_, i) => i !== index),
+        }));
+        toast.success('Image deleted successfully!');
+      } else {
+        toast.error(data.error || 'Failed to delete image');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Failed to delete image. Please try again.');
+    }
   };
 
   const hasChanges = JSON.stringify(profile) !== JSON.stringify(initialProfile);
@@ -403,7 +432,7 @@ export function ProfileSettings() {
       </div>
 
       <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 h-auto">
           <TabsTrigger value="basic" className="text-xs sm:text-sm">Basic Info</TabsTrigger>
           <TabsTrigger value="business" className="text-xs sm:text-sm">Business</TabsTrigger>
           <TabsTrigger value="banking" className="text-xs sm:text-sm">Banking</TabsTrigger>
@@ -594,7 +623,7 @@ export function ProfileSettings() {
               </div>
 
               <div>
-                <Label htmlFor="mapLocation" className="text-sm font-medium">Business Location</Label>
+                <Label htmlFor="mapLocation" className="text-sm font-medium">Google Map Location</Label>
                 <Input
                   id="mapLocation"
                   value={profile.mapLocation}
@@ -882,15 +911,15 @@ export function ProfileSettings() {
                         alt={`Store ${index + 1}`}
                         className="w-full h-40 object-cover rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
                       />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-xl pointer-events-none"></div>
                       <Button
                         variant="destructive"
                         size="sm"
-                        className="absolute top-3 right-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
+                        className="absolute top-3 right-3 h-8 w-8 p-0 z-10 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
                         onClick={() => removeStoreImage(index)}
                       >
                         <X className="h-4 w-4" />
                       </Button>
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-xl"></div>
                     </div>
                   ))}
                 </div>

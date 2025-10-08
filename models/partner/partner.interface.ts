@@ -1,5 +1,6 @@
 import { Document } from "mongoose";
 import { IProduct } from "./product/product.interface";
+import { IPartnerRating } from "./partnerRating.interface";
 
 export interface IPartner extends Document {
     merchantId: string;
@@ -47,20 +48,16 @@ export interface IPartner extends Document {
     visibility: boolean;
     joinedSince: Date;
     citywittyAssured: boolean;
-    ratings?: {
-        userId: string;
-        user: string;
-        rating: number;
-        review?: string;
-        reply?: string;
-        createdAt?: Date;
-    }[];
+    isVerified?: boolean;
+    isCWassured?: boolean;
+    isPremiumSeller?: boolean;
+    isTopMerchant?: boolean;
+    ratings?: IPartnerRating[];
     averageRating?: number;
     tags?: string[];
     status: "pending" | "active" | "suspended" | "inactive";
-    
-    suspensionReason?: string; // <-- new field added
 
+    suspensionReason?: string; // <-- new field added
     purchasedPackage?: {
         variantName: string;
         purchaseDate: Date;
@@ -78,10 +75,8 @@ export interface IPartner extends Document {
         agentId: string;
         agentName: string;
     };
-
     otpCode?: string;
     otpExpiry?: Date;
-
     paymentMethodAccepted?: string[];
     qrcodeLink?: string;
     businessHours?: {

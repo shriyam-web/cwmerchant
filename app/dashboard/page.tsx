@@ -534,31 +534,31 @@ export default function Dashboard() {
           <div className="space-y-6">
             {/* Hero Welcome Section */}
             <Card id="tour-welcome" className="mb-8 bg-white border-0 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                       Welcome back, {(merchant as ExtendedMerchant).displayName || merchant.businessName}!
                     </h3>
-                    <div className="text-gray-600 mb-4">
+                    <div className="text-sm sm:text-base text-gray-600 mb-4">
                       Your store is currently{" "}
-                      <Badge className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                      <Badge className="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full bg-gray-100 text-gray-600">
                         pending
                       </Badge>
                     </div>
-                    <p className="text-gray-500">Complete your profile to unlock full features.</p>
+                    <p className="text-sm sm:text-base text-gray-500">Complete your profile to unlock full features.</p>
                   </div>
-                  <div className="flex flex-row gap-3 items-center ml-auto">
-                    <Button disabled className="bg-gray-400">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto lg:ml-auto">
+                    <Button disabled className="bg-gray-400 text-sm sm:text-base w-full sm:w-auto">
                       Add Product
                     </Button>
-                    <Button disabled variant="outline">
+                    <Button disabled variant="outline" className="text-sm sm:text-base w-full sm:w-auto">
                       Create Offer
                     </Button>
-                    <Button disabled variant="outline">
+                    <Button disabled variant="outline" className="text-sm sm:text-base w-full sm:w-auto hidden sm:flex">
                       View Requests
                     </Button>
-                    <Button variant="outline" onClick={startTour}>
+                    <Button variant="outline" onClick={startTour} className="text-sm sm:text-base w-full sm:w-auto">
                       Take Dashboard Tour
                     </Button>
                   </div>
@@ -569,15 +569,15 @@ export default function Dashboard() {
             {/* No Package Card */}
             {!((merchant as ExtendedMerchant).purchasedPackage?.variantName) && (
               <Card className="border-red-500 bg-red-50 mb-6">
-                <CardContent className="p-4">
-                  <div className="flex items-start">
-                    <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
-                    <div>
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex flex-col sm:flex-row items-start gap-3">
+                    <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <div className="flex-1">
                       <h3 className="text-sm font-medium text-red-800">No Active Merchant Plan</h3>
-                      <p className="text-sm text-red-700 mt-1">
+                      <p className="text-xs sm:text-sm text-red-700 mt-1">
                         You don't have any active merchant plan, purchase now to take your business to heights.
                       </p>
-                      <Button variant="outline" size="sm" className="mt-2 border-red-300 text-red-700 hover:bg-red-100">
+                      <Button variant="outline" size="sm" className="mt-2 border-red-300 text-red-700 hover:bg-red-100 w-full sm:w-auto text-xs sm:text-sm">
                         Purchase Now
                       </Button>
                     </div>
@@ -587,31 +587,31 @@ export default function Dashboard() {
             )}
 
             {/* Store Status + Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <Card id="tour-performance" className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Activity className="h-6 w-6 text-blue-600" />
+                <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                        <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900">Store Performance</h3>
-                        <p className="text-sm text-gray-600">Available after approval</p>
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900">Store Performance</h3>
+                        <p className="text-xs sm:text-sm text-gray-600">Available after approval</p>
                       </div>
                     </div>
-                    <Badge className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">
+                    <Badge className="px-2 sm:px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">
                       Pending
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div id="tour-unavailable" className="text-center py-12">
-                    <div className="mx-auto w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
-                      <Activity className="h-10 w-10 text-gray-400" />
+                <CardContent className="p-4 sm:p-6">
+                  <div id="tour-unavailable" className="text-center py-8 sm:py-12">
+                    <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+                      <Activity className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Performance Tracking Unavailable</h3>
-                    <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Performance Tracking Unavailable</h3>
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 max-w-md mx-auto px-4">
                       Complete your profile and wait for approval to start tracking performance.
                     </p>
                   </div>
@@ -686,16 +686,16 @@ export default function Dashboard() {
           <div className="space-y-6">
             {/* Hero Welcome Section */}
             <Card id="tour-welcome" className="mb-8 bg-white  border-0 transition-all duration-300 ">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                       Welcome back, {(merchant as ExtendedMerchant).displayName || merchant.businessName}!
                     </h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-sm sm:text-base text-gray-600 mb-4">
                       Your store is currently{" "}
                       <Badge
-                        className={`text-sm px-3 py-1 rounded-full ${status === "active"
+                        className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full ${status === "active"
                           ? "bg-green-100 text-green-700"
                           : status === "suspended"
                             ? "bg-red-100 text-red-700"
@@ -705,12 +705,12 @@ export default function Dashboard() {
                         {status || "unknown"}
                       </Badge>
                     </p>
-                    <p className="text-gray-500">Manage your business efficiently with quick actions below.</p>
+                    <p className="text-sm sm:text-base text-gray-500">Manage your business efficiently with quick actions below.</p>
                   </div>
-                  <div className="flex flex-row gap-3 items-center ml-auto">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto lg:ml-auto">
                     <Button
                       onClick={() => setActiveTab("products")}
-                      className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105"
+                      className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto"
                       disabled={status !== "active"}
                     >
                       Add Product
@@ -718,7 +718,7 @@ export default function Dashboard() {
                     <Button
                       onClick={() => setActiveTab("offers")}
                       variant="outline"
-                      className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 hover:scale-105"
+                      className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto"
                       disabled={status !== "active"}
                     >
                       Create Offer
@@ -726,7 +726,7 @@ export default function Dashboard() {
                     <Button
                       onClick={() => setActiveTab("requests")}
                       variant="outline"
-                      className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 hover:scale-105"
+                      className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto hidden sm:flex"
                       disabled={status !== "active"}
                     >
                       View Requests
@@ -734,7 +734,7 @@ export default function Dashboard() {
                     <Button
                       onClick={startTour}
                       variant="outline"
-                      className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-300 hover:scale-105"
+                      className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto"
                       disabled={status !== "active"}
                     >
                       Take Dashboard Tour
@@ -747,12 +747,12 @@ export default function Dashboard() {
             {/* No Package Card */}
             {!((merchant as ExtendedMerchant).purchasedPackage?.variantName) && (
               <Card className="border-red-500 bg-red-50 mb-6">
-                <CardContent className="p-4">
-                  <div className="flex items-start">
-                    <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
-                    <div>
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex flex-col sm:flex-row items-start gap-3">
+                    <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <div className="flex-1">
                       <h3 className="text-sm font-medium text-red-800">No Active Merchant Plan</h3>
-                      <p className="text-sm text-red-700 mt-1">
+                      <p className="text-xs sm:text-sm text-red-700 mt-1">
                         You don't have any active merchant plan, purchase now to take your business to heights.
                       </p>
                     </div>
@@ -762,22 +762,22 @@ export default function Dashboard() {
             )}
 
             {/* Store Status + Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <Card id="tour-performance" className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Activity className="h-6 w-6 text-blue-600" />
+                <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                        <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900">Store Performance</h3>
-                        <p className="text-sm text-gray-600">Track your business growth and key metrics</p>
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900">Store Performance</h3>
+                        <p className="text-xs sm:text-sm text-gray-600">Track your business growth and key metrics</p>
                       </div>
                     </div>
-                    <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
                       <Badge
-                        className={`px-3 py-1 text-xs font-semibold rounded-full ${status === "active"
+                        className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-full ${status === "active"
                           ? "bg-green-100 text-green-800 border border-green-200"
                           : status === "suspended"
                             ? "bg-red-100 text-red-800 border border-red-200"
@@ -789,25 +789,25 @@ export default function Dashboard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                        className="border-blue-200 text-blue-600 hover:bg-blue-50 text-xs sm:text-sm w-full sm:w-auto"
                         onClick={() => merchant.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchant.merchantSlug}`, '_blank')}
                       // disabled={status === "pending"}
                       >
-                        <Eye className="h-4 w-4 mr-2" /> Preview
+                        <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" /> Preview
                       </Button>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 sm:p-6">
                   {stats.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                       {stats.slice(0, 4).map((stat, idx) => (
                         <div
                           key={idx}
                           className="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 hover:scale-105 text-left"
                         >
                           <div className="flex flex-col justify-center mb-2 sm:mb-3 gap-1">
-                            <div className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex-shrink-0">
+                            <div className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex-shrink-0 w-fit">
                               {iconMap[stat.icon] || <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />}
                             </div>
                           </div>
@@ -831,15 +831,15 @@ export default function Dashboard() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-6">
-                        <Activity className="h-10 w-10 text-blue-600" />
+                    <div className="text-center py-8 sm:py-12 px-4">
+                      <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+                        <Activity className="h-8 w-8 sm:h-10 sm:w-10 text-blue-600" />
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Track Performance</h3>
-                      <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Ready to Track Performance</h3>
+                      <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 max-w-md mx-auto">
                         Start by adding your first product to see real-time analytics and performance metrics.
                       </p>
-                      <Button onClick={() => setActiveTab("products")} className="bg-blue-600 hover:bg-blue-700">
+                      <Button onClick={() => setActiveTab("products")} className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base w-full sm:w-auto">
                         <Gift className="h-4 w-4 mr-2" /> Add Your First Product
                       </Button>
                     </div>
@@ -849,34 +849,34 @@ export default function Dashboard() {
 
               {/* Profile Completion / Missing Info */}
               <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}`}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                     {missingFields.length > 0 ? (
                       <>
-                        <AlertTriangle className="h-5 w-5 text-orange-600" />
+                        <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
                         Complete Your Profile
                       </>
                     ) : (
                       <>
-                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                         Profile Complete
                       </>
                     )}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
+                <CardContent className="p-4 sm:p-6 pt-0">
+                  <div className="space-y-3 sm:space-y-4">
                     {missingFields.length > 0 ? (
                       <>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-xs sm:text-sm text-gray-700">
                           Complete your profile to unlock full features and increase visibility.
                         </p>
                         <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
+                          <div className="flex justify-between text-xs sm:text-sm">
                             <span>Profile Completion</span>
                             <span className="font-medium">{profileCompletion}%</span>
                           </div>
-                          <Progress value={profileCompletion} className="h-3" />
+                          <Progress value={profileCompletion} className="h-2 sm:h-3" />
                         </div>
                         <div className="space-y-1">
                           <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">
@@ -912,20 +912,20 @@ export default function Dashboard() {
                             )}
                           </div>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100">
+                        <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 text-xs sm:text-sm">
                           Complete Profile
                         </Button>
                       </>
                     ) : (
                       <>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-xs sm:text-sm text-gray-700">
                           Your profile is fully complete! All features are unlocked.
                         </p>
                         <div className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                          <span className="text-sm font-medium text-green-700">100% Complete</span>
+                          <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
+                          <span className="text-xs sm:text-sm font-medium text-green-700">100% Complete</span>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100">
+                        <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100 text-xs sm:text-sm">
                           Update Profile
                         </Button>
                       </>
@@ -937,65 +937,63 @@ export default function Dashboard() {
 
             {/* Recent Purchase Requests */}
             <Card className="bg-white border-0 shadow-lg">
-              <CardHeader className="pb-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-br from-orange-100 to-red-100 rounded-lg">
-                      <Users className="h-6 w-6 text-orange-600" />
+              <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 bg-gradient-to-br from-orange-100 to-red-100 rounded-lg">
+                      <Users className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl font-bold text-gray-900">Recent Purchase Requests</CardTitle>
-                      <p className="text-sm text-gray-600 mt-1">Manage customer purchase requests and approvals</p>
+                      <CardTitle className="text-base sm:text-xl font-bold text-gray-900">Recent Purchase Requests</CardTitle>
+                      <p className="text-xs sm:text-sm text-gray-600 mt-1">Manage customer purchase requests and approvals</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => setActiveTab("requests")} className="border-orange-200 text-orange-600 hover:bg-orange-50">
+                  <Button variant="outline" size="sm" onClick={() => setActiveTab("requests")} className="border-orange-200 text-orange-600 hover:bg-orange-50 text-xs sm:text-sm w-full sm:w-auto">
                     View All
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 {requests.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="mx-auto w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4">
-                      <Users className="h-8 w-8 text-gray-400" />
+                  <div className="text-center py-8 sm:py-12 px-4">
+                    <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                      <Users className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Purchase Requests</h3>
-                    <p className="text-gray-600 mb-6 max-w-sm mx-auto">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No Purchase Requests</h3>
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 max-w-sm mx-auto">
                       When customers make purchase requests, they'll appear here for your review and approval.
                     </p>
-                    <Button onClick={() => setActiveTab("products")} variant="outline" className="border-gray-300 text-gray-600 hover:bg-gray-50">
+                    <Button onClick={() => setActiveTab("products")} variant="outline" className="border-gray-300 text-gray-600 hover:bg-gray-50 text-sm sm:text-base w-full sm:w-auto">
                       <Gift className="h-4 w-4 mr-2" /> Check Your Products
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {requests.slice(0, 5).map((request) => (
                       <div
                         key={request.id}
-                        className="bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                        className="bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl p-3 sm:p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center gap-3 md:gap-4">
-                            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm md:text-lg flex-shrink-0">
+                        <div className="flex flex-col gap-3 sm:gap-4">
+                          <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base md:text-lg flex-shrink-0">
                               {request.customer.charAt(0).toUpperCase()}
                             </div>
                             <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-gray-900 text-base md:text-lg truncate">{request.customer}</h4>
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
+                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base md:text-lg truncate">{request.customer}</h4>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-gray-600 mt-1">
                                 <span className="flex items-center gap-1">
-                                  <Menu className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                  <Menu className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                                   <span className="truncate">{request.time}</span>
                                 </span>
                                 <span className="flex items-center gap-1">
-                                  <IndianRupee className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                  <IndianRupee className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                                   <span className="font-medium">₹{typeof request.amount === 'number' ? request.amount.toLocaleString() : request.amount}</span>
                                 </span>
                               </div>
                             </div>
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3">
                             <Badge
-                              className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-full self-start sm:self-center ${request.status === "approved"
+                              className={`px-2 py-1 text-xs font-semibold rounded-full flex-shrink-0 ${request.status === "approved"
                                 ? "bg-green-100 text-green-800 border border-green-200"
                                 : request.status === "pending"
                                   ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
@@ -1004,42 +1002,42 @@ export default function Dashboard() {
                             >
                               {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                             </Badge>
-                            <div className="flex gap-2 self-stretch sm:self-center">
-                              <Button
-                                size="sm"
-                                className="bg-green-600 hover:bg-green-700 text-white px-3 md:px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1 sm:flex-none"
-                                onClick={() => {
-                                  // Handle approve action
-                                  setRequests(prev => prev.map(r =>
-                                    r.id === request.id ? { ...r, status: "approved" as const } : r
-                                  ));
-                                }}
-                              >
-                                <CheckCircle className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                                Approve
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-red-300 text-red-600 hover:bg-red-50 px-3 md:px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1 sm:flex-none"
-                                onClick={() => {
-                                  // Handle decline action
-                                  setRequests(prev => prev.map(r =>
-                                    r.id === request.id ? { ...r, status: "rejected" as const } : r
-                                  ));
-                                }}
-                              >
-                                <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                                Decline
-                              </Button>
-                            </div>
+                          </div>
+                          <div className="flex gap-2 w-full">
+                            <Button
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1"
+                              onClick={() => {
+                                // Handle approve action
+                                setRequests(prev => prev.map(r =>
+                                  r.id === request.id ? { ...r, status: "approved" as const } : r
+                                ));
+                              }}
+                            >
+                              <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-red-300 text-red-600 hover:bg-red-50 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1"
+                              onClick={() => {
+                                // Handle decline action
+                                setRequests(prev => prev.map(r =>
+                                  r.id === request.id ? { ...r, status: "rejected" as const } : r
+                                ));
+                              }}
+                            >
+                              <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                              Decline
+                            </Button>
                           </div>
                         </div>
                       </div>
                     ))}
                     {requests.length > 5 && (
                       <div className="text-center pt-4">
-                        <Button variant="outline" onClick={() => setActiveTab("requests")} className="border-gray-300 text-gray-600 hover:bg-gray-50">
+                        <Button variant="outline" onClick={() => setActiveTab("requests")} className="border-gray-300 text-gray-600 hover:bg-gray-50 text-sm sm:text-base w-full sm:w-auto">
                           View {requests.length - 5} More Requests
                         </Button>
                       </div>
@@ -1051,11 +1049,11 @@ export default function Dashboard() {
 
             {/* Performance Chart */}
             <Card>
-              <CardHeader>
-                <CardTitle>Revenue Analytics</CardTitle>
-                <CardDescription>Monthly and daily performance overview</CardDescription>
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="text-base sm:text-lg md:text-xl">Revenue Analytics</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Monthly and daily performance overview</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <PerformanceChart />
               </CardContent>
             </Card>
@@ -1091,15 +1089,16 @@ export default function Dashboard() {
           merchantStatus={merchant.status}
           isTourRunning={runTour}
         />
-        <div className="flex-1 lg:ml-64 pt-2 md:pt-4 pb-4 md:pb-8 px-4 md:px-8">
+        <div className="flex-1 lg:ml-64 pt-2 sm:pt-3 md:pt-4 pb-4 md:pb-8 px-3 sm:px-4 md:px-8">
           {/* Menu Button */}
-          <div className="flex items-center justify-between mb-4 lg:hidden">
+          <div className="flex items-center justify-between mb-3 sm:mb-4 lg:hidden">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="text-sm"
             >
-              <Menu className="h-5 w-5 mr-1" />
+              <Menu className="h-4 w-4 sm:h-5 sm:w-5 mr-1" />
               {sidebarOpen ? 'Collapse' : 'Menu'}
             </Button>
           </div>
