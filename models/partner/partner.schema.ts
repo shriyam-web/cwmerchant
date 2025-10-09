@@ -10,8 +10,6 @@ import { PodcastLogSchema } from './podcastLog.schema';
 import { OfflineDiscountSchema } from './offlineDiscount.schema';
 import { BranchLocationSchema } from './branchLocation.schema';
 
-
-
 const PartnerSchema = new Schema<IPartner>({
   merchantId: { type: String, required: true, unique: true },
   username: { type: String },
@@ -37,7 +35,7 @@ const PartnerSchema = new Schema<IPartner>({
   businessType: { type: String, required: true },
   yearsInBusiness: { type: String, required: true },
   averageMonthlyRevenue: { type: String, required: true },
-  discountOffered: { type: String, required: true },
+  discountOffered: { type: String },
   description: { type: String, required: true },
   website: { type: String },
   socialLinks: {
@@ -54,13 +52,13 @@ const PartnerSchema = new Schema<IPartner>({
   customOffer: { type: String },
   ribbonTag: { type: String },
   mapLocation: { type: String },
-  visibility: { type: Boolean, required: true },
+  visibility: { type: Boolean, default: false },
   joinedSince: { type: Date, required: true, default: Date.now },
-  citywittyAssured: { type: Boolean, required: true },
-  isVerified: { type: Boolean },
-  isCWassured: { type: Boolean },
-  isPremiumSeller: { type: Boolean },
-  isTopMerchant: { type: Boolean },
+  citywittyAssured: { type: Boolean },
+  isVerified: { type: Boolean, required: true, default: false },
+  isCWassured: { type: Boolean, required: true, default: false },
+  isPremiumSeller: { type: Boolean, required: true, default: false },
+  isTopMerchant: { type: Boolean, required: true, default: false },
   ratings: [PartnerRatingSchema],
   averageRating: { type: Number },
   tags: [{ type: String }],
