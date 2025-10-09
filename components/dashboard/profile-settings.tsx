@@ -73,11 +73,35 @@ interface ExtendedMerchant {
   mapLocation?: string;
 }
 
-export function ProfileSettings() {
+interface ProfileSettingsProps {
+  tourIndex?: number;
+}
+
+export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
   const { merchant, setMerchant } = useMerchantAuth() as {
     merchant: ExtendedMerchant | null;
     setMerchant: ((merchant: ExtendedMerchant) => void) | null;
   };
+
+  const [activeTab, setActiveTab] = useState<string>("basic");
+
+  // Update active tab based on tour index
+  useEffect(() => {
+    if (tourIndex !== undefined) {
+      const tabMapping: Record<number, string> = {
+        3: "basic",        // tour-profile-basic
+        4: "business",     // tour-profile-business
+        5: "banking",      // tour-profile-banking
+        6: "hours",        // tour-profile-hours
+        7: "store-images", // tour-profile-images
+        8: "additional",   // tour-profile-additional
+      };
+      const newTab = tabMapping[tourIndex];
+      if (newTab) {
+        setActiveTab(newTab);
+      }
+    }
+  }, [tourIndex]);
 
   const [profile, setProfile] = useState({
     businessName: '',
@@ -431,7 +455,7 @@ export function ProfileSettings() {
         </Button>
       </div>
 
-      <Tabs defaultValue="basic" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 h-auto">
           <TabsTrigger value="basic" className="text-xs sm:text-sm">Basic Info</TabsTrigger>
           <TabsTrigger value="business" className="text-xs sm:text-sm">Business</TabsTrigger>
@@ -442,7 +466,7 @@ export function ProfileSettings() {
         </TabsList>
 
         <TabsContent value="basic" className="mt-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
+          <Card id="tour-profile-basic" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -544,7 +568,7 @@ export function ProfileSettings() {
         </TabsContent>
 
         <TabsContent value="business" className="mt-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-500">
+          <Card id="tour-profile-business" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -703,7 +727,7 @@ export function ProfileSettings() {
         </TabsContent>
 
         <TabsContent value="banking" className="mt-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-purple-500">
+          <Card id="tour-profile-banking" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-purple-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
@@ -781,7 +805,7 @@ export function ProfileSettings() {
         </TabsContent>
 
         <TabsContent value="hours" className="mt-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-orange-500">
+          <Card id="tour-profile-hours" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-orange-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
@@ -835,7 +859,7 @@ export function ProfileSettings() {
         </TabsContent>
 
         <TabsContent value="additional" className="mt-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-pink-500">
+          <Card id="tour-profile-additional" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-pink-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
@@ -892,7 +916,7 @@ export function ProfileSettings() {
         </TabsContent>
 
         <TabsContent value="store-images" className="mt-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-teal-500">
+          <Card id="tour-profile-images" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-teal-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-teal-500 rounded-full"></div>

@@ -1,16 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, FileText, Calendar, CheckCircle, Clock, Image as ImageIcon, Video, Mic, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FileText, Calendar, CheckCircle, Clock, Image as ImageIcon, Video, Mic, Globe, BarChart3, History, TrendingUp, Zap, Crown, Star } from 'lucide-react';
 
 interface Request {
     id: string;
@@ -29,6 +24,7 @@ interface SupportItemWithLimits {
     total: number;
     used: number;
     icon: any;
+    description: string;
 }
 
 interface SupportItemWithBuilt {
@@ -36,6 +32,7 @@ interface SupportItemWithBuilt {
     title: string;
     built: boolean;
     icon: any;
+    description: string;
 }
 
 type SupportItem = SupportItemWithLimits | SupportItemWithBuilt;
@@ -68,234 +65,260 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
         }
     ]);
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [newRequest, setNewRequest] = useState<Omit<Request, 'id' | 'status' | 'submittedAt' | 'completedAt'>>({
-        type: '',
-        title: '',
-        description: '',
-        priority: 'normal'
-    });
-
-    const handleSubmitRequest = () => {
-        if (!newRequest.type || !newRequest.title || !newRequest.description) return;
-
-        const request: Request = {
-            id: Date.now().toString(),
-            ...newRequest,
-            status: 'pending',
-            submittedAt: new Date().toISOString().split('T')[0],
-            completedAt: null
-        };
-
-        setRequests((prev) => [...prev, request]);
-        setNewRequest({ type: '', title: '', description: '', priority: 'normal' });
-        setIsDialogOpen(false);
-    };
-
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'completed':
-                return 'bg-green-600';
+                return 'text-emerald-600';
             case 'in_progress':
-                return 'bg-blue-600';
+                return 'text-blue-600';
             case 'pending':
-                return 'bg-orange-500';
+                return 'text-amber-600';
             default:
-                return 'bg-gray-500';
+                return 'text-gray-600';
         }
     };
 
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'completed':
-                return <CheckCircle className="h-4 w-4 text-white" />;
+                return <CheckCircle className="h-4 w-4" />;
             case 'in_progress':
-                return <Clock className="h-4 w-4 text-white" />;
+                return <Clock className="h-4 w-4" />;
             case 'pending':
-                return <FileText className="h-4 w-4 text-white" />;
+                return <FileText className="h-4 w-4" />;
             default:
-                return <FileText className="h-4 w-4 text-white" />;
+                return <FileText className="h-4 w-4" />;
         }
     };
 
-    // Use static default support data to avoid redundant API fetch and improve performance
+    const getPriorityColor = (priority: string) => {
+        switch (priority) {
+            case 'urgent':
+                return 'bg-red-100 text-red-800';
+            case 'high':
+                return 'bg-orange-100 text-orange-800';
+            case 'normal':
+                return 'bg-blue-100 text-blue-800';
+            case 'low':
+                return 'bg-gray-100 text-gray-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
+        }
+    };
+
+    // Enhanced support data with descriptions
     const supportData: SupportItem[] = [
-        { type: 'graphics', title: 'Graphics', total: 10, used: 0, icon: ImageIcon },
-        { type: 'reels', title: 'Reels', total: 5, used: 0, icon: Video },
-        { type: 'podcast', title: 'Podcast', total: 3, used: 0, icon: Mic },
-        { type: 'website', title: 'Website', built: false, icon: Globe }
+        {
+            type: 'graphics',
+            title: 'Graphics Design',
+            total: 10,
+            used: 0,
+            icon: ImageIcon,
+            description: 'Professional banners, logos, and marketing graphics'
+        },
+        {
+            type: 'reels',
+            title: 'Video Reels',
+            total: 5,
+            used: 0,
+            icon: Video,
+            description: 'Engaging short-form videos for social media'
+        },
+        {
+            type: 'podcast',
+            title: 'Podcast Production',
+            total: 3,
+            used: 0,
+            icon: Mic,
+            description: 'Professional podcast recording and editing'
+        },
+        {
+            type: 'website',
+            title: 'Website Development',
+            built: false,
+            icon: Globe,
+            description: 'Custom website design and development'
+        }
     ];
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Digital Support</h2>
-                    <p className="text-gray-600">Request professional marketing materials and graphics</p>
+        <div id="tour-support-main" className="min-h-screen">
+            <div className="max-w-7xl mx-auto px-6 pt-0 pb-6 space-y-8">
+                {/* Upgrade Banner */}
+                <Card className="border border-blue-200 bg-blue-50/50">
+                    <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Badge className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1">
+                                        AD
+                                    </Badge>
+                                    <Crown className="h-4 w-4 text-blue-600" />
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                    Don’t settle for limits when your business deserves the world.
+                                </h3>
+                                <p className="text-gray-700 mb-4 leading-relaxed">
+                                    Get higher limits, priority digital support, and access to advanced tools for graphics, videos, podcasts, and websites.
+                                    Strengthen your brand visibility, attract new customers, and accelerate your business growth with expert-level assistance.
+                                </p>
+                                <div className="flex items-center gap-6 text-sm text-gray-600">
+                                    <div className="flex items-center gap-1">
+                                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                                        <span>More Reels and Graphics</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <Zap className="h-4 w-4 text-green-500" />
+                                        <span>Faster Growth</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <TrendingUp className="h-4 w-4 text-purple-500" />
+                                        <span>Own E-commerce Store</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="ml-6 flex-shrink-0">
+                                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg">
+                                    Upgrade Now
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Your Plan Heading */}
+                <div id="tour-support-plan" className="flex items-center gap-3 mb-6">
+
+                    <h2 className="text-2xl font-bold text-gray-900">Your Plan</h2>
+                    <Badge className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1">
+                        {merchant?.purchasedPackage || 'No Plan available'}
+                    </Badge>
                 </div>
 
-                {/* New Request Dialog */}
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-gradient-to-r from-blue-600 to-indigo-600">
-                            <Plus className="h-4 w-4 mr-2" />
-                            New Request
-                        </Button>
-                    </DialogTrigger>
-
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Request Digital Support</DialogTitle>
-                        </DialogHeader>
-
-                        <div className="space-y-4">
-                            {/* Request Type */}
-                            <div>
-                                <Label htmlFor="requestType">Request Type *</Label>
-                                <Select
-                                    value={newRequest.type}
-                                    onValueChange={(value) => setNewRequest({ ...newRequest, type: value })}
-                                >
-                                    <SelectTrigger className="mt-1">
-                                        <SelectValue placeholder="Select request type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="banner">Banner Design</SelectItem>
-                                        <SelectItem value="social_media">Social Media Graphics</SelectItem>
-                                        <SelectItem value="poster">Promotional Poster</SelectItem>
-                                        <SelectItem value="logo">Logo Design</SelectItem>
-                                        <SelectItem value="flyer">Flyer Design</SelectItem>
-                                        <SelectItem value="other">Other</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Title */}
-                            <div>
-                                <Label htmlFor="requestTitle">Title *</Label>
-                                <Input
-                                    id="requestTitle"
-                                    value={newRequest.title}
-                                    onChange={(e) => setNewRequest({ ...newRequest, title: e.target.value })}
-                                    placeholder="Brief title for your request"
-                                    className="mt-1"
-                                />
-                            </div>
-
-                            {/* Description */}
-                            <div>
-                                <Label htmlFor="requestDescription">Description *</Label>
-                                <Textarea
-                                    id="requestDescription"
-                                    value={newRequest.description}
-                                    onChange={(e) => setNewRequest({ ...newRequest, description: e.target.value })}
-                                    placeholder="Describe what you need in detail..."
-                                    className="mt-1"
-                                    rows={4}
-                                />
-                            </div>
-
-                            {/* Priority */}
-                            <div>
-                                <Label htmlFor="priority">Priority</Label>
-                                <Select
-                                    value={newRequest.priority}
-                                    onValueChange={(value) =>
-                                        setNewRequest({ ...newRequest, priority: value as 'low' | 'normal' | 'high' | 'urgent' })
-                                    }
-                                >
-                                    <SelectTrigger className="mt-1">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="low">Low</SelectItem>
-                                        <SelectItem value="normal">Normal</SelectItem>
-                                        <SelectItem value="high">High</SelectItem>
-                                        <SelectItem value="urgent">Urgent</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <Button onClick={handleSubmitRequest} className="w-full">
-                                Submit Request
-                            </Button>
+                {/* Support Services */}
+                <Card id="tour-support-services" className="border border-gray-200">
+                    {/* <CardHeader className="border-b border-gray-100">
+                        <div className="flex items-center">
+                            <BarChart3 className="h-6 w-6 text-gray-700 mr-3" />
+                            <CardTitle className="text-xl font-semibold text-gray-900">Available Support Services</CardTitle>
                         </div>
-                    </DialogContent>
-                </Dialog>
-            </div>
-
-            {/* Support Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                {supportData.map((item) => {
-                    const IconComponent = item.icon;
-                    return (
-                        <Card key={item.type} className="border-0 shadow-lg">
-                            <CardContent className="p-6 text-center">
-                                <IconComponent className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                                <h3 className="font-semibold text-gray-900 mb-4">{item.title}</h3>
-                                {'built' in item ? (
-                                    <div>
-                                        <p className="text-sm text-gray-600 mb-2">Website Built: {(item as SupportItemWithBuilt).built ? 'Yes' : 'No'}</p>
-                                        {(item as SupportItemWithBuilt).built && <CheckCircle className="h-5 w-5 text-green-600 mx-auto" />}
-                                    </div>
-                                ) : (
-                                    <div>
-                                        <div className="flex justify-between text-sm text-gray-600 mb-2">
-                                            <span>Total Allowed: {(item as SupportItemWithLimits).total}</span>
-                                            <span>Used: {(item as SupportItemWithLimits).used}</span>
+                    </CardHeader> */}
+                    <CardContent className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {supportData.map((item) => {
+                                const IconComponent = item.icon;
+                                return (
+                                    <div key={item.type} className="border border-gray-200 rounded-lg p-6">
+                                        <div className="flex items-start space-x-4">
+                                            <div className="p-3 rounded-lg border border-gray-200 flex-shrink-0">
+                                                <IconComponent className="h-6 w-6 text-gray-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
+                                                <p className="text-gray-600 text-sm leading-relaxed mb-4">{item.description}</p>
+                                                {'built' in item ? (
+                                                    <div className="flex items-center space-x-2">
+                                                        {(item as SupportItemWithBuilt).built ? (
+                                                            <>
+                                                                <CheckCircle className="h-5 w-5 text-emerald-600" />
+                                                                <span className="text-sm font-medium text-emerald-700">Built & Ready</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Globe className="h-5 w-5 text-gray-400" />
+                                                                <span className="text-sm font-medium text-gray-500">Not Built Yet</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-3">
+                                                        <div className="flex justify-between items-center text-sm">
+                                                            <span className="text-gray-600">Usage</span>
+                                                            <span className="text-gray-900 font-medium">
+                                                                {(item as SupportItemWithLimits).used} / {(item as SupportItemWithLimits).total}
+                                                            </span>
+                                                        </div>
+                                                        <Progress
+                                                            value={((item as SupportItemWithLimits).used / (item as SupportItemWithLimits).total) * 100}
+                                                            className="h-2"
+                                                        />
+                                                        <p className="text-xs text-gray-500">
+                                                            {Math.round(((item as SupportItemWithLimits).used / (item as SupportItemWithLimits).total) * 100)}% utilized
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                        <Progress value={((item as SupportItemWithLimits).used / (item as SupportItemWithLimits).total) * 100} className="mb-2" />
-                                        <p className="text-xs text-gray-600">{Math.round(((item as SupportItemWithLimits).used / (item as SupportItemWithLimits).total) * 100)}% used</p>
                                     </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    );
-                })}
-            </div>
+                                );
+                            })}
+                        </div>
+                    </CardContent>
+                </Card>
 
-            {/* Request History */}
-            <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">Request History</h3>
-                {requests.map((request) => (
-                    <Card key={request.id}>
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-4">
-                                    <div className="p-3 rounded-lg" style={{ backgroundColor: getStatusColor(request.status) }}>
-                                        {getStatusIcon(request.status)}
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold text-gray-900">{request.title}</h4>
-                                        <p className="text-gray-600 text-sm">{request.description}</p>
-                                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                                            <span className="flex items-center gap-1">
-                                                <Calendar className="h-3 w-3" />
-                                                Submitted: {new Date(request.submittedAt).toLocaleDateString()}
-                                            </span>
-                                            {request.completedAt && (
-                                                <span className="flex items-center gap-1">
-                                                    <CheckCircle className="h-3 w-3" />
-                                                    Completed: {new Date(request.completedAt).toLocaleDateString()}
+                {/* Request History */}
+                <Card id="tour-support-history" className="border border-gray-200">
+                    <CardHeader className="border-b border-gray-100">
+                        <div className="flex items-center">
+                            <History className="h-6 w-6 text-gray-700 mr-3" />
+                            <CardTitle className="text-xl font-semibold text-gray-900">Request History</CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                        <div className="space-y-6">
+                            {requests.map((request) => (
+                                <div key={request.id} className="border border-gray-200 rounded-lg p-6">
+                                    <div className="flex items-start space-x-4">
+                                        <div className={`p-3 rounded-lg border flex-shrink-0 ${getStatusColor(request.status)}`}>
+                                            {getStatusIcon(request.status)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <h4 className="font-semibold text-gray-900 text-base">{request.title}</h4>
+                                                {request.priority && (
+                                                    <Badge className={`text-xs px-2 py-1 ${getPriorityColor(request.priority)}`}>
+                                                        {request.priority}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            <p className="text-gray-600 text-sm mb-4 leading-relaxed">{request.description}</p>
+                                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                                <div className="flex items-center gap-1">
+                                                    <Calendar className="h-4 w-4" />
+                                                    Submitted: {new Date(request.submittedAt).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    })}
+                                                </div>
+                                                {request.completedAt && (
+                                                    <div className="flex items-center gap-1 text-emerald-600">
+                                                        <CheckCircle className="h-4 w-4" />
+                                                        Completed: {new Date(request.completedAt).toLocaleDateString('en-US', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </div>
+                                                )}
+                                                <span className={`text-sm font-medium capitalize ${getStatusColor(request.status)}`}>
+                                                    {request.status.replace('_', ' ')}
                                                 </span>
-                                            )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="text-right">
-                                    <Badge className="text-white capitalize">{request.status.replace('_', ' ')}</Badge>
-                                    {request.status === 'completed' && (
-                                        <Button variant="outline" size="sm" className="mt-2">
-                                            Download
-                                        </Button>
-                                    )}
-                                </div>
+                            ))}
+                        </div>
+                        {requests.length === 0 && (
+                            <div className="text-center py-12">
+                                <History className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                                <h3 className="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
+                                <p className="text-gray-600">Your digital support request history will appear here</p>
                             </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

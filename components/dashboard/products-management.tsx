@@ -86,7 +86,7 @@ export function ProductsManagement() {
   };
 
   return (
-    <div className="space-y-6">
+    <div id="tour-products-main" className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Products Management</h2>
@@ -95,7 +95,7 @@ export function ProductsManagement() {
 
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-blue-600 to-indigo-600">
+            <Button id="tour-products-add" className="bg-gradient-to-r from-blue-600 to-indigo-600">
               <Plus className="h-4 w-4 mr-2" />
               Add Product
             </Button>

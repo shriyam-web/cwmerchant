@@ -124,12 +124,7 @@ export default function Dashboard() {
   const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(false);
   const [runTour, setRunTour] = useState<boolean>(false);
   const [tourSteps, setTourSteps] = useState<Step[]>([]);
-
-  useEffect(() => {
-    if (tourSteps.length > 0) {
-      setRunTour(true);
-    }
-  }, [tourSteps]);
+  const [currentTourIndex, setCurrentTourIndex] = useState<number>(0);
 
   useEffect(() => {
     setSidebarOpen(window.innerWidth >= 1024);
@@ -358,15 +353,24 @@ export default function Dashboard() {
   };
 
   const getFullTourSteps = (): Step[] => [
-    { target: "#tour-welcome", content: "Welcome to your dashboard! This is the overview where you'll see your business performance and quick actions." },
-    { target: "#tour-performance", content: "Here you'll track your store's performance with key metrics and analytics." },
-    { target: "#tour-profile-completion", content: "Complete your profile to unlock all dashboard features." },
-    { target: "body", content: "Fill in all your business details here. Complete information helps you get approved faster.", placement: "center" },
-    { target: "body", content: "Once approved, you'll be able to create and manage special offers and promotions for your customers.", placement: "center" },
-    { target: "body", content: "Once approved, you'll be able to add and manage your CW products here.", placement: "center" },
-    { target: "body", content: "Once approved, you'll be able to add and manage your in-store products here.", placement: "center" },
-    { target: "body", content: "Once approved, you'll be able to review and approve customer purchase requests here.", placement: "center" },
-    { target: "body", content: "Once approved, you'll be able to request digital marketing materials and support here.", placement: "center" },
+    { target: "#tour-welcome", content: "Welcome to your dashboard! This is the overview where you'll see your business performance and quick actions.", placement: "auto" },
+    { target: "#tour-performance", content: "Here you'll track your store's performance with key metrics and analytics.", placement: "auto" },
+    { target: "#tour-profile-completion", content: "Complete your profile to unlock all dashboard features.", placement: "auto" },
+    { target: "#tour-profile-basic", content: "Start with basic information - your name, contact details, and business category. This is essential for customer discovery.", placement: "auto" },
+    { target: "#tour-profile-business", content: "Add your business details including description, website, and social media links to build credibility.", placement: "auto" },
+    { target: "#tour-profile-banking", content: "Set up your banking information for secure payments and settlements.", placement: "auto" },
+    { target: "#tour-profile-hours", content: "Configure your business hours so customers know when you're open.", placement: "auto" },
+    { target: "#tour-profile-images", content: "Upload photos of your store to showcase your business to customers.", placement: "auto" },
+    { target: "#tour-profile-additional", content: "Complete additional details like payment methods and minimum order values.", placement: "auto" },
+    { target: "#tour-offers-main", content: "Create and manage special offers and promotions to attract more customers.", placement: "auto" },
+    { target: "#tour-offers-add", content: "Click here to create new promotional offers and discounts for your products.", placement: "auto" },
+    { target: "#tour-products-main", content: "Add and manage your product catalog. Keep your inventory up to date.", placement: "auto" },
+    { target: "#tour-products-add", content: "Click here to add new products to your catalog with details, pricing, and images.", placement: "auto" },
+    { target: "#tour-requests-main", content: "Review and approve customer purchase requests. Manage your sales pipeline.", placement: "auto" },
+    { target: "#tour-requests-filters", content: "Use filters to quickly find pending, approved, or rejected requests.", placement: "auto" },
+    { target: "#tour-support-plan", content: "Check your current plan and available digital support services.", placement: "auto" },
+    { target: "#tour-support-services", content: "Explore available digital services like graphics design, video reels, and website development.", placement: "auto" },
+    { target: "#tour-support-history", content: "Track all your digital support requests and their completion status.", placement: "auto" },
   ];
 
   const getTourSteps = (tab: string): Step[] => {
@@ -396,35 +400,35 @@ export default function Dashboard() {
       case "offers":
         return [
           {
-            target: "#tour-unavailable",
+            target: "#tour-offers-main",
             content: "Once approved, you'll be able to create and manage special offers and promotions for your customers.",
           },
         ];
       case "products":
         return [
           {
-            target: "#tour-unavailable",
+            target: "#tour-products-main",
             content: "Once approved, you'll be able to add and manage your products and services here.",
           },
         ];
       case "offline-products":
         return [
           {
-            target: "#tour-unavailable",
+            target: "#tour-products-main",
             content: "Once approved, you'll be able to add and manage your in-store products here.",
           },
         ];
       case "requests":
         return [
           {
-            target: "#tour-unavailable",
+            target: "#tour-requests-main",
             content: "Once approved, you'll be able to review and approve customer purchase requests here.",
           },
         ];
       case "support":
         return [
           {
-            target: "#tour-unavailable",
+            target: "#tour-support-main",
             content: "Once approved, you'll be able to request digital marketing materials and support here.",
           },
         ];
@@ -441,84 +445,126 @@ export default function Dashboard() {
     const { status } = merchant;
 
     const renderProfileCompletionCard = () => (
-      <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}`}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {missingFields.length > 0 ? (
-              <>
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
-                Complete Your Profile
-              </>
-            ) : (
-              <>
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                Profile Complete
-              </>
-            )}
-          </CardTitle>
+      <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100" : "border-green-200 bg-gradient-to-br from-green-50 to-green-100"} shadow-lg`}>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              {missingFields.length > 0 ? (
+                <>
+                  <AlertTriangle className="h-5 w-5 text-orange-600" />
+                  Complete Your Profile
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  Profile Complete
+                </>
+              )}
+            </CardTitle>
+            <div className="relative w-16 h-16">
+              <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                <path
+                  d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeDasharray={`${profileCompletion}, 100`}
+                  className={missingFields.length > 0 ? "text-orange-200" : "text-green-200"}
+                />
+                <path
+                  d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeDasharray="100, 100"
+                  className={missingFields.length > 0 ? "text-orange-600" : "text-green-600"}
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className={`text-sm font-bold ${missingFields.length > 0 ? "text-orange-700" : "text-green-700"}`}>
+                  {profileCompletion}%
+                </span>
+              </div>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="p-4 pt-0">
+          <div className="space-y-3">
             {missingFields.length > 0 ? (
               <>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-700 mb-3">
                   Complete your profile to unlock full features and increase visibility.
                 </p>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Profile Completion</span>
-                    <span className="font-medium">{profileCompletion}%</span>
+                <div className="space-y-3">
+                  <div className="bg-white rounded-lg p-3 border border-orange-200 shadow-sm">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-orange-600" />
+                        <span className="text-sm font-medium text-gray-900">Missing Information</span>
+                      </div>
+                      <Badge className="bg-orange-100 text-orange-800 border border-orange-200">
+                        {missingFields.length} fields
+                      </Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {(showAllMissingFields ? missingFields : missingFields.slice(0, 4)).map((field) => (
+                        <Badge
+                          key={field}
+                          variant="outline"
+                          className="text-xs border-orange-300 text-orange-700 bg-orange-50 hover:bg-orange-100 transition-colors"
+                        >
+                          {humanReadableFields[field] || field}
+                        </Badge>
+                      ))}
+                      {missingFields.length > 4 && !showAllMissingFields && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors"
+                          onClick={() => setShowAllMissingFields(true)}
+                        >
+                          +{missingFields.length - 4} more
+                        </Badge>
+                      )}
+                      {showAllMissingFields && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors"
+                          onClick={() => setShowAllMissingFields(false)}
+                        >
+                          Show less
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                  <Progress value={profileCompletion} className="h-3" />
                 </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                    Missing Fields ({missingFields.length})
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {(showAllMissingFields ? missingFields : missingFields.slice(0, 5)).map((field) => (
-                      <Badge
-                        key={field}
-                        variant="outline"
-                        className="text-xs border-orange-300 text-orange-700 bg-orange-100"
-                      >
-                        {humanReadableFields[field] || field}
-                      </Badge>
-                    ))}
-                    {missingFields.length > 5 && !showAllMissingFields && (
-                      <Badge
-                        variant="outline"
-                        className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
-                        onClick={() => setShowAllMissingFields(true)}
-                      >
-                        +{missingFields.length - 5} more
-                      </Badge>
-                    )}
-                    {showAllMissingFields && (
-                      <Badge
-                        variant="outline"
-                        className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
-                        onClick={() => setShowAllMissingFields(false)}
-                      >
-                        Show less
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 allow-during-tour" onClick={() => setActiveTab("profile")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 hover:border-orange-400 font-semibold transition-all duration-200 allow-during-tour"
+                  onClick={() => setActiveTab("profile")}
+                >
+                  <AlertTriangle className="h-4 w-4 mr-2" />
                   Complete Profile
                 </Button>
               </>
             ) : (
               <>
-                <p className="text-sm text-gray-700">
-                  Your profile is fully complete! All features are unlocked.
-                </p>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">100% Complete</span>
+                <div className="text-center py-3">
+                  <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                    <CheckCircle className="h-8 w-8 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Profile Complete!</h3>
+                  <p className="text-sm text-green-700">
+                    Your profile is fully complete! All features are unlocked and your visibility is maximized.
+                  </p>
                 </div>
-                <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100 allow-during-tour" onClick={() => setActiveTab("profile")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-green-300 text-green-700 hover:bg-green-100 hover:border-green-400 font-semibold transition-all duration-200 allow-during-tour"
+                  onClick={() => setActiveTab("profile")}
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
                   Update Profile
                 </Button>
               </>
@@ -589,32 +635,61 @@ export default function Dashboard() {
             {/* Store Status + Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <Card id="tour-performance" className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
-                <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
-                        <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                      <div className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg shadow-sm">
+                        <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-blue-700" />
                       </div>
                       <div>
                         <h3 className="text-lg sm:text-xl font-bold text-gray-900">Store Performance</h3>
-                        <p className="text-xs sm:text-sm text-gray-600">Available after approval</p>
+                        <p className="text-xs sm:text-sm text-gray-600">Key metrics and insights</p>
                       </div>
                     </div>
-                    <Badge className="px-2 sm:px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">
-                      Pending
+                    <Badge className="px-2 sm:px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200 shadow-sm">
+                      Active
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6">
-                  <div id="tour-unavailable" className="text-center py-8 sm:py-12">
-                    <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4 sm:mb-6">
-                      <Activity className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
+                <CardContent className="p-3 sm:p-4">
+                  {loading ? (
+                    <div className="text-center py-6">
+                      <Activity className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-3" />
+                      <p className="text-sm text-gray-600">Loading performance data...</p>
                     </div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Performance Tracking Unavailable</h3>
-                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 max-w-md mx-auto px-4">
-                      Complete your profile and wait for approval to start tracking performance.
-                    </p>
-                  </div>
+                  ) : stats.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {stats.map((stat, index) => (
+                        <div key={index} className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                              {iconMap[stat.icon] || <Gift className="h-5 w-5 text-blue-600" />}
+                            </div>
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${stat.changeType === "positive"
+                              ? "bg-green-100 text-green-800 border border-green-200"
+                              : stat.changeType === "negative"
+                                ? "bg-red-100 text-red-800 border border-red-200"
+                                : "bg-gray-100 text-gray-800 border border-gray-200"
+                              }`}>
+                              {stat.change}
+                            </span>
+                          </div>
+                          <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                          <div className="text-sm text-gray-600 font-medium">{stat.title}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 sm:py-8">
+                      <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                        <Activity className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No Performance Data</h3>
+                      <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 max-w-md mx-auto px-4">
+                        Performance metrics will appear here once you start receiving orders and interactions.
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -624,7 +699,7 @@ export default function Dashboard() {
           </div>
         );
       } else if (activeTab === "profile") {
-        return <div id="tour-profile-settings"><ProfileSettings /></div>;
+        return <div id="tour-profile-settings"><ProfileSettings tourIndex={currentTourIndex} /></div>;
       } else {
         if (runTour) {
           // During tour, show actual features for educational purposes
@@ -678,66 +753,90 @@ export default function Dashboard() {
       case "requests":
         return <PurchaseRequests />;
       case "profile":
-        return <ProfileSettings />;
+        return <ProfileSettings tourIndex={currentTourIndex} />;
       case "support":
         return <DigitalSupport />;
       default:
         return (
           <div className="space-y-6">
             {/* Hero Welcome Section */}
-            <Card id="tour-welcome" className="mb-8 bg-white  border-0 transition-all duration-300 ">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+            <Card id="tour-welcome" className="-mt-4 mb-8 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 border-0 shadow-xl text-white">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
                   <div className="flex-1">
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-                      Welcome back, {(merchant as ExtendedMerchant).displayName || merchant.businessName}!
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-600 mb-4">
-                      Your store is currently{" "}
-                      <Badge
-                        className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full ${status === "active"
-                          ? "bg-green-100 text-green-700"
-                          : status === "suspended"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-gray-100 text-gray-600"
-                          }`}
-                      >
-                        {status || "unknown"}
-                      </Badge>
-                    </p>
-                    <p className="text-sm sm:text-base text-gray-500">Manage your business efficiently with quick actions below.</p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <span className="text-xl font-bold text-white">
+                          {((merchant as ExtendedMerchant).displayName || merchant.businessName || "").charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1">
+                          Welcome back, {(merchant as ExtendedMerchant).displayName || merchant.businessName}!
+                        </h3>
+                        <Badge
+                          className={`text-xs sm:text-sm px-3 py-1 rounded-full font-medium ${status === "active"
+                            ? "bg-green-500 text-white"
+                            : status === "suspended"
+                              ? "bg-red-500 text-white"
+                              : "bg-yellow-500 text-white"
+                            }`}
+                        >
+                          {status === "active" ? "Active" : status === "suspended" ? "Suspended" : "Pending"}
+                        </Badge>
+                      </div>
+                    </div>
+                    <p className="text-blue-100 text-lg mb-4">Manage your business efficiently with quick actions below.</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                      <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                        <div className="text-2xl font-bold text-white">{requests.filter(r => r.status === "pending").length}</div>
+                        <div className="text-xs text-blue-100">Pending Requests</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                        <div className="text-2xl font-bold text-white">{stats.length > 0 ? stats[0]?.value || 0 : 0}</div>
+                        <div className="text-xs text-blue-100">Total Orders</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                        <div className="text-2xl font-bold text-white">{profileCompletion}%</div>
+                        <div className="text-xs text-blue-100">Profile Complete</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                        <div className="text-2xl font-bold text-white">{((merchant as ExtendedMerchant).purchasedPackage?.variantName) ? "Yes" : "No"}</div>
+                        <div className="text-xs text-blue-100">Plan Active</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto lg:ml-auto">
+                  <div className="flex flex-col gap-3 w-full lg:w-auto">
                     <Button
                       onClick={() => setActiveTab("products")}
-                      className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto"
+                      className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
                       disabled={status !== "active"}
                     >
+                      <Gift className="h-5 w-5 mr-2" />
                       Add Product
                     </Button>
                     <Button
                       onClick={() => setActiveTab("offers")}
-                      variant="outline"
-                      className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto"
+                      className="bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-sm font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
                       disabled={status !== "active"}
                     >
+                      <Star className="h-5 w-5 mr-2" />
                       Create Offer
                     </Button>
                     <Button
                       onClick={() => setActiveTab("requests")}
-                      variant="outline"
-                      className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto hidden sm:flex"
+                      className="bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-sm font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 hidden sm:flex"
                       disabled={status !== "active"}
                     >
+                      <Activity className="h-5 w-5 mr-2" />
                       View Requests
                     </Button>
                     <Button
                       onClick={startTour}
-                      variant="outline"
-                      className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base w-full sm:w-auto"
-                      disabled={status !== "active"}
+                      className="bg-white/90 text-blue-700 hover:bg-white border-2 border-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
                     >
-                      Take Dashboard Tour
+                      <Eye className="h-5 w-5 mr-2" />
+                      Take Tour
                     </Button>
                   </div>
                 </div>
@@ -848,46 +947,74 @@ export default function Dashboard() {
               </Card>
 
               {/* Profile Completion / Missing Info */}
-              <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}`}>
-                <CardHeader className="p-4 sm:p-6">
-                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                    {missingFields.length > 0 ? (
-                      <>
-                        <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
-                        Complete Your Profile
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-                        Profile Complete
-                      </>
+              <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100 shadow-lg" : "border-green-200 bg-gradient-to-br from-green-50 to-green-100 shadow-lg"}`}>
+                <CardHeader className="pb-1 sm:pb-2 p-3 sm:p-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      {missingFields.length > 0 ? (
+                        <>
+                          <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
+                          Complete Your Profile
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                          Profile Complete
+                        </>
+                      )}
+                    </CardTitle>
+                    {missingFields.length > 0 && (
+                      <div className="relative w-12 h-12">
+                        <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
+                          <path
+                            d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeDasharray={`${profileCompletion}, 100`}
+                            className="text-orange-200"
+                          />
+                          <path
+                            d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeDasharray="100, 100"
+                            className="text-orange-600"
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-xs font-bold text-orange-700">
+                            {profileCompletion}%
+                          </span>
+                        </div>
+                      </div>
                     )}
-                  </CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 pt-0">
-                  <div className="space-y-3 sm:space-y-4">
+                <CardContent className="p-3 sm:p-4 pt-0">
+                  <div className="space-y-2 sm:space-y-3">
                     {missingFields.length > 0 ? (
                       <>
-                        <p className="text-xs sm:text-sm text-gray-700">
+                        <p className="text-sm sm:text-base text-gray-700 mb-3">
                           Complete your profile to unlock full features and increase visibility.
                         </p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs sm:text-sm">
-                            <span>Profile Completion</span>
-                            <span className="font-medium">{profileCompletion}%</span>
+                        <div className="bg-white rounded-lg p-3 border border-orange-200 shadow-sm">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <AlertTriangle className="h-4 w-4 text-orange-600" />
+                              <span className="text-sm font-medium text-gray-900">Missing Information</span>
+                            </div>
+                            <Badge className="bg-orange-100 text-orange-800 border border-orange-200">
+                              {missingFields.length} fields
+                            </Badge>
                           </div>
-                          <Progress value={profileCompletion} className="h-2 sm:h-3" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                            Missing Fields ({missingFields.length})
-                          </p>
-                          <div className="flex flex-wrap gap-1">
+                          <div className="flex flex-wrap gap-2">
                             {(showAllMissingFields ? missingFields : missingFields.slice(0, 5)).map((field) => (
                               <Badge
                                 key={field}
                                 variant="outline"
-                                className="text-xs border-orange-300 text-orange-700 bg-orange-100"
+                                className="text-xs border-orange-300 text-orange-700 bg-orange-50 hover:bg-orange-100 transition-colors"
                               >
                                 {humanReadableFields[field] || field}
                               </Badge>
@@ -895,7 +1022,7 @@ export default function Dashboard() {
                             {missingFields.length > 5 && !showAllMissingFields && (
                               <Badge
                                 variant="outline"
-                                className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
+                                className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors"
                                 onClick={() => setShowAllMissingFields(true)}
                               >
                                 +{missingFields.length - 5} more
@@ -904,7 +1031,7 @@ export default function Dashboard() {
                             {showAllMissingFields && (
                               <Badge
                                 variant="outline"
-                                className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
+                                className="text-xs border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors"
                                 onClick={() => setShowAllMissingFields(false)}
                               >
                                 Show less
@@ -912,22 +1039,25 @@ export default function Dashboard() {
                             )}
                           </div>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 text-xs sm:text-sm">
+                        <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 hover:border-orange-400 font-semibold transition-all duration-200 text-xs sm:text-sm">
                           Complete Profile
                         </Button>
                       </>
                     ) : (
                       <>
-                        <p className="text-xs sm:text-sm text-gray-700">
-                          Your profile is fully complete! All features are unlocked.
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
-                          <span className="text-xs sm:text-sm font-medium text-green-700">100% Complete</span>
+                        <div className="text-center py-4">
+                          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-3 shadow-lg">
+                            <CheckCircle className="h-8 w-8 text-green-600" />
+                          </div>
+                          <h3 className="text-lg font-bold text-green-800 mb-2">🎉 Profile Complete!</h3>
+                          <p className="text-sm text-green-700 mb-4">
+                            Your profile is fully complete! All features are unlocked and your visibility is maximized.
+                          </p>
+                          <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100 hover:border-green-400 font-semibold transition-all duration-200 text-sm">
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Update Profile
+                          </Button>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100 text-xs sm:text-sm">
-                          Update Profile
-                        </Button>
                       </>
                     )}
                   </div>
@@ -936,7 +1066,7 @@ export default function Dashboard() {
             </div>
 
             {/* Recent Purchase Requests */}
-            <Card className="bg-white border-0 shadow-lg">
+            <Card id="tour-purchase-requests" className="bg-white border-0 shadow-lg">
               <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <div className="flex items-center gap-2 sm:gap-3">
@@ -968,70 +1098,72 @@ export default function Dashboard() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="divide-y divide-gray-100">
                     {requests.slice(0, 5).map((request) => (
                       <div
                         key={request.id}
-                        className="bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl p-3 sm:p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                        className="py-4 first:pt-0 last:pb-0 hover:bg-gray-50 transition-colors duration-200"
                       >
-                        <div className="flex flex-col gap-3 sm:gap-4">
-                          <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base md:text-lg flex-shrink-0">
-                              {request.customer.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base md:text-lg truncate">{request.customer}</h4>
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-gray-600 mt-1">
-                                <span className="flex items-center gap-1">
-                                  <Menu className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                  <span className="truncate">{request.time}</span>
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <IndianRupee className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                  <span className="font-medium">₹{typeof request.amount === 'number' ? request.amount.toLocaleString() : request.amount}</span>
-                                </span>
-                              </div>
-                            </div>
-                            <Badge
-                              className={`px-2 py-1 text-xs font-semibold rounded-full flex-shrink-0 ${request.status === "approved"
-                                ? "bg-green-100 text-green-800 border border-green-200"
-                                : request.status === "pending"
-                                  ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-                                  : "bg-red-100 text-red-800 border border-red-200"
-                                }`}
-                            >
-                              {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                            </Badge>
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0">
+                            {request.customer.charAt(0).toUpperCase()}
                           </div>
-                          <div className="flex gap-2 w-full">
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1"
-                              onClick={() => {
-                                // Handle approve action
-                                setRequests(prev => prev.map(r =>
-                                  r.id === request.id ? { ...r, status: "approved" as const } : r
-                                ));
-                              }}
-                            >
-                              <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-red-300 text-red-600 hover:bg-red-50 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 flex-1"
-                              onClick={() => {
-                                // Handle decline action
-                                setRequests(prev => prev.map(r =>
-                                  r.id === request.id ? { ...r, status: "rejected" as const } : r
-                                ));
-                              }}
-                            >
-                              <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                              Decline
-                            </Button>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{request.customer}</h4>
+                              <Badge
+                                className={`px-2 py-1 text-xs font-medium rounded-full ml-2 flex-shrink-0 ${request.status === "approved"
+                                  ? "bg-green-100 text-green-800 border border-green-200"
+                                  : request.status === "pending"
+                                    ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                                    : "bg-red-100 text-red-800 border border-red-200"
+                                  }`}
+                              >
+                                {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
+                              <span className="flex items-center gap-1">
+                                <Menu className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                                <span>{request.time}</span>
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <IndianRupee className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                                <span className="font-medium">₹{typeof request.amount === 'number' ? request.amount.toLocaleString() : request.amount}</span>
+                              </span>
+                            </div>
                           </div>
+                          {request.status === "pending" && (
+                            <div className="flex gap-2 flex-shrink-0">
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-1 text-xs font-medium rounded-md"
+                                onClick={() => {
+                                  // Handle approve action
+                                  setRequests(prev => prev.map(r =>
+                                    r.id === request.id ? { ...r, status: "approved" as const } : r
+                                  ));
+                                }}
+                              >
+                                <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-red-300 text-red-600 hover:bg-red-50 px-3 sm:px-4 py-1 text-xs font-medium rounded-md"
+                                onClick={() => {
+                                  // Handle decline action
+                                  setRequests(prev => prev.map(r =>
+                                    r.id === request.id ? { ...r, status: "rejected" as const } : r
+                                  ));
+                                }}
+                              >
+                                <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                                Decline
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -1048,7 +1180,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Performance Chart */}
-            <Card>
+            <Card id="tour-performance-chart">
               <CardHeader className="p-4 sm:p-6">
                 <CardTitle className="text-base sm:text-lg md:text-xl">Revenue Analytics</CardTitle>
                 <CardDescription className="text-xs sm:text-sm">Monthly and daily performance overview</CardDescription>
@@ -1161,35 +1293,118 @@ export default function Dashboard() {
       <Joyride
         steps={tourSteps}
         run={runTour}
+        stepIndex={currentTourIndex}
         continuous={true}
         showProgress={true}
         showSkipButton={true}
         hideCloseButton={true}
         disableOverlayClose={true}
         disableCloseOnEsc={true}
-        locale={{ skip: "Close Tour" }}
+        scrollToFirstStep={true}
+        spotlightClicks={false}
+        disableScrolling={false}
+        locale={{
+          skip: "Close Tour",
+          last: "Finish Tour",
+          next: "Next",
+          back: "Back"
+        }}
+        floaterProps={{
+          disableAnimation: false,
+          styles: {
+            floater: {
+              filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))',
+            },
+          },
+          options: {
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: 'viewport',
+            },
+            flip: {
+              enabled: true,
+              behavior: ['top', 'bottom', 'left', 'right'],
+            },
+            offset: {
+              enabled: true,
+              offset: '0, 10',
+            },
+          },
+        }}
         callback={(data) => {
-          const { index, status, type } = data;
-          if (status === "finished" || status === "skipped") {
+          const { index, status, type, action, lifecycle } = data;
+
+          console.log('Tour callback:', { index, status, type, action, lifecycle });
+
+          // Handle tour completion, skip, or close
+          if (status === "finished" || status === "skipped" || action === "close" || action === "skip") {
+            console.log('Tour ended:', status, action);
             setRunTour(false);
-          } else if (type === "step:before") {
+            setCurrentTourIndex(0);
+            setTourSteps([]);
+            setActiveTab("overview");
+            return;
+          }
+
+          // Handle reaching the last step and clicking next/finish
+          if (type === "step:after" && action === "next" && index >= tourSteps.length - 1) {
+            console.log('Reached last step, ending tour');
             setTimeout(() => {
-              if (index === 0 || index === 1 || index === 2) {
-                setActiveTab("overview");
-              } else if (index === 3) {
-                setActiveTab("profile");
-              } else if (index === 4) {
-                setActiveTab("offers");
-              } else if (index === 5) {
-                setActiveTab("products");
-              } else if (index === 6) {
-                setActiveTab("offline-products");
-              } else if (index === 7) {
-                setActiveTab("requests");
-              } else if (index === 8) {
-                setActiveTab("support");
-              }
-            }, 500);
+              setRunTour(false);
+              setCurrentTourIndex(0);
+              setTourSteps([]);
+              setActiveTab("overview");
+            }, 100);
+            return;
+          }
+
+          // Handle navigation between steps
+          if (type === "step:after" && (action === "next" || action === "prev")) {
+            // Calculate target index based on action
+            const targetIndex = action === "next" ? index + 1 : index - 1;
+
+            // Check if we're going beyond the tour steps
+            if (targetIndex >= tourSteps.length || targetIndex < 0) {
+              console.log('Tour navigation out of bounds, ending tour');
+              setRunTour(false);
+              setCurrentTourIndex(0);
+              setTourSteps([]);
+              setActiveTab("overview");
+              return;
+            }
+
+            // Determine which tab the target step needs
+            let requiredTab = "overview";
+            if (targetIndex >= 3 && targetIndex <= 8) {
+              requiredTab = "profile";
+            } else if (targetIndex === 9 || targetIndex === 10) {
+              requiredTab = "offers";
+            } else if (targetIndex === 11 || targetIndex === 12) {
+              requiredTab = "products";
+            } else if (targetIndex === 13 || targetIndex === 14) {
+              requiredTab = "requests";
+            } else if (targetIndex >= 15 && targetIndex <= 17) {
+              requiredTab = "support";
+            }
+
+            console.log(`Moving to step ${targetIndex} (tab: ${requiredTab}, current: ${activeTab})`);
+
+            // Pause tour temporarily to allow DOM updates
+            setRunTour(false);
+
+            // Update tour index so child components receive correct prop
+            setCurrentTourIndex(targetIndex);
+
+            // Switch tab if different from current
+            if (requiredTab !== activeTab) {
+              console.log(`Switching tab from ${activeTab} to ${requiredTab}`);
+              setActiveTab(requiredTab);
+            }
+
+            // Wait for DOM to update (child components need time to render/update)
+            setTimeout(() => {
+              setRunTour(true);
+            }, 350);
           }
         }}
         styles={{
@@ -1198,6 +1413,39 @@ export default function Dashboard() {
             textColor: "#374151",
             backgroundColor: "#ffffff",
             overlayColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 10000,
+            width: typeof window !== 'undefined' && window.innerWidth < 640 ? '90vw' : 400,
+          },
+          tooltip: {
+            borderRadius: 8,
+            padding: typeof window !== 'undefined' && window.innerWidth < 640 ? 12 : 20,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? 14 : 16,
+            maxWidth: typeof window !== 'undefined' && window.innerWidth < 640 ? '90vw' : '400px',
+          },
+          tooltipContainer: {
+            textAlign: 'left',
+          },
+          tooltipContent: {
+            padding: typeof window !== 'undefined' && window.innerWidth < 640 ? '8px 0' : '12px 0',
+          },
+          buttonNext: {
+            backgroundColor: '#3b82f6',
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? 13 : 14,
+            padding: typeof window !== 'undefined' && window.innerWidth < 640 ? '8px 12px' : '10px 16px',
+            borderRadius: 6,
+          },
+          buttonBack: {
+            marginRight: 8,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? 13 : 14,
+            padding: typeof window !== 'undefined' && window.innerWidth < 640 ? '8px 12px' : '10px 16px',
+            color: '#6b7280',
+          },
+          buttonSkip: {
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? 13 : 14,
+            color: '#6b7280',
+          },
+          spotlight: {
+            borderRadius: 4,
           },
         }}
       />
@@ -1217,6 +1465,76 @@ export default function Dashboard() {
             }
             .allow-during-tour {
               pointer-events: auto !important;
+            }
+            
+            /* Ensure tooltip stays within viewport */
+            .react-joyride__tooltip {
+              max-width: 90vw !important;
+              box-sizing: border-box !important;
+            }
+            
+            /* Mobile responsive styles */
+            @media (max-width: 640px) {
+              .react-joyride__tooltip {
+                max-width: 90vw !important;
+                margin: 10px !important;
+                font-size: 14px !important;
+              }
+              
+              .react-joyride__tooltip__main {
+                max-width: 100% !important;
+              }
+              
+              .react-joyride__tooltip__footer {
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+              }
+              
+              .react-joyride__tooltip__button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+                white-space: nowrap !important;
+              }
+              
+              /* Ensure spotlight doesn't overflow */
+              .react-joyride__spotlight {
+                border-radius: 4px !important;
+              }
+              
+              /* Better overlay on mobile */
+              .react-joyride__overlay {
+                background-color: rgba(0, 0, 0, 0.6) !important;
+              }
+            }
+            
+            /* Tablet styles */
+            @media (min-width: 641px) and (max-width: 1024px) {
+              .react-joyride__tooltip {
+                max-width: 400px !important;
+              }
+            }
+            
+            /* Ensure tooltip content is readable */
+            .react-joyride__tooltip__content {
+              line-height: 1.5 !important;
+              word-wrap: break-word !important;
+              overflow-wrap: break-word !important;
+            }
+            
+            /* Smooth animations */
+            .react-joyride__tooltip {
+              animation: tooltipFadeIn 0.3s ease-in-out !important;
+            }
+            
+            @keyframes tooltipFadeIn {
+              from {
+                opacity: 0;
+                transform: scale(0.95);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1);
+              }
             }
           `
         }} />

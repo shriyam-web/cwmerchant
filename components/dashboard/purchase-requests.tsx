@@ -87,7 +87,7 @@ export function PurchaseRequests() {
   const pendingCount = requests.filter(r => r.status === 'pending').length;
 
   return (
-    <div className="space-y-6">
+    <div id="tour-requests-main" className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Purchase Requests</h2>
@@ -99,7 +99,7 @@ export function PurchaseRequests() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div id="tour-requests-filters" className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />

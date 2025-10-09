@@ -130,6 +130,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
               return (
                 <button
                   key={item.id}
+                  id={`tour-sidebar-${item.id}`}
                   onClick={() => {
                     if (!isDisabled || allowOpenForTour) {
                       onTabChange(item.id);
@@ -159,6 +160,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
           <div className="mt-4 pt-4 border-t border-slate-200 flex-shrink-0">
             <div className="space-y-2">
               <Button
+                id="tour-preview-shop"
                 variant="outline"
                 size="sm"
                 className="w-full justify-start bg-white/40 border-slate-200 hover:bg-white hover:border-blue-300 transition-all duration-200 rounded-lg py-2 text-sm"
@@ -170,6 +172,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 <ExternalLink className="h-3 w-3 ml-auto text-slate-400" />
               </Button>
               <Button
+                id="tour-notifications"
                 variant="outline"
                 size="sm"
                 className="w-full justify-start bg-white/40 border-slate-200 hover:bg-white hover:border-blue-300 transition-all duration-200 rounded-lg py-2 text-sm"
@@ -180,6 +183,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 <Badge variant="secondary" className="ml-auto bg-red-100 text-red-700 text-xs font-semibold">2</Badge>
               </Button>
               <Button
+                id="tour-logout"
                 variant="destructive"
                 size="sm"
                 className="w-full justify-start transition-all duration-200 rounded-lg py-2 text-sm"
