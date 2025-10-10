@@ -125,6 +125,7 @@ export default function Dashboard() {
   const [runTour, setRunTour] = useState<boolean>(false);
   const [tourSteps, setTourSteps] = useState<Step[]>([]);
   const [currentTourIndex, setCurrentTourIndex] = useState<number>(0);
+  const [activeOffersCount, setActiveOffersCount] = useState<number>(0);
 
   useEffect(() => {
     setSidebarOpen(window.innerWidth >= 1024);
@@ -308,6 +309,24 @@ export default function Dashboard() {
     CheckCircle: <CheckCircle className="h-6 w-6 text-teal-500" />,
   };
 
+  // Fetch active offers count
+  const fetchActiveOffersCount = async () => {
+    if (!merchant?.id) return;
+
+    try {
+      const response = await fetch(`/api/merchant/offers?merchantId=${merchant.id}`);
+      const data = await response.json();
+
+      if (data.success && data.offers) {
+        // Count only active offers
+        const activeCount = data.offers.filter((offer: any) => offer.status === 'Active').length;
+        setActiveOffersCount(activeCount);
+      }
+    } catch (error) {
+      console.error('Error fetching offers count:', error);
+    }
+  };
+
   useEffect(() => {
     if (!merchant?.id) {
       setLoading(false); // set loading to false if no id
@@ -344,6 +363,7 @@ export default function Dashboard() {
     };
 
     fetchDashboard();
+    fetchActiveOffersCount();
   }, [merchant?.id]); // only refetch if merchant id changes
 
   // Tour functions
@@ -609,7 +629,7 @@ export default function Dashboard() {
                       View Requests
                     </Button>
                     <Button variant="outline" onClick={startTour} className="text-sm sm:text-base w-full sm:w-auto">
-                      Take Dashboard Tour
+                      Take  Tour
                     </Button>
                   </div>
                 </div>
@@ -727,7 +747,7 @@ export default function Dashboard() {
         // Show actual features for educational purposes when status is pending
         switch (activeTab) {
           case "offers":
-            return <div id="tour-offers"><OffersManagement /></div>;
+            return <div id="tour-offers"><OffersManagement onOffersChange={fetchActiveOffersCount} /></div>;
           case "products":
             return <div id="tour-products"><ProductsManagement /></div>;
           case "offline-products":
@@ -754,7 +774,7 @@ export default function Dashboard() {
 
     switch (activeTab) {
       case "offers":
-        return <OffersManagement />;
+        return <OffersManagement onOffersChange={fetchActiveOffersCount} />;
       case "products":
         return <ProductsManagement />;
       case "offline-products":
@@ -764,7 +784,7 @@ export default function Dashboard() {
       case "profile":
         return <ProfileSettings tourIndex={currentTourIndex} />;
       case "support":
-        return <DigitalSupport />;
+        return <DigitalSupport merchant={merchant} />;
       default:
         return (
           <div className="space-y-6">
@@ -1048,7 +1068,12 @@ export default function Dashboard() {
                             )}
                           </div>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 hover:border-orange-400 font-semibold transition-all duration-200 text-xs sm:text-sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 hover:border-orange-400 font-semibold transition-all duration-200 text-xs sm:text-sm"
+                          onClick={() => setActiveTab("profile")}
+                        >
                           Complete Profile
                         </Button>
                       </>
@@ -1062,7 +1087,12 @@ export default function Dashboard() {
                           <p className="text-sm text-green-700 mb-4">
                             Your profile is fully complete! All features are unlocked and your visibility is maximized.
                           </p>
-                          <Button variant="outline" size="sm" className="w-full border-green-300 text-green-700 hover:bg-green-100 hover:border-green-400 font-semibold transition-all duration-200 text-sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full border-green-300 text-green-700 hover:bg-green-100 hover:border-green-400 font-semibold transition-all duration-200 text-sm"
+                            onClick={() => setActiveTab("profile")}
+                          >
                             <CheckCircle className="h-4 w-4 mr-2" />
                             Update Profile
                           </Button>
@@ -1229,6 +1259,7 @@ export default function Dashboard() {
           setSidebarOpen={setSidebarOpen}
           merchantStatus={merchant.status}
           isTourRunning={runTour}
+          activeOffersCount={activeOffersCount}
         />
         <div className="flex-1 lg:ml-64 pt-2 sm:pt-3 md:pt-4 pb-4 md:pb-8 px-3 sm:px-4 md:px-8">
           {/* Menu Button */}

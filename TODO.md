@@ -1,7 +1,8 @@
-- [x] Make TabsList responsive (scrollable on small screens)
-- [x] Adjust grid layouts for better mobile experience (business details, social links, days, payment methods)
-- [x] Improve header layout for mobile (stack button if needed)
-- [x] Add fancy touches: hover effects, transitions, better spacing, icons, gradients
-- [x] Enhance avatar section styling
-- [x] Improve loading states UI
-- [x] Test responsiveness on different screen sizes
+# TODO: Make Digital Support Page Responsive
+
+- [ ] Update upgrade banner layout to stack on mobile (flex-col sm:flex-row)
+- [ ] Make headings responsive (e.g., text-xl md:text-2xl)
+- [ ] Update support services item layouts to stack icon and content on mobile (flex-col sm:flex-row)
+- [ ] Update request history item layouts to stack icon and content on mobile (flex-col sm:flex-row)
+- [ ] Adjust padding and spacing for mobile (e.g., p-4 sm:p-6)
+- [ ] Ensure buttons and badges are responsive (full-width on small screens if needed)

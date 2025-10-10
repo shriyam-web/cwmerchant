@@ -22,6 +22,7 @@ interface ExtendedMerchant {
   role: "merchant";
   status: "active" | "pending" | "suspended" | "inactive";
   merchantId?: string;
+  merchantSlug?: string;
   legalName?: string;
   displayName?: string;
   emailVerified?: boolean;
@@ -448,9 +449,14 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Profile Settings</h2>
           <p className="text-gray-600 mt-1">Manage your business profile and settings</p>
         </div>
-        <Button variant="outline" className="hover:shadow-md transition-all duration-200 border-blue-200 hover:border-blue-300">
+        <Button
+          variant="outline"
+          className="hover:shadow-md transition-all duration-200 border-blue-200 hover:border-blue-300"
+          onClick={() => merchant?.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchant.merchantSlug}`, '_blank')}
+          disabled={!merchant?.merchantSlug}
+        >
           <Eye className="h-4 w-4 mr-2" />
-          Preview Shop
+          Preview Store
           <ExternalLink className="h-4 w-4 ml-2" />
         </Button>
       </div>

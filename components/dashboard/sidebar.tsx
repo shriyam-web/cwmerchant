@@ -37,9 +37,10 @@ interface DashboardSidebarProps {
   setSidebarOpen: (open: boolean) => void;
   merchantStatus: string;
   isTourRunning: boolean;
+  activeOffersCount?: number;
 }
 
-export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSidebarOpen, merchantStatus, isTourRunning }: DashboardSidebarProps) {
+export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSidebarOpen, merchantStatus, isTourRunning, activeOffersCount = 0 }: DashboardSidebarProps) {
   const router = useRouter();
   const { merchant, logout } = useMerchantAuth(); // ✅ Auth context
   const [merchantInfo, setMerchantInfo] = useState<any>(null);
@@ -58,9 +59,9 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
 
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
-    { id: 'offers', label: 'Offers', icon: Gift, badge: '3' },
-    { id: 'products', label: 'CW Products', icon: Package, badge: null },
-    { id: 'offline-products', label: 'In-Store Products', icon: Package, badge: null },
+    { id: 'offers', label: 'Offers', icon: Gift, badge: activeOffersCount > 0 ? activeOffersCount.toString() : null },
+    { id: 'products', label: 'CityWitty Store', icon: Package, badge: null },
+    { id: 'offline-products', label: 'Your Store', icon: Package, badge: null },
     { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: '5' },
     { id: 'profile', label: 'Profile Settings', icon: Settings, badge: null },
     { id: 'support', label: 'Digital Support', icon: HelpCircle, badge: null }
@@ -168,7 +169,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 disabled={merchantStatus === "pending"}
               >
                 <Eye className="h-4 w-4 mr-2 text-slate-600" />
-                <span className="font-medium text-slate-700">Preview Shop</span>
+                <span className="font-medium text-slate-700">Preview Store</span>
                 <ExternalLink className="h-3 w-3 ml-auto text-slate-400" />
               </Button>
               <Button
