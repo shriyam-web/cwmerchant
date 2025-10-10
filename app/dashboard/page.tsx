@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useMerchantAuth } from "@/lib/auth-context";
 import ProfileRemovedNotice from "@/components/ui/ProfileRemovedNotice";
 import WelcomePendingModal from "@/components/ui/WelcomePendingModal";
+import { EmailVerificationBanner } from "@/components/ui/EmailVerificationBanner";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { OffersManagement } from "@/components/dashboard/offers-management";
@@ -1274,6 +1275,20 @@ export default function Dashboard() {
               {sidebarOpen ? 'Collapse' : 'Menu'}
             </Button>
           </div>
+
+          {/* Email Verification Banner */}
+          {merchant.emailVerified === false && (
+            <EmailVerificationBanner
+              merchantId={merchant.id}
+              email={merchant.email}
+              onVerified={() => {
+                // Refresh merchant data
+                if (setMerchant) {
+                  setMerchant({ ...merchant, emailVerified: true });
+                }
+              }}
+            />
+          )}
 
           {/* Pending Account Banner */}
           {merchant.status === "pending" && (

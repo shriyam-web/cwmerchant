@@ -77,6 +77,8 @@ export interface IPartner extends Document {
     };
     otpCode?: string;
     otpExpiry?: Date;
+    emailVerificationOtp?: string;
+    emailVerificationOtpExpiry?: Date;
     paymentMethodAccepted?: string[];
     qrcodeLink?: string;
     businessHours?: {

@@ -80,6 +80,8 @@ const PartnerSchema = new Schema<IPartner>({
   },
   otpCode: { type: String },
   otpExpiry: { type: Date },
+  emailVerificationOtp: { type: String },
+  emailVerificationOtpExpiry: { type: Date },
   paymentMethodAccepted: [{ type: String }],
   qrcodeLink: { type: String },
   businessHours: {

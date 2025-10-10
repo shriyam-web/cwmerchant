@@ -96,6 +96,7 @@ interface Merchant {
   merchantSlug?: string;
   role: "merchant";
   status: "active" | "pending" | "suspended" | "inactive";
+  emailVerified?: boolean;
 }
 
 interface MerchantRegisterData {
