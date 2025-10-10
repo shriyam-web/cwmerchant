@@ -59,7 +59,7 @@ interface ExtendedMerchant {
   email: string;
   businessName: string;
   role: "merchant";
-  status: "active" | "pending" | "suspended" | "inactive";
+  status?: string;
   merchantId?: string;
   legalName?: string;
   displayName?: string;
@@ -348,6 +348,8 @@ export default function Dashboard() {
 
   // Tour functions
   const startTour = () => {
+    setActiveTab("overview");
+    setCurrentTourIndex(0);
     setTourSteps(getFullTourSteps());
     setRunTour(true);
   };
@@ -371,6 +373,8 @@ export default function Dashboard() {
     { target: "#tour-support-plan", content: "Check your current plan and available digital support services.", placement: "auto" },
     { target: "#tour-support-services", content: "Explore available digital services like graphics design, video reels, and website development.", placement: "auto" },
     { target: "#tour-support-history", content: "Track all your digital support requests and their completion status.", placement: "auto" },
+    // Temporarily skip support-wide tour step because that section loads on a different tab
+    // { target: "#tour-support-main", content: "Access your dedicated support tools and resources whenever you need assistance.", placement: "auto" },
   ];
 
   const getTourSteps = (tab: string): Step[] => {
@@ -442,7 +446,7 @@ export default function Dashboard() {
   if (!merchant) return <div className="p-8">No merchant found.</div>;
 
   const renderMainContent = () => {
-    const { status } = merchant;
+    const status = merchant?.status;
 
     const renderProfileCompletionCard = () => (
       <Card id="tour-profile-completion" className={`${missingFields.length > 0 ? "border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100" : "border-green-200 bg-gradient-to-br from-green-50 to-green-100"} shadow-lg`}>
@@ -646,8 +650,17 @@ export default function Dashboard() {
                         <p className="text-xs sm:text-sm text-gray-600">Key metrics and insights</p>
                       </div>
                     </div>
-                    <Badge className="px-2 sm:px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200 shadow-sm">
-                      Active
+                    <Badge
+                      className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-full shadow-sm ${String(status) === "active"
+                        ? "bg-green-100 text-green-800 border border-green-200"
+                        : String(status) === "suspended"
+                          ? "bg-red-100 text-red-800 border border-red-200"
+                          : String(status) === "pending"
+                            ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                            : "bg-gray-100 text-gray-800 border border-gray-200"
+                        }`}
+                    >
+                      {status ? `${status.charAt(0).toUpperCase()}${status.slice(1)}` : "Unknown"}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -656,6 +669,16 @@ export default function Dashboard() {
                     <div className="text-center py-6">
                       <Activity className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-3" />
                       <p className="text-sm text-gray-600">Loading performance data...</p>
+                    </div>
+                  ) : status === "pending" ? (
+                    <div className="text-center py-6 sm:py-8">
+                      <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                        <AlertTriangle className="h-8 w-8 sm:h-10 sm:w-10 text-yellow-600" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Awaiting Activation</h3>
+                      <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 max-w-md mx-auto px-4">
+                        Your Store Performance will be live once your account is activated.
+                      </p>
                     </div>
                   ) : stats.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -701,44 +724,30 @@ export default function Dashboard() {
       } else if (activeTab === "profile") {
         return <div id="tour-profile-settings"><ProfileSettings tourIndex={currentTourIndex} /></div>;
       } else {
-        if (runTour) {
-          // During tour, show actual features for educational purposes
-          switch (activeTab) {
-            case "offers":
-              return <div id="tour-offers"><OffersManagement /></div>;
-            case "products":
-              return <div id="tour-products"><ProductsManagement /></div>;
-            case "offline-products":
-              return <div id="tour-offline-products"><ProductsManagement /></div>;
-            case "requests":
-              return <div id="tour-requests"><PurchaseRequests /></div>;
-            case "support":
-              return <div id="tour-support"><DigitalSupport merchant={merchant} /></div>;
-            default:
-              return (
-                <div id="tour-unavailable" className="text-center py-12">
-                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mb-6">
-                    <AlertTriangle className="h-10 w-10 text-yellow-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Unavailable</h3>
-                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                    This feature will be available once your profile is approved. Please complete your profile and wait for administrator approval.
-                  </p>
+        // Show actual features for educational purposes when status is pending
+        switch (activeTab) {
+          case "offers":
+            return <div id="tour-offers"><OffersManagement /></div>;
+          case "products":
+            return <div id="tour-products"><ProductsManagement /></div>;
+          case "offline-products":
+            return <div id="tour-offline-products"><ProductsManagement /></div>;
+          case "requests":
+            return <div id="tour-requests"><PurchaseRequests /></div>;
+          case "support":
+            return <div id="tour-support"><DigitalSupport merchant={merchant} /></div>;
+          default:
+            return (
+              <div id="tour-unavailable" className="text-center py-12">
+                <div className="mx-auto w-20 h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mb-6">
+                  <AlertTriangle className="h-10 w-10 text-yellow-600" />
                 </div>
-              );
-          }
-        } else {
-          return (
-            <div id="tour-unavailable" className="text-center py-12">
-              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mb-6">
-                <AlertTriangle className="h-10 w-10 text-yellow-600" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Unavailable</h3>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  This feature will be available once your profile is approved. Please complete your profile and wait for administrator approval.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Unavailable</h3>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                This feature will be available once your profile is approved. Please complete your profile and wait for administrator approval.
-              </p>
-            </div>
-          );
+            );
         }
       }
     }
@@ -1210,7 +1219,7 @@ export default function Dashboard() {
       )}
 
       {/* Welcome Pending Modal */}
-      <WelcomePendingModal isOpen={showWelcomeModal} onClose={() => { setShowWelcomeModal(false); setTourSteps(getFullTourSteps()); setRunTour(true); }} />
+      <WelcomePendingModal isOpen={showWelcomeModal} onClose={() => { setShowWelcomeModal(false); setActiveTab("overview"); setCurrentTourIndex(0); setTourSteps(getFullTourSteps()); setRunTour(true); }} />
 
       <div className="flex">
         <DashboardSidebar
@@ -1335,6 +1344,18 @@ export default function Dashboard() {
           const { index, status, type, action, lifecycle } = data;
 
           console.log('Tour callback:', { index, status, type, action, lifecycle });
+
+          // Handle tour start - ensure we begin from overview
+          if (type === "tour:start") {
+            console.log('Tour starting, ensuring overview tab');
+            setRunTour(false);
+            setActiveTab("overview");
+            setCurrentTourIndex(0);
+            setTimeout(() => {
+              setRunTour(true);
+            }, 350);
+            return;
+          }
 
           // Handle tour completion, skip, or close
           if (status === "finished" || status === "skipped" || action === "close" || action === "skip") {

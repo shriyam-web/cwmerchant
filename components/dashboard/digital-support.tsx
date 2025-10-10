@@ -191,7 +191,7 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
 
                     <h2 className="text-2xl font-bold text-gray-900">Your Plan</h2>
                     <Badge className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1">
-                        {merchant?.purchasedPackage || 'No Plan available'}
+                        {merchant?.purchasedPackage?.variantName || 'No Plan available'}
                     </Badge>
                 </div>
 
