@@ -5,6 +5,7 @@ import { useMerchantAuth } from "@/lib/auth-context";
 import ProfileRemovedNotice from "@/components/ui/ProfileRemovedNotice";
 import WelcomePendingModal from "@/components/ui/WelcomePendingModal";
 import { EmailVerificationBanner } from "@/components/ui/EmailVerificationBanner";
+import { MerchantPlanBanner } from "@/components/ui/MerchantPlanBanner";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { OffersManagement } from "@/components/dashboard/offers-management";
@@ -637,26 +638,6 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* No Package Card */}
-            {!((merchant as ExtendedMerchant).purchasedPackage?.variantName) && (
-              <Card className="border-red-500 bg-red-50 mb-6">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium text-red-800">No Active Merchant Plan</h3>
-                      <p className="text-xs sm:text-sm text-red-700 mt-1">
-                        You don't have any active merchant plan, purchase now to take your business to heights.
-                      </p>
-                      <Button variant="outline" size="sm" className="mt-2 border-red-300 text-red-700 hover:bg-red-100 w-full sm:w-auto text-xs sm:text-sm">
-                        Purchase Now
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
             {/* Store Status + Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <Card id="tour-performance" className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
@@ -872,23 +853,6 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* No Package Card */}
-            {!((merchant as ExtendedMerchant).purchasedPackage?.variantName) && (
-              <Card className="border-red-500 bg-red-50 mb-6">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium text-red-800">No Active Merchant Plan</h3>
-                      <p className="text-xs sm:text-sm text-red-700 mt-1">
-                        You don't have any active merchant plan, purchase now to take your business to heights.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Store Status + Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -1288,6 +1252,11 @@ export default function Dashboard() {
                 }
               }}
             />
+          )}
+
+          {/* Merchant Plan Banner */}
+          {!(merchant as ExtendedMerchant).purchasedPackage?.variantName && (
+            <MerchantPlanBanner merchantId={merchant.id} />
           )}
 
           {/* Pending Account Banner */}

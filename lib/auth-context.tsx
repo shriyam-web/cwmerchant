@@ -181,7 +181,8 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // ✅ All good → set merchant
+      // ✅ All good → set merchant and clear any previous profile removed notice
+      setProfileRemovedNotice(false);
       setMerchant(data.merchant);
       localStorage.setItem("merchant", JSON.stringify(data.merchant));
     } catch (err) {
@@ -231,7 +232,8 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
-      // ✅ Success
+      // ✅ Success - clear any previous profile removed notice
+      setProfileRemovedNotice(false);
       setMerchant(data.merchant);
       localStorage.setItem("merchant", JSON.stringify(data.merchant));
       localStorage.setItem("merchantToken", data.token);

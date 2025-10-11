@@ -87,39 +87,39 @@ export function EmailVerificationBanner({ merchantId, email, onVerified }: Email
     return (
         <>
             {/* Banner */}
-            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-500 rounded-lg p-4 mb-6 shadow-sm">
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3 flex-1">
-                        <div className="flex-shrink-0 mt-0.5">
-                            <AlertCircle className="h-5 w-5 text-orange-600" />
+            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-500 rounded-lg p-3 mb-4 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 flex-1">
+                        <div className="flex-shrink-0">
+                            <AlertCircle className="h-4 w-4 text-orange-600" />
                         </div>
-                        <div className="flex-1">
-                            <h3 className="text-sm font-semibold text-orange-900 mb-1">
+                        <div className="flex-1 min-w-0">
+                            <h3 className="text-xs font-semibold text-orange-900">
                                 Email Verification Required
                             </h3>
-                            <p className="text-sm text-orange-800 mb-3">
-                                Please verify your email address <strong>{email}</strong> to unlock all features and ensure secure communication.
+                            <p className="text-xs text-orange-800 mt-0.5">
+                                Please verify <strong>{email}</strong> to unlock all features.
                             </p>
-                            <Button
-                                onClick={handleSendOtp}
-                                disabled={sending}
-                                size="sm"
-                                className="bg-orange-600 hover:bg-orange-700 text-white"
-                            >
-                                {sending ? (
-                                    <>
-                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Sending OTP...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Mail className="h-4 w-4 mr-2" />
-                                        Verify Email Now
-                                    </>
-                                )}
-                            </Button>
                         </div>
                     </div>
+                    <Button
+                        onClick={handleSendOtp}
+                        disabled={sending}
+                        size="sm"
+                        className="bg-orange-600 hover:bg-orange-700 text-white h-8 text-xs flex-shrink-0"
+                    >
+                        {sending ? (
+                            <>
+                                <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+                                Sending...
+                            </>
+                        ) : (
+                            <>
+                                <Mail className="h-3 w-3 mr-1.5" />
+                                Verify Now
+                            </>
+                        )}
+                    </Button>
                 </div>
             </div>
 
