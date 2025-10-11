@@ -1214,7 +1214,16 @@ export default function Dashboard() {
       )}
 
       {/* Welcome Pending Modal */}
-      <WelcomePendingModal isOpen={showWelcomeModal} onClose={() => { setShowWelcomeModal(false); setActiveTab("overview"); setCurrentTourIndex(0); setTourSteps(getFullTourSteps()); setRunTour(true); }} />
+      <WelcomePendingModal
+        isOpen={showWelcomeModal}
+        onClose={() => {
+          setShowWelcomeModal(false);
+          setActiveTab("overview");
+          setCurrentTourIndex(0);
+          setTourSteps([]);
+          setRunTour(false);
+        }}
+      />
 
       <div className="flex">
         <DashboardSidebar
@@ -1490,15 +1499,14 @@ export default function Dashboard() {
       {runTour && (
         <style dangerouslySetInnerHTML={{
           __html: `
-            body * {
+            #root,
+            #__next {
               pointer-events: none !important;
             }
             .react-joyride__beacon,
             .react-joyride__spotlight,
             .react-joyride__tooltip,
-            .react-joyride__tooltip * {
-              pointer-events: auto !important;
-            }
+            .react-joyride__tooltip *,
             .allow-during-tour {
               pointer-events: auto !important;
             }
