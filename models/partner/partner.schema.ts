@@ -30,7 +30,7 @@ const PartnerSchema = new Schema<IPartner>({
   country: { type: String, default: "India" },
   whatsapp: { type: String, required: true },
   isWhatsappSame: { type: Boolean, required: true },
-  gstNumber: { type: String, required: true },
+  gstNumber: { type: String },
   panNumber: { type: String, required: true },
   businessType: { type: String, required: true },
   yearsInBusiness: { type: String, required: true },
@@ -115,4 +115,4 @@ const PartnerSchema = new Schema<IPartner>({
 }, { timestamps: true }
 );
 
-export default mongoose.models.Partner || mongoose.model<IPartner>('Partner', PartnerSchema);
+export default mongoose.models.Partner || mongoose.model<IPartner>('Partner', PartnerSchema); 

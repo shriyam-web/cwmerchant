@@ -18,7 +18,7 @@ export default function Step3LegalInfo({ formData, handleInputChange, fieldError
 
             <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label htmlFor="gstNumber">GST Number <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="gstNumber">GST Number</Label>
                     <Input
                         id="gstNumber"
                         value={formData.gstNumber}
@@ -29,7 +29,6 @@ export default function Step3LegalInfo({ formData, handleInputChange, fieldError
                         }}
                         onBlur={() => formData.gstNumber && checkingField.gstNumber}
                         placeholder="Enter GST number"
-                        required
                         className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                     />
                     {checkingField.gstNumber ? (

@@ -680,7 +680,7 @@ export const usePartnerRegistration = () => {
 
         // --- Legal Information ---
         addSectionHeader("Legal Information");
-        addField("GST Number", formData.gstNumber, true);
+        addField("GST Number", formData.gstNumber);
         addField("PAN Number", formData.panNumber, true);
         addField("Business License", formData.businessLicenseNumber);
         y += 10;
@@ -775,7 +775,7 @@ export const usePartnerRegistration = () => {
     const stepFields = [
         ['legalName', 'displayName', 'category', 'city', 'streetAddress', 'pincode', 'locality', 'state'], // step 0
         ['merchantSlug', 'email', 'phone', 'whatsapp'], // step 1
-        ['gstNumber', 'panNumber', 'businessLicenseNumber'], // step 2
+        ['panNumber', 'businessLicenseNumber'], // step 2
         ['businessType', 'yearsInBusiness', 'averageMonthlyRevenue', 'description', 'businessHours.open', 'businessHours.close', 'businessHours.days'], // step 3
         ['password', 'confirmPassword', 'agreeToTerms'] // step 4
     ];
@@ -793,7 +793,6 @@ export const usePartnerRegistration = () => {
         "email",
         "phone",
         "whatsapp",
-        "gstNumber",
         "panNumber",
         "businessType",
         "yearsInBusiness",
@@ -821,6 +820,9 @@ export const usePartnerRegistration = () => {
             const value = formData[field as keyof typeof formData];
             if (field === 'confirmPassword') {
                 return !value || value !== formData.password;
+            }
+            if (field === 'businessLicenseNumber') {
+                return !value;
             }
             return !value;
         });

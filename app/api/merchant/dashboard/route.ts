@@ -94,14 +94,14 @@ export async function GET(req: Request) {
       {
         id: "1",
         customer: "Rahul Sharma",
-        amount: "₹1,250",
+        amount: "1,250",
         status: "pending",
         time: "2 hours ago",
       },
       {
         id: "2",
         customer: "Priya Singh",
-        amount: "₹850",
+        amount: "850",
         status: "approved",
         time: "5 hours ago",
       },
