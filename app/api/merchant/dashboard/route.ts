@@ -2,13 +2,10 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
-
 export const dynamic = 'force-dynamic';
-
 export async function GET(req: Request) {
   try {
     await dbConnect();
-
     const url = new URL(req.url);
     const merchantId = url.searchParams.get("merchantId");
     if (!merchantId) {
