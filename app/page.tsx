@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Users, TrendingUp, Star, ArrowRight, Shield, Clock, Target } from 'lucide-react';
+import { Analytics } from "@vercel/analytics/next"
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { SupportWidget } from '@/components/support-widget';

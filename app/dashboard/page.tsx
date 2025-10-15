@@ -10,6 +10,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { OffersManagement } from "@/components/dashboard/offers-management";
 import { ProductsManagement } from "@/components/dashboard/products-management";
+import { OfflineProductsManagement } from "@/components/dashboard/offline-products-management";
 import { PurchaseRequests } from "@/components/dashboard/purchase-requests";
 import { ProfileSettings } from "@/components/dashboard/profile-settings";
 import DigitalSupport from "@/components/dashboard/digital-support";
@@ -733,7 +734,7 @@ export default function Dashboard() {
           case "products":
             return <div id="tour-products"><ProductsManagement /></div>;
           case "offline-products":
-            return <div id="tour-offline-products"><ProductsManagement /></div>;
+            return <div id="tour-offline-products"><OfflineProductsManagement /></div>;
           case "requests":
             return <div id="tour-requests"><PurchaseRequests /></div>;
           case "support":
@@ -760,7 +761,7 @@ export default function Dashboard() {
       case "products":
         return <ProductsManagement />;
       case "offline-products":
-        return <ProductsManagement />;
+        return <OfflineProductsManagement />;
       case "requests":
         return <PurchaseRequests />;
       case "profile":

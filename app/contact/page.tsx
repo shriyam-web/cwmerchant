@@ -21,7 +21,6 @@ export default function ContactPage() {
             <Navbar />
             <br /><br />
             <main className="min-h-screen bg-gray-50 text-gray-900">
-
                 <ContactForm />
             </main>
             <Footer />
