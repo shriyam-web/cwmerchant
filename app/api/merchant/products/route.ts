@@ -84,6 +84,46 @@ export async function POST(request: NextRequest) {
     }
 }
 
+export async function PUT(request: NextRequest) {
+    try {
+        await dbConnect();
+
+        const body = await request.json();
+        const { merchantId, productData } = body;
+
+        if (!merchantId || !productData || !productData.productId) {
+            return NextResponse.json({ error: 'Merchant ID, product data, and product ID required' }, { status: 400 });
+        }
+
+        // Find the partner
+        const partner = await Partner.findById(merchantId);
+        if (!partner) {
+            return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
+        }
+
+        // Find and update the product
+        const updatedProduct = await Product.findOneAndUpdate(
+            { productId: productData.productId },
+            { $set: productData },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProduct) {
+            return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({
+            message: 'Product updated successfully',
+            product: updatedProduct
+        });
+    } catch (error) {
+        console.error('Error updating product:', error);
+        return NextResponse.json({
+            error: error instanceof Error ? error.message : 'Failed to update product'
+        }, { status: 500 });
+    }
+}
+
 export async function DELETE(request: NextRequest) {
     try {
         await dbConnect();

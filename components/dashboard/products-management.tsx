@@ -11,6 +11,7 @@ import { ProductsList } from './products-management/components/steps';
 import { Form } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
 import { useMerchantAuth } from '@/lib/auth-context';
+import { productRecordToFormValues, ProductRecord } from './products-management/types';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -87,10 +88,28 @@ export const ProductsManagement = () => {
         loading,
     };
 
+    const handleEditProduct = (product: ProductRecord) => {
+        // Convert product record to form values
+        const formValues = productRecordToFormValues(product);
+
+        // Reset form with product data
+        form.reset(formValues);
+
+        // Open the dialog
+        setIsAddDialogOpen(true);
+
+        // Reset to first step
+        setCurrentStep(0);
+    };
+
     const handleDeleteProduct = (productId: string) => {
         setProductToDelete(productId);
         setDeleteDialogOpen(true);
     };
+
+    const totalProducts = products.length;
+    const inStockProducts = products.filter((product: ProductRecord) => product.isAvailableStock && Number((product as ProductRecord).availableStocks ?? 0) > 0).length;
+    const unavailableProducts = totalProducts - inStockProducts;
 
     const confirmDeleteProduct = async () => {
         if (!productToDelete || !merchant?.id) return;
@@ -133,50 +152,123 @@ export const ProductsManagement = () => {
     return (
         <div className="space-y-8">
             {/* Hero Header Section */}
-            <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 rounded-xl p-8 text-white">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-white/20 rounded-full">
-                            <ShoppingCart className="h-8 w-8" />
+            <div className="relative overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-sky-50 via-white to-indigo-50 px-8 py-10 shadow-sm">
+                <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-32 left-10 h-72 w-72 rounded-full bg-purple-400/20 blur-3xl" />
+                <div className="relative grid gap-10 lg:grid-cols-[1.1fr,1fr]">
+                    <div className="space-y-6">
+                        <Badge variant="outline" className="w-fit border-blue-200 bg-blue-100/60 text-blue-700">
+                            Store Control Center
+                        </Badge>
+                        <div className="space-y-3">
+                            <h1 className="text-4xl font-bold tracking-tight text-blue-950">Command your product experience</h1>
+                            <p className="text-base text-blue-800/80 md:text-lg">
+                                Shape compelling listings, coordinate pricing, and keep availability in check across the CityWitty marketplace.
+                            </p>
                         </div>
-                        <div>
-                            <h1 className="text-4xl font-bold tracking-tight">Products Management</h1>
-                            <p className="text-blue-100 text-lg mt-1">Products you add here will be live on CityWitty Store giving exposure to your products</p>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="flex items-start gap-3 rounded-xl border border-blue-200/60 bg-white/80 p-4 shadow-sm backdrop-blur">
+                                <div className="rounded-lg bg-blue-600/10 p-2 text-blue-600">
+                                    <ShoppingCart className="h-5 w-5" />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-sm font-semibold text-blue-900">Unified catalog</p>
+                                    <p className="text-sm text-blue-700/80">
+                                        Keep SKUs, variants, media, and delivery promises aligned in one streamlined flow.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3 rounded-xl border border-purple-200/60 bg-white/80 p-4 shadow-sm backdrop-blur">
+                                <div className="rounded-lg bg-purple-600/10 p-2 text-purple-600">
+                                    <Package className="h-5 w-5" />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-sm font-semibold text-purple-900">Launch faster</p>
+                                    <p className="text-sm text-purple-700/80">
+                                        Reuse highlights, FAQs, and media kits to publish products in minutes.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button className="gap-2 rounded-full bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-md hover:bg-blue-700">
+                                        <Plus className="h-5 w-5" />
+                                        Add Product
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                                    <DialogHeader>
+                                        <DialogTitle className="flex items-center gap-2">
+                                            <Package className="h-5 w-5" />
+                                            {form.getValues('productId') ? 'Edit Product' : 'Add New Product'}
+                                        </DialogTitle>
+                                    </DialogHeader>
+                                    <ProductsFormContext.Provider value={contextValue}>
+                                        <Form {...form}>
+                                            <div className="space-y-6">
+                                                <StepNavigation context={contextValue} />
+                                                <RenderStep
+                                                    context={contextValue}
+                                                    handleImageUpload={contextValue.onUploadImages}
+                                                />
+                                                <BottomNavigation context={contextValue} form={form} />
+                                            </div>
+                                        </Form>
+                                    </ProductsFormContext.Provider>
+                                </DialogContent>
+                            </Dialog>
+                            <Button
+                                variant="outline"
+                                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                                asChild
+                            >
+                                <a href="#products-overview">View catalog</a>
+                            </Button>
                         </div>
                     </div>
-                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="bg-white text-blue-600 hover:bg-blue-50 gap-2 px-6 py-3 text-lg font-semibold shadow-lg">
-                                <Plus className="h-5 w-5" />
-                                Add Product
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle className="flex items-center gap-2">
-                                    <Package className="h-5 w-5" />
-                                    Add New Product
-                                </DialogTitle>
-                            </DialogHeader>
-                            <ProductsFormContext.Provider value={contextValue}>
-                                <Form {...form}>
-                                    <div className="space-y-6">
-                                        <StepNavigation context={contextValue} />
-                                        <RenderStep
-                                            context={contextValue}
-                                            handleImageUpload={contextValue.onUploadImages}
-                                        />
-                                        <BottomNavigation context={contextValue} form={form} />
-                                    </div>
-                                </Form>
-                            </ProductsFormContext.Provider>
-                        </DialogContent>
-                    </Dialog>
+                    <div className="flex h-full flex-col justify-between gap-4 rounded-2xl border border-blue-200/60 bg-white/90 p-6 shadow-lg backdrop-blur">
+                        <div>
+                            <h3 className="text-sm font-semibold uppercase tracking-wide text-blue-600">Live overview</h3>
+                            <p className="mt-2 text-sm text-blue-900/70">
+                                Keep a pulse on catalog health before diving into detailed management.
+                            </p>
+                        </div>
+                        <dl className="grid grid-cols-2 gap-4 text-sm text-blue-900">
+                            <div className="space-y-1 rounded-xl border border-blue-100 bg-blue-50/60 p-4">
+                                <dt className="text-xs uppercase text-blue-500">Total Products</dt>
+                                <dd className="text-2xl font-bold text-blue-900">{totalProducts}</dd>
+                                <dd className="text-xs text-blue-700/70">Across your active catalog</dd>
+                            </div>
+                            <div className="space-y-1 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
+                                <dt className="text-xs uppercase text-emerald-600">In Stock</dt>
+                                <dd className="text-2xl font-bold text-emerald-700">
+                                    {inStockProducts}
+                                </dd>
+                                <dd className="text-xs text-emerald-600/80">Ready for purchase</dd>
+                            </div>
+                            <div className="space-y-1 rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
+                                <dt className="text-xs uppercase text-indigo-600">Needs Attention</dt>
+                                <dd className="text-2xl font-bold text-indigo-700">
+                                    {unavailableProducts}
+                                </dd>
+                                <dd className="text-xs text-indigo-600/80">Review inventory levels</dd>
+                            </div>
+                            <div className="space-y-1 rounded-xl border border-purple-100 bg-purple-50/60 p-4">
+                                <dt className="text-xs uppercase text-purple-600">Last Sync</dt>
+                                <dd className="text-2xl font-bold text-purple-700">
+                                    {loading ? 'Updating…' : 'Moments ago'}
+                                </dd>
+                                <dd className="text-xs text-purple-600/80">Auto-refresh with form activity</dd>
+                            </div>
+                        </dl>
+                    </div>
                 </div>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-blue-800">Total Products</CardTitle>
@@ -213,10 +305,10 @@ export const ProductsManagement = () => {
                         <p className="text-xs text-red-600">Need restocking</p>
                     </CardContent>
                 </Card>
-            </div>
+            </div> */}
 
             {/* Products Section */}
-            <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
+            <Card id="products-overview" className="border-2 border-dashed border-blue-200 bg-blue-50/30">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -234,7 +326,7 @@ export const ProductsManagement = () => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <ProductsList products={products} onDelete={handleDeleteProduct} />
+                    <ProductsList products={products} onDelete={handleDeleteProduct} onEdit={handleEditProduct} />
                 </CardContent>
             </Card>
 
@@ -245,7 +337,7 @@ export const ProductsManagement = () => {
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
                             This action cannot be undone. This will permanently delete the product
-                            and all its images from both the database and Cloudinary.
+                            and all its images.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

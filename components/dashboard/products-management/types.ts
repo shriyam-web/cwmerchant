@@ -375,6 +375,52 @@ export const sanitizeArray = (values: string[]) =>
 export const generateId = (prefix: string) =>
   `${prefix}-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
 
+export const productRecordToFormValues = (product: ProductRecord): ProductFormValues => ({
+  productId: product.productId,
+  productName: product.productName,
+  productCategory: product.productCategory,
+  productDescription: product.productDescription,
+  brand: product.brand || '',
+  productImages: product.productImages,
+  productHighlights: product.productHighlights,
+  originalPrice: product.originalPrice.toString(),
+  discountedPrice: product.discountedPrice?.toString() || '',
+  offerApplicable: product.offerApplicable || '',
+  deliveryFee: product.deliveryFee.toString(),
+  orderHandlingFee: product.orderHandlingFee.toString(),
+  discountOfferedOnProduct: product.discountOfferedOnProduct.toString(),
+  cashbackPoints: product.cashbackPoints.toString(),
+  isWalletCompatible: product.isWalletCompatible,
+  productVariants: product.productVariants.map((variant) => ({
+    variantId: variant.variantId,
+    name: variant.name,
+    price: variant.price.toString(),
+    stock: variant.stock.toString(),
+  })),
+  instore: product.instore,
+  isAvailableStock: product.isAvailableStock,
+  availableStocks: product.availableStocks.toString(),
+  productHeight: product.productHeight?.toString() || '',
+  productWidth: product.productWidth?.toString() || '',
+  productWeight: product.productWeight?.toString() || '',
+  productPackageWeight: product.productPackageWeight?.toString() || '',
+  productPackageHeight: product.productPackageHeight?.toString() || '',
+  productPackageWidth: product.productPackageWidth?.toString() || '',
+  whatsInsideTheBox: product.whatsInsideTheBox,
+  deliverableLocations: product.deliverableLocations,
+  eta: product.eta || '',
+  isWarranty: product.isWarranty,
+  warrantyDescription: product.warrantyDescription || '',
+  isReplacement: product.isReplacement,
+  replacementDays: product.replacementDays?.toString() || '',
+  cityWittyAssured: product.cityWittyAssured,
+  isPriority: product.isPriority,
+  sponsored: product.sponsored,
+  bestsellerBadge: product.bestsellerBadge,
+  additionalInfo: product.additionalInfo || '',
+  faq: product.faq,
+});
+
 export const steps = [
   {
     title: 'Basics',
@@ -405,7 +451,7 @@ export const steps = [
     ] as const,
   },
   {
-    title: 'Inventory & Logistics',
+    title: 'Inventory Availablility & Logistics',
     description: 'Update inventory, shipping, and packaging details.',
     color: 'from-blue-400 to-blue-300',
     fields: [
@@ -428,8 +474,8 @@ export const steps = [
     ] as const,
   },
   {
-    title: 'Badges & Extras',
-    description: 'Select special badges and add FAQs or extra info.',
+    title: 'Extra Information',
+    description: 'Add FAQs or extra info.',
     color: 'from-blue-500 to-blue-400',
     fields: [
       'cityWittyAssured',

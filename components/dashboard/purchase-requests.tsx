@@ -88,12 +88,12 @@ export function PurchaseRequests() {
 
   return (
     <div id="tour-requests-main" className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Purchase Requests</h2>
           <p className="text-gray-600">Review and approve customer purchase requests</p>
         </div>
-        <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+        <Badge variant="secondary" className="self-start sm:self-auto bg-orange-100 text-orange-700">
           {pendingCount} Pending Approvals
         </Badge>
       </div>
@@ -102,7 +102,7 @@ export function PurchaseRequests() {
       <div id="tour-requests-filters" className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search by customer or product..."
               value={searchTerm}
@@ -112,7 +112,7 @@ export function PurchaseRequests() {
           </div>
         </div>
         <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-full sm:w-48">
             <Filter className="h-4 w-4 mr-2" />
             <SelectValue />
           </SelectTrigger>
@@ -128,10 +128,10 @@ export function PurchaseRequests() {
       <div className="space-y-4">
         {filteredRequests.map((request) => (
           <Card key={request.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <Avatar className="w-12 h-12">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex w-full sm:w-auto items-start sm:items-center gap-4">
+                  <Avatar className="w-12 h-12 flex-shrink-0">
                     <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
                       {request.customerName
                         ? request.customerName
@@ -142,21 +142,21 @@ export function PurchaseRequests() {
                     </AvatarFallback>
                   </Avatar>
 
-                  <div>
-                    <div className="font-semibold text-gray-900">{request.customerName}</div>
-                    <div className="text-sm text-gray-600">{request.customerPhone}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-gray-900 truncate">{request.customerName}</div>
+                    <div className="text-sm text-gray-600 break-words">{request.customerPhone}</div>
                     <div className="text-sm text-gray-500 mt-1">
                       Submitted on {new Date(request.submittedAt).toLocaleString()}
                     </div>
                   </div>
                 </div>
 
-                <div className="text-right">
-                  <div className="text-xl font-bold text-gray-900 mb-1">{request.amount}</div>
-                  <div className="text-sm text-gray-600 mb-2">{request.product}</div>
+                <div className="flex w-full sm:w-auto flex-col gap-2 sm:items-end">
+                  <div className="text-xl font-bold text-gray-900">{request.amount}</div>
+                  <div className="text-sm text-gray-600 sm:text-right">{request.product}</div>
                   <Badge
                     variant="secondary"
-                    className={getStatusColor(request.status) + ' text-white capitalize'}
+                    className={`${getStatusColor(request.status)} text-white capitalize self-start sm:self-auto`}
                   >
                     {request.status === 'pending' && <Clock className="h-3 w-3 mr-1" />}
                     {request.status === 'approved' && <CheckCircle className="h-3 w-3 mr-1" />}
@@ -167,10 +167,10 @@ export function PurchaseRequests() {
               </div>
 
               {request.status === 'pending' && (
-                <div className="flex space-x-2 mt-4 pt-4 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2 pt-4 border-t border-gray-200">
                   <Button
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700"
+                    className="w-full sm:w-auto bg-green-600 hover:bg-green-700"
                     onClick={() => handleApprove(request.id)}
                   >
                     <CheckCircle className="h-4 w-4 mr-1" />
@@ -179,12 +179,13 @@ export function PurchaseRequests() {
                   <Button
                     size="sm"
                     variant="destructive"
+                    className="w-full sm:w-auto"
                     onClick={() => handleReject(request.id)}
                   >
                     <X className="h-4 w-4 mr-1" />
                     Reject
                   </Button>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" className="w-full sm:w-auto">
                     View Receipt
                   </Button>
                 </div>

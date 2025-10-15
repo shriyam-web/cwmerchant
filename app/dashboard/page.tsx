@@ -608,31 +608,33 @@ export default function Dashboard() {
             {/* Hero Welcome Section */}
             <Card id="tour-welcome" className="mb-8 bg-white border-0 transition-all duration-300">
               <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+                  <div className="flex-1 space-y-3">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
                       Welcome back, {(merchant as ExtendedMerchant).displayName || merchant.businessName}!
                     </h3>
-                    <div className="text-sm sm:text-base text-gray-600 mb-4">
-                      Your store is currently{" "}
+                    <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base text-gray-600">
+                      <span>Your store is currently</span>
                       <Badge className="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full bg-gray-100 text-gray-600">
                         pending
                       </Badge>
                     </div>
-                    <p className="text-sm sm:text-base text-gray-500">Complete your profile to unlock full features.</p>
+                    <p className="text-sm sm:text-base text-gray-500">
+                      Complete your profile to unlock full features.
+                    </p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto lg:ml-auto">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3 w-full lg:w-auto lg:ml-auto">
                     <Button disabled className="bg-gray-400 text-sm sm:text-base w-full sm:w-auto">
                       Add Product
                     </Button>
                     <Button disabled variant="outline" className="text-sm sm:text-base w-full sm:w-auto">
                       Create Offer
                     </Button>
-                    <Button disabled variant="outline" className="text-sm sm:text-base w-full sm:w-auto hidden sm:flex">
+                    <Button disabled variant="outline" className="text-sm sm:text-base w-full sm:w-auto">
                       View Requests
                     </Button>
                     <Button variant="outline" onClick={startTour} className="text-sm sm:text-base w-full sm:w-auto">
-                      Take  Tour
+                      Start Tour
                     </Button>
                   </div>
                 </div>
@@ -640,8 +642,8 @@ export default function Dashboard() {
             </Card>
 
             {/* Store Status + Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-              <Card id="tour-performance" className="lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              <Card id="tour-performance" className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-lg">
                 <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-4">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2 sm:gap-3">
@@ -674,12 +676,12 @@ export default function Dashboard() {
                       <p className="text-sm text-gray-600">Loading performance data...</p>
                     </div>
                   ) : status === "pending" ? (
-                    <div className="text-center py-6 sm:py-8">
+                    <div className="text-center py-6 sm:py-8 px-4">
                       <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                         <AlertTriangle className="h-8 w-8 sm:h-10 sm:w-10 text-yellow-600" />
                       </div>
                       <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Awaiting Activation</h3>
-                      <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 max-w-md mx-auto px-4">
+                      <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
                         Your Store Performance will be live once your account is activated.
                       </p>
                     </div>
@@ -894,7 +896,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6">
                   {stats.length > 0 ? (
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                       {stats.slice(0, 4).map((stat, idx) => (
                         <div
                           key={idx}
@@ -991,7 +993,7 @@ export default function Dashboard() {
                   <div className="space-y-2 sm:space-y-3">
                     {missingFields.length > 0 ? (
                       <>
-                        <p className="text-sm sm:text-base text-gray-700 mb-3">
+                        <p className="text-sm sm:text-base text-gray-700">
                           Complete your profile to unlock full features and increase visibility.
                         </p>
                         <div className="bg-white rounded-lg p-3 border border-orange-200 shadow-sm">
@@ -1109,7 +1111,7 @@ export default function Dashboard() {
                         key={request.id}
                         className="py-4 first:pt-0 last:pb-0 hover:bg-gray-50 transition-colors duration-200"
                       >
-                        <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0">
                             {request.customer.charAt(0).toUpperCase()}
                           </div>
@@ -1134,7 +1136,11 @@ export default function Dashboard() {
                               </span>
                               <span className="flex items-center gap-1">
                                 <IndianRupee className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                <span className="font-medium">₹{typeof request.amount === 'number' ? request.amount.toLocaleString() : request.amount}</span>
+                                <span className="font-medium">
+                                  {typeof request.amount === "number"
+                                    ? request.amount.toLocaleString()
+                                    : request.amount.replace(/^₹/, "")}
+                                </span>
                               </span>
                             </div>
                           </div>
@@ -1226,7 +1232,7 @@ export default function Dashboard() {
         }}
       />
 
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         <DashboardSidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -1236,7 +1242,7 @@ export default function Dashboard() {
           isTourRunning={runTour}
           activeOffersCount={activeOffersCount}
         />
-        <div className="flex-1 lg:ml-64 pt-2 sm:pt-3 md:pt-4 pb-4 md:pb-8 px-3 sm:px-4 md:px-8">
+        <div className="flex-1 lg:ml-64 pt-2 sm:pt-3 md:pt-4 pb-4 md:pb-8 px-4 sm:px-6 md:px-8">
           {/* Menu Button */}
           <div className="flex items-center justify-between mb-3 sm:mb-4 lg:hidden">
             <Button
@@ -1246,7 +1252,7 @@ export default function Dashboard() {
               className="text-sm"
             >
               <Menu className="h-4 w-4 sm:h-5 sm:w-5 mr-1" />
-              {sidebarOpen ? 'Collapse' : 'Menu'}
+              {sidebarOpen ? "Collapse" : "Menu"}
             </Button>
           </div>
 
@@ -1271,18 +1277,16 @@ export default function Dashboard() {
 
           {/* Pending Account Banner */}
           {merchant.status === "pending" && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <div className="flex items-start">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
-                <div>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-5 mb-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-3">
+                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div className="space-y-2">
                   <h3 className="text-sm font-medium text-yellow-800">Incomplete Account Information</h3>
-                  <p className="text-sm text-yellow-700 mt-1">
+                  <p className="text-sm text-yellow-700">
                     Your account details are incomplete. Please fill in the missing information and submit for review.
-                    The administrator will verify and approve your updates within 48 hours.
-                    You’ll receive an email once your profile is approved and live.
+                    The administrator will verify and approve your updates within 48 hours. You’ll receive an email once your profile is approved and live.
                   </p>
                 </div>
-
               </div>
             </div>
           )}

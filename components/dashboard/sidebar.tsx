@@ -61,7 +61,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
     { id: 'offers', label: 'Offers', icon: Gift, badge: activeOffersCount > 0 ? activeOffersCount.toString() : null },
     { id: 'products', label: 'CityWitty Store', icon: Package, badge: null },
-    { id: 'offline-products', label: 'Your Store', icon: Package, badge: null },
+    { id: 'offline-products', label: 'Your Offline Store', icon: Package, badge: null },
     { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: '5' },
     { id: 'profile', label: 'Profile Settings', icon: Settings, badge: null },
     { id: 'support', label: 'Digital Support', icon: HelpCircle, badge: null }

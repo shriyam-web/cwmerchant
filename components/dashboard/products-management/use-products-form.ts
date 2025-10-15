@@ -154,8 +154,11 @@ export const useProductsForm = () => {
 
         setLoading(true);
         try {
-
             const productIdValue = values.productId?.trim() || generateId('CW');
+
+            // Check if we're editing an existing product
+            const isEditing = products.some(p => p.productId === productIdValue);
+
             const productData = {
                 productId: productIdValue,
                 productName: values.productName.trim(),
@@ -214,7 +217,7 @@ export const useProductsForm = () => {
             };
 
             const response = await fetch('/api/merchant/products', {
-                method: 'POST',
+                method: isEditing ? 'PUT' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -225,8 +228,15 @@ export const useProductsForm = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to save product');
+                throw new Error(isEditing ? 'Failed to update product' : 'Failed to save product');
             }
+
+            toast({
+                title: isEditing ? 'Product updated' : 'Product added',
+                description: isEditing
+                    ? 'Product has been successfully updated.'
+                    : 'Product has been successfully added.',
+            });
 
             // Refresh products list
             await fetchProducts();

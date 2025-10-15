@@ -113,6 +113,7 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
   const { currentStep, goToNextStep, goToPreviousStep, onSubmit, loading, validateStep } = context;
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
+  const isEditing = !!form.getValues('productId');
 
   const handleNext = async () => {
     if (loading) return;
@@ -149,14 +150,22 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
             {isLastStep ? 'Saving...' : 'Checking...'}
           </>
         ) : (
-          isLastStep ? 'Submit Product' : 'Next'
+          isLastStep ? (isEditing ? 'Update Product' : 'Submit Product') : 'Next'
         )}
       </Button>
     </div>
   );
 };
 
-export const ProductsList = ({ products, onDelete }: { products: ProductRecord[]; onDelete: (productId: string) => void }) => {
+export const ProductsList = ({
+  products,
+  onDelete,
+  onEdit
+}: {
+  products: ProductRecord[];
+  onDelete: (productId: string) => void;
+  onEdit?: (product: ProductRecord) => void;
+}) => {
   if (products.length === 0) {
     return (
       <div className="text-center py-12 border-2 border-dashed rounded-2xl">
@@ -170,7 +179,7 @@ export const ProductsList = ({ products, onDelete }: { products: ProductRecord[]
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {products.map((product) => (
-        <ProductCard key={product.productId} product={product} onDelete={onDelete} />
+        <ProductCard key={product.productId} product={product} onDelete={onDelete} onEdit={onEdit} />
       ))}
     </div>
   );

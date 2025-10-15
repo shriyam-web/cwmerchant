@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, Users, DollarSign, Calendar, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, IndianRupee, Calendar, BarChart3 } from 'lucide-react';
 
 export function PerformanceChart() {
   const monthlyData = [
@@ -36,10 +36,11 @@ export function PerformanceChart() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">₹{(totalRevenue / 100000).toFixed(1)}L</p>
+                <p className="text-2xl font-bold text-gray-900">{totalRevenue}</p>
+                <p className="text-xs text-gray-500">( {(totalRevenue / 100000).toFixed(1)} L )</p>
               </div>
               <div className="p-3 bg-green-100 rounded-xl">
-                <DollarSign className="h-6 w-6 text-green-600" />
+                <IndianRupee className="h-6 w-6 text-green-600" />
               </div>
             </div>
           </CardContent>
@@ -95,8 +96,8 @@ export function PerformanceChart() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="text-lg font-bold text-gray-900">{data.month}</div>
                     <div className={`flex items-center gap-1 text-sm font-semibold px-2 py-1 rounded-full ${data.change.startsWith('+')
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
                       }`}>
                       {data.change.startsWith('+') ? (
                         <TrendingUp className="h-3 w-3" />
@@ -132,8 +133,8 @@ export function PerformanceChart() {
                     <div className="text-sm font-medium text-gray-600 mb-3">{data.day}</div>
                     <div className="text-xl font-bold text-blue-600 mb-2">₹{(data.revenue / 1000).toFixed(1)}K</div>
                     <div className={`flex items-center justify-center gap-1 text-xs font-semibold px-2 py-1 rounded-full mb-2 ${data.change.startsWith('+')
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
                       }`}>
                       {data.change.startsWith('+') ? (
                         <TrendingUp className="h-3 w-3" />

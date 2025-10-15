@@ -19,8 +19,11 @@ import {
   Check,
   Image as ImageIcon,
   Eye,
+  Pencil,
 } from 'lucide-react';
+import { useState } from 'react';
 import { currencyFormatter, ProductRecord } from '../types';
+import { ProductDetailsModal } from './ProductDetailsModal';
 
 const badgeConfigs = [
   {
@@ -64,15 +67,19 @@ const badgeConfigs = [
 type ProductCardProps = {
   product: ProductRecord;
   onDelete: (productId: string) => void;
+  onEdit?: (product: ProductRecord) => void;
 };
 
-export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
+export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const displayBadges = badgeConfigs.filter(({ condition }) => condition(product));
 
   const originalPrice = product.originalPrice;
   const discountedPrice = product.discountedPrice ?? product.originalPrice;
   const hasDiscount = product.discountedPrice != null;
   const discountPercent = hasDiscount ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
+  const availableStockCount = product.availableStocks ?? 0;
+  const isAvailable = product.isAvailableStock && availableStockCount > 0;
 
   return (
     <Card className="group overflow-hidden border-2 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 rounded-3xl bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-indigo-950/20 hover:scale-[1.02] hover:-translate-y-1">
@@ -100,20 +107,30 @@ export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="absolute left-3 top-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
           <Button
             size="icon"
             variant="secondary"
-            className="h-8 w-8 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg hover:scale-110 transition-all duration-200"
-            onClick={() => onDelete(product.productId)}
+            className="h-8 w-8 rounded-full bg-white/95 backdrop-blur-sm shadow-lg hover:bg-white hover:scale-110 transition-all duration-200"
+            onClick={() => setIsModalOpen(true)}
           >
             <Eye className="h-4 w-4 text-gray-700" />
           </Button>
+          {onEdit && (
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-8 w-8 rounded-full bg-white/95 backdrop-blur-sm shadow-lg hover:bg-white hover:scale-110 transition-all duration-200"
+              onClick={() => onEdit(product)}
+            >
+              <Pencil className="h-4 w-4 text-gray-700" />
+            </Button>
+          )}
         </div>
 
         {/* Out of Stock Overlay */}
-        {!product.isAvailableStock && (
-          <div className="absolute inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center rounded-t-3xl">
+        {!isAvailable && (
+          <div className="pointer-events-none absolute inset-0 z-10 bg-black/80 backdrop-blur-sm flex items-center justify-center rounded-t-3xl">
             <Badge className="bg-red-500 text-white text-lg px-6 py-3 shadow-2xl animate-pulse">
               Out of Stock
             </Badge>
@@ -197,7 +214,7 @@ export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
         <div
           className={cn(
             'flex items-center gap-3 p-3 rounded-xl border-2 shadow-md transition-all duration-300',
-            product.isAvailableStock
+            isAvailable
               ? 'bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 border-blue-200 dark:border-blue-800 hover:shadow-blue-200/50'
               : 'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 border-gray-200 dark:border-gray-700'
           )}
@@ -205,7 +222,7 @@ export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
           <div
             className={cn(
               'p-2.5 rounded-lg shadow-md',
-              product.isAvailableStock
+              isAvailable
                 ? 'bg-gradient-to-br from-blue-500 to-cyan-500'
                 : 'bg-gradient-to-br from-gray-400 to-gray-500'
             )}
@@ -214,9 +231,9 @@ export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
           </div>
           <div className="flex-1">
             <span className="text-sm font-semibold">
-              {product.isAvailableStock ? `${product.availableStocks} units in stock` : 'Currently unavailable'}
+              {product.availableStocks > 0 ? `${product.availableStocks} units in stock` : 'Currently unavailable'}
             </span>
-            {product.isAvailableStock && (
+            {product.availableStocks > 0 && (
               <div className="flex items-center gap-1 mt-0.5">
                 <Check className="h-3 w-3 text-green-600" />
                 <span className="text-xs text-green-600 font-medium">Ready to ship</span>
@@ -253,6 +270,14 @@ export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
           )}
         </div>
       </CardContent>
+
+      {/* Product Details Modal */}
+      <ProductDetailsModal
+        product={product}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onEdit={onEdit}
+      />
     </Card>
   );
 };
