@@ -154,10 +154,15 @@ export const useProductsForm = () => {
 
         setLoading(true);
         try {
-            const productIdValue = values.productId?.trim() || generateId('CW');
+            const rawProductId = values.productId?.trim();
+            const existingProduct = rawProductId
+                ? products.find((product) => product.productId === rawProductId)
+                : undefined;
+
+            const productIdValue = existingProduct?.productId || rawProductId || generateId('CW');
 
             // Check if we're editing an existing product
-            const isEditing = products.some(p => p.productId === productIdValue);
+            const isEditing = Boolean(existingProduct);
 
             const productData = {
                 productId: productIdValue,

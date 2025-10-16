@@ -1,8 +1,8 @@
 import { Schema } from "mongoose";
+import { IProduct } from "./product.interface";
 import { VariantSchema } from "./variant.schema";
 import { ProductRatingSchema } from "./productRating.schema";
 import { FAQSchema } from "./faq.schema";
-import { IProduct } from "./product.interface";
 
 export const ProductSchema = new Schema<IProduct>(
     {

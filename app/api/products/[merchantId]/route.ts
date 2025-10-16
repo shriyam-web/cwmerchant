@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Types } from 'mongoose';
 import dbConnect from '@/lib/mongodb';
-import { ProductSchema } from '@/models/partner/product/product.schema';
+import { ProductSchema } from '@/models/partner/partner/product/product.schema';
 import mongoose from 'mongoose';
 
 const modelName = 'Product';

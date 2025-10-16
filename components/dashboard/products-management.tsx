@@ -207,14 +207,14 @@ export const ProductsManagement = () => {
                                     </DialogHeader>
                                     <ProductsFormContext.Provider value={contextValue}>
                                         <Form {...form}>
-                                            <div className="space-y-6">
+                                            <form onSubmit={form.handleSubmit(handleSubmitProduct)} className="space-y-6">
                                                 <StepNavigation context={contextValue} />
                                                 <RenderStep
                                                     context={contextValue}
                                                     handleImageUpload={contextValue.onUploadImages}
                                                 />
                                                 <BottomNavigation context={contextValue} form={form} />
-                                            </div>
+                                            </form>
                                         </Form>
                                     </ProductsFormContext.Provider>
                                 </DialogContent>

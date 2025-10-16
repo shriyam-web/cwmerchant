@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Partner from '@/models/partner';
-import { ProductSchema } from '@/models/partner/product/product.schema';
 import mongoose from 'mongoose';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -10,8 +9,6 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
 
 export async function GET(request: NextRequest) {
     try {
@@ -25,8 +22,8 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Merchant ID required' }, { status: 400 });
         }
 
-        // Find partner and populate products
-        const partner = await Partner.findById(merchantId).populate('products');
+        // Find partner and return embedded products
+        const partner = await Partner.findById(merchantId);
         if (!partner) {
             return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
         }
@@ -58,23 +55,23 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
         }
 
-        // Create new product
-        const newProduct = new Product({
+        // Create new embedded product
+        const newProduct = {
             ...productData,
             productId: productData.productId || `CW-${Date.now()}`,
-        });
+        };
 
-        // Save the product
-        const savedProduct = await newProduct.save();
-
-        // Add product to partner's products array
+        // Add product to partner's products array and save partner
         partner.products = partner.products || [];
-        partner.products.push(savedProduct._id);
-        await partner.save();
+        partner.products.push({
+            ...newProduct,
+            _id: new mongoose.Types.ObjectId(),
+        });
+        await partner.save({ validateModifiedOnly: true });
 
         return NextResponse.json({
             message: 'Product added successfully',
-            product: savedProduct
+            product: newProduct
         });
     } catch (error) {
         console.error('Error saving product:', error);
@@ -102,19 +99,24 @@ export async function PUT(request: NextRequest) {
         }
 
         // Find and update the product
-        const updatedProduct = await Product.findOneAndUpdate(
-            { productId: productData.productId },
-            { $set: productData },
-            { new: true, runValidators: true }
+        const productIndex = partner.products?.findIndex(
+            (prod: any) => prod.productId === productData.productId
         );
 
-        if (!updatedProduct) {
+        if (productIndex === undefined || productIndex === -1) {
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
 
+        partner.products![productIndex] = {
+            ...partner.products![productIndex],
+            ...productData,
+        };
+
+        await partner.save({ validateModifiedOnly: true });
+
         return NextResponse.json({
             message: 'Product updated successfully',
-            product: updatedProduct
+            product: partner.products![productIndex]
         });
     } catch (error) {
         console.error('Error updating product:', error);
@@ -136,11 +138,20 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: 'Merchant ID and Product ID required' }, { status: 400 });
         }
 
-        // Find the product
-        const product = await Product.findOne({ productId });
-        if (!product) {
+        const partner = await Partner.findById(merchantId);
+        if (!partner) {
+            return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
+        }
+
+        const productIndex = partner.products?.findIndex(
+            (prod: any) => prod.productId === productId
+        );
+
+        if (productIndex === undefined || productIndex === -1) {
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
+
+        const product = partner.products![productIndex];
 
         // Delete images from Cloudinary
         const deleteImagePromises = product.productImages.map(async (imageUrl: string) => {
@@ -162,17 +173,8 @@ export async function DELETE(request: NextRequest) {
 
         await Promise.allSettled(deleteImagePromises);
 
-        // Remove product reference from partner
-        const partner = await Partner.findById(merchantId);
-        if (partner) {
-            partner.products = partner.products?.filter(
-                (pid: any) => pid.toString() !== product._id.toString()
-            ) || [];
-            await partner.save();
-        }
-
-        // Delete the product from database
-        await Product.findByIdAndDelete(product._id);
+        partner.products!.splice(productIndex, 1);
+        await partner.save({ validateModifiedOnly: true });
 
         return NextResponse.json({
             message: 'Product and images deleted successfully',

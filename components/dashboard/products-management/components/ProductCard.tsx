@@ -74,20 +74,22 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const displayBadges = badgeConfigs.filter(({ condition }) => condition(product));
 
-  const originalPrice = product.originalPrice;
-  const discountedPrice = product.discountedPrice ?? product.originalPrice;
-  const hasDiscount = product.discountedPrice != null;
-  const discountPercent = hasDiscount ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
+  const originalPrice = product.originalPrice ?? 0;
+  const discountedPrice = product.discountedPrice ?? product.originalPrice ?? 0;
+  const hasDiscount = product.discountedPrice != null && product.originalPrice != null;
+  const discountPercent = hasDiscount && originalPrice > 0 ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
   const availableStockCount = product.availableStocks ?? 0;
   const isAvailable = product.isAvailableStock && availableStockCount > 0;
+  const primaryImage = product.productImages?.[0];
+  const hasPrimaryImage = Boolean(primaryImage);
 
   return (
     <Card className="group overflow-hidden border-2 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 rounded-3xl bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-indigo-950/20 hover:scale-[1.02] hover:-translate-y-1">
       {/* Image Section with Enhanced Overlay */}
       <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-t-3xl">
-        {product.productImages[0] ? (
+        {hasPrimaryImage ? (
           <img
-            src={product.productImages[0]}
+            src={primaryImage}
             alt={product.productName}
             className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
@@ -231,9 +233,9 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
           </div>
           <div className="flex-1">
             <span className="text-sm font-semibold">
-              {product.availableStocks > 0 ? `${product.availableStocks} units in stock` : 'Currently unavailable'}
+              {availableStockCount > 0 ? `${availableStockCount} units in stock` : 'Currently unavailable'}
             </span>
-            {product.availableStocks > 0 && (
+            {availableStockCount > 0 && (
               <div className="flex items-center gap-1 mt-0.5">
                 <Check className="h-3 w-3 text-green-600" />
                 <span className="text-xs text-green-600 font-medium">Ready to ship</span>

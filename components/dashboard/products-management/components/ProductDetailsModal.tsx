@@ -44,10 +44,22 @@ type ProductDetailsModalProps = {
 export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: ProductDetailsModalProps) => {
     if (!product) return null;
 
-    const originalPrice = product.originalPrice;
-    const discountedPrice = product.discountedPrice ?? product.originalPrice;
-    const hasDiscount = product.discountedPrice != null;
-    const discountPercent = hasDiscount ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
+    const originalPrice = product.originalPrice ?? 0;
+    const discountedPrice = product.discountedPrice ?? originalPrice;
+    const hasDiscount = product.discountedPrice != null && product.originalPrice != null;
+    const discountPercent = hasDiscount && originalPrice > 0 ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
+    const productImages = product.productImages ?? [];
+    const hasProductImages = productImages.length > 0;
+    const productHighlights = product.productHighlights ?? [];
+    const hasProductHighlights = productHighlights.length > 0;
+    const productVariants = product.productVariants ?? [];
+    const hasProductVariants = productVariants.length > 0;
+    const faq = product.faq ?? [];
+    const hasFaq = faq.length > 0;
+    const whatsInsideTheBox = product.whatsInsideTheBox ?? [];
+    const hasWhatsInsideTheBox = whatsInsideTheBox.length > 0;
+    const deliverableLocations = product.deliverableLocations ?? [];
+    const hasDeliverableLocations = deliverableLocations.length > 0;
 
     const handleEdit = () => {
         if (onEdit) {
@@ -121,11 +133,17 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         <div>
                             <h3 className="text-lg font-semibold mb-3">Product Images</h3>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {product.productImages.map((image, index) => (
-                                    <div key={index} className="aspect-video rounded-lg overflow-hidden border-2">
-                                        <img src={image} alt={`${product.productName} ${index + 1}`} className="w-full h-full object-cover" />
+                                {hasProductImages ? (
+                                    productImages.map((image, index) => (
+                                        <div key={index} className="aspect-video rounded-lg overflow-hidden border-2">
+                                            <img src={image} alt={`${product.productName} ${index + 1}`} className="w-full h-full object-cover" />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full flex items-center justify-center rounded-lg border-2 border-dashed py-6 text-muted-foreground">
+                                        No product images available
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
 
@@ -166,20 +184,20 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                                     <div className="bg-white/50 dark:bg-gray-900/50 p-3 rounded-lg">
                                         <p className="text-xs text-muted-foreground">Delivery Fee</p>
                                         <p className="font-semibold">
-                                            {product.deliveryFee === 0 ? 'FREE' : currencyFormatter.format(product.deliveryFee)}
+                                            {(product.deliveryFee ?? 0) === 0 ? 'FREE' : currencyFormatter.format(product.deliveryFee ?? 0)}
                                         </p>
                                     </div>
                                     <div className="bg-white/50 dark:bg-gray-900/50 p-3 rounded-lg">
                                         <p className="text-xs text-muted-foreground">Handling Fee</p>
-                                        <p className="font-semibold">{currencyFormatter.format(product.orderHandlingFee)}</p>
+                                        <p className="font-semibold">{currencyFormatter.format(product.orderHandlingFee ?? 0)}</p>
                                     </div>
                                     <div className="bg-white/50 dark:bg-gray-900/50 p-3 rounded-lg">
                                         <p className="text-xs text-muted-foreground">Cashback Points</p>
-                                        <p className="font-semibold">{product.cashbackPoints} points</p>
+                                        <p className="font-semibold">{product.cashbackPoints ?? 0} points</p>
                                     </div>
                                     <div className="bg-white/50 dark:bg-gray-900/50 p-3 rounded-lg">
                                         <p className="text-xs text-muted-foreground">Discount Offered</p>
-                                        <p className="font-semibold">{currencyFormatter.format(product.discountOfferedOnProduct)}</p>
+                                        <p className="font-semibold">{currencyFormatter.format(product.discountOfferedOnProduct ?? 0)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -194,13 +212,13 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         </div>
 
                         {/* Product Highlights */}
-                        {product.productHighlights.length > 0 && (
+                        {hasProductHighlights && (
                             <>
                                 <Separator />
                                 <div>
                                     <h3 className="text-lg font-semibold mb-3">Key Highlights</h3>
                                     <ul className="space-y-2">
-                                        {product.productHighlights.map((highlight, index) => (
+                                        {productHighlights.map((highlight, index) => (
                                             <li key={index} className="flex items-start gap-2">
                                                 <Check className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
                                                 <span>{highlight}</span>
@@ -222,7 +240,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                                         <Package className={`h-5 w-5 ${product.isAvailableStock ? 'text-blue-600' : 'text-gray-500'}`} />
                                         <div>
                                             <p className="font-semibold">
-                                                {product.isAvailableStock ? `${product.availableStocks} units` : 'Out of Stock'}
+                                                {product.isAvailableStock ? `${product.availableStocks ?? 0} units` : 'Out of Stock'}
                                             </p>
                                             <p className="text-xs text-muted-foreground">Available Stock</p>
                                         </div>
@@ -248,18 +266,18 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         </div>
 
                         {/* Product Variants */}
-                        {product.productVariants.length > 0 && (
+                        {hasProductVariants && (
                             <>
                                 <Separator />
                                 <div>
                                     <h3 className="text-lg font-semibold mb-3">Product Variants</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        {product.productVariants.map((variant) => (
+                                        {productVariants.map((variant) => (
                                             <div key={variant.variantId} className="p-4 rounded-xl border-2 bg-gray-50 dark:bg-gray-900/20">
                                                 <p className="font-semibold">{variant.name}</p>
                                                 <div className="flex items-center justify-between mt-2">
-                                                    <span className="text-green-600 font-bold">{currencyFormatter.format(variant.price)}</span>
-                                                    <span className="text-sm text-muted-foreground">{variant.stock} in stock</span>
+                                                    <span className="text-green-600 font-bold">{currencyFormatter.format(variant.price ?? 0)}</span>
+                                                    <span className="text-sm text-muted-foreground">{variant.stock ?? 0} in stock</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -291,7 +309,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                                         Warranty Available
                                     </Badge>
                                 )}
-                                {product.deliveryFee === 0 && (
+                                {(product.deliveryFee ?? 0) === 0 && (
                                     <Badge variant="outline" className="border-orange-300 text-orange-600">
                                         <Truck className="h-3 w-3 mr-1" />
                                         Free Delivery
@@ -418,13 +436,13 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         )}
 
                         {/* What's Inside the Box */}
-                        {product.whatsInsideTheBox.length > 0 && (
+                        {hasWhatsInsideTheBox && (
                             <>
                                 <Separator />
                                 <div>
                                     <h3 className="text-lg font-semibold mb-3">What's Inside the Box</h3>
                                     <ul className="space-y-2">
-                                        {product.whatsInsideTheBox.map((item, index) => (
+                                        {whatsInsideTheBox.map((item, index) => (
                                             <li key={index} className="flex items-start gap-2">
                                                 <Box className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                                                 <span>{item}</span>
@@ -436,13 +454,13 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         )}
 
                         {/* Deliverable Locations */}
-                        {product.deliverableLocations.length > 0 && (
+                        {hasDeliverableLocations && (
                             <>
                                 <Separator />
                                 <div>
                                     <h3 className="text-lg font-semibold mb-3">Deliverable Locations</h3>
                                     <div className="flex flex-wrap gap-2">
-                                        {product.deliverableLocations.map((location, index) => (
+                                        {deliverableLocations.map((location, index) => (
                                             <Badge key={index} variant="secondary">
                                                 <MapPin className="h-3 w-3 mr-1" />
                                                 {location}
@@ -468,7 +486,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         )}
 
                         {/* FAQ */}
-                        {product.faq.length > 0 && (
+                        {hasFaq && (
                             <>
                                 <Separator />
                                 <div>
@@ -477,7 +495,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                                         Frequently Asked Questions
                                     </h3>
                                     <div className="space-y-4">
-                                        {product.faq.map((item, index) => (
+                                        {faq.map((item, index) => (
                                             <div key={index} className="p-4 rounded-xl border-2 bg-gray-50 dark:bg-gray-900/20">
                                                 <p className="font-semibold mb-2">{item.question}</p>
                                                 <p className="text-sm text-muted-foreground">{item.answer}</p>

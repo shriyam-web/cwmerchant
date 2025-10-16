@@ -1,15 +1,15 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { IPartner } from './partner/partner.interface';
-import { ProductSchema } from './partner/product/product.schema';
-
-import { IPartnerRating } from "./partner/partnerRating.interface";
-import { PartnerRatingSchema } from './partner/partnerRating.schema';
-import { DsGraphicSchema } from './partner/ds_graphic.schema';
-import { DsReelSchema } from './partner/ds_reel.schema';
-import { DsWeblogSchema } from './partner/ds_weblog.schema';
-import { PodcastLogSchema } from './partner/podcastLog.schema';
-import { OfflineDiscountSchema } from './partner/offlineDiscount.schema';
-import { BranchLocationSchema } from './partner/branchLocation.schema';
+import { IPartner } from './partner.interface';
+import { IProduct } from "./product/product.interface";
+import { IPartnerRating } from "./partnerRating.interface";
+import { PartnerRatingSchema } from './partnerRating.schema';
+import { ProductSchema } from './product/product.schema';
+import { DsGraphicSchema } from './ds_graphic.schema';
+import { DsReelSchema } from './ds_reel.schema';
+import { DsWeblogSchema } from './ds_weblog.schema';
+import { PodcastLogSchema } from './podcastLog.schema';
+import { OfflineDiscountSchema } from './offlineDiscount.schema';
+import { BranchLocationSchema } from './branchLocation.schema';
 
 const PartnerSchema = new Schema<IPartner>({
   merchantId: { type: String, required: true, unique: true },
@@ -31,7 +31,7 @@ const PartnerSchema = new Schema<IPartner>({
   country: { type: String, default: "India" },
   whatsapp: { type: String, required: true },
   isWhatsappSame: { type: Boolean, required: true },
-  gstNumber: { type: String },
+  gstNumber: { type: String, required: true },
   panNumber: { type: String, required: true },
   businessType: { type: String, required: true },
   yearsInBusiness: { type: String, required: true },
@@ -81,8 +81,6 @@ const PartnerSchema = new Schema<IPartner>({
   },
   otpCode: { type: String },
   otpExpiry: { type: Date },
-  emailVerificationOtp: { type: String },
-  emailVerificationOtpExpiry: { type: Date },
   paymentMethodAccepted: [{ type: String }],
   qrcodeLink: { type: String },
   businessHours: {
@@ -116,4 +114,4 @@ const PartnerSchema = new Schema<IPartner>({
 }, { timestamps: true }
 );
 
-export default mongoose.models.Partner || mongoose.model<IPartner>('Partner', PartnerSchema); 
+export default mongoose.models.Partner || mongoose.model<IPartner>('Partner', PartnerSchema);

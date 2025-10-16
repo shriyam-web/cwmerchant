@@ -108,8 +108,8 @@ export type ProductFormValues = z.infer<typeof formSchema>;
 export type VariantRecord = {
   variantId: string;
   name: string;
-  price: number;
-  stock: number;
+  price?: number;
+  stock?: number;
 };
 
 export type FAQRecord = {
@@ -123,39 +123,39 @@ export type ProductRecord = {
   productCategory: string;
   productDescription: string;
   brand?: string;
-  productImages: string[];
-  productHighlights: string[];
-  originalPrice: number;
+  productImages?: string[];
+  productHighlights?: string[];
+  originalPrice?: number;
   discountedPrice?: number;
   offerApplicable?: string;
-  deliveryFee: number;
-  orderHandlingFee: number;
-  discountOfferedOnProduct: number;
-  cashbackPoints: number;
-  isWalletCompatible: boolean;
-  productVariants: VariantRecord[];
-  instore: boolean;
-  isAvailableStock: boolean;
-  availableStocks: number;
+  deliveryFee?: number;
+  orderHandlingFee?: number;
+  discountOfferedOnProduct?: number;
+  cashbackPoints?: number;
+  isWalletCompatible?: boolean;
+  productVariants?: VariantRecord[];
+  instore?: boolean;
+  isAvailableStock?: boolean;
+  availableStocks?: number;
   productHeight?: number;
   productWidth?: number;
   productWeight?: number;
   productPackageWeight?: number;
   productPackageHeight?: number;
   productPackageWidth?: number;
-  whatsInsideTheBox: string[];
-  deliverableLocations: string[];
+  whatsInsideTheBox?: string[];
+  deliverableLocations?: string[];
   eta?: string;
-  isWarranty: boolean;
+  isWarranty?: boolean;
   warrantyDescription?: string;
-  isReplacement: boolean;
+  isReplacement?: boolean;
   replacementDays?: number;
-  cityWittyAssured: boolean;
-  isPriority: boolean;
-  sponsored: boolean;
-  bestsellerBadge: boolean;
+  cityWittyAssured?: boolean;
+  isPriority?: boolean;
+  sponsored?: boolean;
+  bestsellerBadge?: boolean;
   additionalInfo?: string;
-  faq: FAQRecord[];
+  faq?: FAQRecord[];
 };
 
 export const createEmptyFormValues = (): ProductFormValues => ({
@@ -381,44 +381,44 @@ export const productRecordToFormValues = (product: ProductRecord): ProductFormVa
   productCategory: product.productCategory,
   productDescription: product.productDescription,
   brand: product.brand || '',
-  productImages: product.productImages,
-  productHighlights: product.productHighlights,
-  originalPrice: product.originalPrice.toString(),
+  productImages: product.productImages || [],
+  productHighlights: product.productHighlights || [],
+  originalPrice: product.originalPrice?.toString() || '0',
   discountedPrice: product.discountedPrice?.toString() || '',
   offerApplicable: product.offerApplicable || '',
-  deliveryFee: product.deliveryFee.toString(),
-  orderHandlingFee: product.orderHandlingFee.toString(),
-  discountOfferedOnProduct: product.discountOfferedOnProduct.toString(),
-  cashbackPoints: product.cashbackPoints.toString(),
-  isWalletCompatible: product.isWalletCompatible,
-  productVariants: product.productVariants.map((variant) => ({
+  deliveryFee: product.deliveryFee?.toString() || '0',
+  orderHandlingFee: product.orderHandlingFee?.toString() || '0',
+  discountOfferedOnProduct: product.discountOfferedOnProduct?.toString() || '0',
+  cashbackPoints: product.cashbackPoints?.toString() || '0',
+  isWalletCompatible: product.isWalletCompatible ?? false,
+  productVariants: (product.productVariants || []).map((variant) => ({
     variantId: variant.variantId,
     name: variant.name,
-    price: variant.price.toString(),
-    stock: variant.stock.toString(),
+    price: variant.price?.toString() || '0',
+    stock: variant.stock?.toString() || '0',
   })),
-  instore: product.instore,
-  isAvailableStock: product.isAvailableStock,
-  availableStocks: product.availableStocks.toString(),
+  instore: product.instore ?? false,
+  isAvailableStock: product.isAvailableStock ?? false,
+  availableStocks: product.availableStocks?.toString() || '0',
   productHeight: product.productHeight?.toString() || '',
   productWidth: product.productWidth?.toString() || '',
   productWeight: product.productWeight?.toString() || '',
   productPackageWeight: product.productPackageWeight?.toString() || '',
   productPackageHeight: product.productPackageHeight?.toString() || '',
   productPackageWidth: product.productPackageWidth?.toString() || '',
-  whatsInsideTheBox: product.whatsInsideTheBox,
-  deliverableLocations: product.deliverableLocations,
+  whatsInsideTheBox: product.whatsInsideTheBox || [],
+  deliverableLocations: product.deliverableLocations || [],
   eta: product.eta || '',
-  isWarranty: product.isWarranty,
+  isWarranty: product.isWarranty ?? false,
   warrantyDescription: product.warrantyDescription || '',
-  isReplacement: product.isReplacement,
+  isReplacement: product.isReplacement ?? false,
   replacementDays: product.replacementDays?.toString() || '',
-  cityWittyAssured: product.cityWittyAssured,
-  isPriority: product.isPriority,
-  sponsored: product.sponsored,
-  bestsellerBadge: product.bestsellerBadge,
+  cityWittyAssured: product.cityWittyAssured ?? false,
+  isPriority: product.isPriority ?? false,
+  sponsored: product.sponsored ?? false,
+  bestsellerBadge: product.bestsellerBadge ?? false,
   additionalInfo: product.additionalInfo || '',
-  faq: product.faq,
+  faq: product.faq || [],
 });
 
 export const steps = [

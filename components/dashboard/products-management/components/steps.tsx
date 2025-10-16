@@ -118,15 +118,21 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
   const handleNext = async () => {
     if (loading) return;
 
-    if (isLastStep) {
-      const valid = await validateStep(currentStep);
-      if (!valid) {
-        return;
-      }
-      await onSubmit(form.getValues());
-    } else {
+    if (!isLastStep) {
       await goToNextStep();
     }
+    // If it's the last step, the form submit will be triggered by the submit button
+  };
+
+  const handleSubmit = async (e: React.MouseEvent) => {
+    if (loading) return;
+
+    const valid = await validateStep(currentStep);
+    if (!valid) {
+      e.preventDefault();
+      return;
+    }
+    // Let the form's onSubmit handle the actual submission
   };
 
   return (
@@ -140,8 +146,8 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
         Previous
       </Button>
       <Button
-        type="button"
-        onClick={handleNext}
+        type={isLastStep ? "submit" : "button"}
+        onClick={isLastStep ? handleSubmit : handleNext}
         disabled={loading}
       >
         {loading ? (

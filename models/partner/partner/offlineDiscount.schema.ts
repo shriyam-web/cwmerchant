@@ -5,10 +5,10 @@ export const OfflineDiscountSchema = new Schema(
         category: { type: String, required: true },
         offerTitle: { type: String, required: true },
         offerDescription: { type: String, required: true },
-        discountValue: { type: Number, required: true, default: 0 },
-        discountPercent: { type: Number, required: true, default: 0 },
+        discountValue: { type: Number, required: true },
+        discountPercent: { type: Number, required: true },
         status: { type: String, enum: ["Active", "Inactive"], default: "Active" },
-        validUpto: { type: Date, required: false },
+        validUpto: { type: Date, required: true },
     },
-    { _id: true }  // Enable _id for subdocuments to allow edit/delete operations
+    { _id: false }
 );
