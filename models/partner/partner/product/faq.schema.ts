@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 import { IFAQ } from "./product.interface";
 
-export const FAQSchema = new Schema<IFAQ>(
+export const FAQSchema = new Schema(
     {
         question: { type: String },
         answer: { type: String },
