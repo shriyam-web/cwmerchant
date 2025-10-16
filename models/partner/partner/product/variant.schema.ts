@@ -1,6 +1,6 @@
-import { InferSchemaType, Schema } from "mongoose";
+import { Schema } from "mongoose";
 
-const VariantDefinition = new Schema(
+export const VariantSchema = new Schema(
     {
         variantId: { type: String },
         name: { type: String },
@@ -9,7 +9,3 @@ const VariantDefinition = new Schema(
     },
     { _id: false }
 );
-
-export type VariantDocument = InferSchemaType<typeof VariantDefinition>;
-
-export const VariantSchema: Schema<VariantDocument> = VariantDefinition;
