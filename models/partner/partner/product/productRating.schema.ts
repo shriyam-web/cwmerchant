@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 import { IProductRating } from "./product.interface";
 
-export const ProductRatingSchema = new Schema<IProductRating>(
+export const ProductRatingSchema = new Schema(
     {
         userId: { type: String },
         userName: { type: String },
