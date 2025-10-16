@@ -1,6 +1,7 @@
 import { Schema } from "mongoose";
+import { IVariant } from "./product.interface";
 
-export const VariantSchema = new Schema(
+export const VariantSchema = new Schema<IVariant>(
     {
         variantId: { type: String },
         name: { type: String },
