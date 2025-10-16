@@ -16,7 +16,6 @@ import {
     initialProducts,
     steps,
 } from './types';
-// new changes i'm making
 
 export const useProductsForm = () => {
     const { merchant } = useMerchantAuth();
