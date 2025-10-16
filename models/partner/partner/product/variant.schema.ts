@@ -1,12 +1,15 @@
-import { Schema } from "mongoose";
-import { IVariant } from "./product.interface";
+import { InferSchemaType, Schema } from "mongoose";
 
-export const VariantSchema = new Schema<IVariant>(
+const VariantDefinition = new Schema(
     {
-        variantId: { type: String, },
-        name: { type: String, },
-        price: { type: Number, },
-        stock: { type: Number, },
+        variantId: { type: String },
+        name: { type: String },
+        price: { type: Number },
+        stock: { type: Number },
     },
     { _id: false }
 );
+
+export type VariantDocument = InferSchemaType<typeof VariantDefinition>;
+
+export const VariantSchema: Schema<VariantDocument> = VariantDefinition;
