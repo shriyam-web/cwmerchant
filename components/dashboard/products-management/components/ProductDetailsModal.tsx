@@ -90,7 +90,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         {onEdit && (
                             <Button
                                 onClick={handleEdit}
-                                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg"
+                                className="mt-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg"
                             >
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit Product

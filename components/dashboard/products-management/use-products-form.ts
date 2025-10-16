@@ -24,11 +24,13 @@ export const useProductsForm = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [uploadingImages, setUploadingImages] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [closeIntent, setCloseIntent] = useState<'manual' | 'submit' | null>(null);
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: useMemo(() => createEmptyFormValues(), []),
         mode: 'onChange',
+        shouldUnregister: false,
     });
 
     const imagesFieldArray = useFieldArray({ control: form.control, name: 'productImages' as FieldArrayPath<ProductFormValues> });
@@ -44,14 +46,50 @@ export const useProductsForm = () => {
 
     useEffect(() => {
         if (!isAddDialogOpen) {
+            return;
+        }
+
+        const subscription = form.watch(() => {
+            setCloseIntent(null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, [form, isAddDialogOpen]);
+
+    useEffect(() => {
+        if (!isAddDialogOpen) {
+            return;
+        }
+
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            if (form.formState.isDirty && closeIntent !== 'submit') {
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [form.formState.isDirty, closeIntent, isAddDialogOpen]);
+
+    useEffect(() => {
+        if (!isAddDialogOpen && closeIntent === 'manual') {
             form.reset(createEmptyFormValues());
             setCurrentStep(0);
+            setCloseIntent(null);
         }
-    }, [isAddDialogOpen, form]);
+    }, [isAddDialogOpen, closeIntent, form]);
 
     const goToNextStep = async () => {
         const canProceed = await validateStep(currentStep);
         if (!canProceed) {
+            return false;
+        }
+
+        if (currentStep >= steps.length - 1) {
             return false;
         }
 
@@ -245,6 +283,7 @@ export const useProductsForm = () => {
 
             // Refresh products list
             await fetchProducts();
+            setCloseIntent('submit');
             setIsAddDialogOpen(false);
         } catch (error) {
             console.error('Error saving product:', error);
@@ -253,6 +292,7 @@ export const useProductsForm = () => {
                 description: error instanceof Error ? error.message : 'Please try again later.',
                 variant: 'destructive',
             });
+            setCloseIntent('manual');
         } finally {
             setLoading(false);
         }
