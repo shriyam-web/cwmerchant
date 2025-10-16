@@ -73,7 +73,9 @@ export default function Step1BasicBusiness({ formData, handleInputChange, fieldE
                             {[
                                 'Fashion & Clothing',
                                 'Footwear',
-                                'Salon & Spa',
+                                'Beauty Salon',
+                                'Unisex Salon',
+                                'Spa Center',
                                 'Restaurants & Dining',
                                 'Hotels & Resorts',
                                 'Education & Careers',
