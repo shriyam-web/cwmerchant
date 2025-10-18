@@ -46,6 +46,7 @@ export async function POST(req: Request) {
                 category: offer.category,
                 offerTitle: offer.offerTitle,
                 offerDescription: offer.offerDescription,
+                originalPrice: offer.originalPrice || 0,
                 discountValue: offer.discountValue || 0,
                 discountPercent: offer.discountPercent || 0,
                 status: offer.status || 'Active',
@@ -57,11 +58,14 @@ export async function POST(req: Request) {
         partner.offlineDiscount = migratedOffers;
         await partner.save();
 
+        // Fetch the updated partner to get the new _ids
+        const updatedPartner = await Partner.findById(merchantId);
+
         return NextResponse.json({
             success: true,
             message: `Successfully migrated ${offersWithoutId.length} offers`,
             migrated: offersWithoutId.length,
-            offers: partner.offlineDiscount
+            offers: updatedPartner?.offlineDiscount || partner.offlineDiscount
         });
     } catch (err) {
         console.error("Error migrating offers:", err);

@@ -18,6 +18,7 @@ interface Offer {
   category: string;
   offerTitle: string;
   offerDescription: string;
+  originalPrice?: number;
   discountValue: number;
   discountPercent: number;
   status: 'Active' | 'Inactive';
@@ -59,6 +60,20 @@ const convertYYYYMMDDToDDMMYYYY = (yyyymmdd: string): string => {
   return `${day}/${month}/${year}`;
 };
 
+const calculateFinalPrice = (price: { originalPrice?: number; discountValue?: number; discountPercent?: number; }) => {
+  const original = price.originalPrice ?? 0;
+  if (original <= 0) return 0;
+  const valueBased = price.discountValue ? Math.max(original - price.discountValue, 0) : original;
+  const percentBased = price.discountPercent ? Math.max(original * (1 - price.discountPercent / 100), 0) : original;
+  const final = Math.min(valueBased, percentBased);
+  return Math.max(Number(final.toFixed(2)), 0);
+};
+
+const formatCurrency = (value: number) => {
+  const safeValue = Number.isFinite(value) ? Math.max(value, 0) : 0;
+  return `₹${safeValue.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+};
+
 export function OffersManagement({ onOffersChange }: OffersManagementProps = {}) {
   const { merchant } = useMerchantAuth();
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -73,6 +88,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
     category: '',
     offerTitle: '',
     offerDescription: '',
+    originalPrice: 0,
     discountValue: 0,
     discountPercent: 0,
     status: 'Active',
@@ -102,7 +118,11 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
             id: offer._id
           });
         });
-        setOffers(data.offers || []);
+        const offersWithFinalPrice = (data.offers || []).map((offer: Offer) => ({
+          ...offer,
+          originalPrice: offer.originalPrice ?? 0
+        }));
+        setOffers(offersWithFinalPrice);
       } else {
         toast.error(data.error || 'Failed to fetch offers');
       }
@@ -131,7 +151,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
       const data = await response.json();
 
       if (data.success) {
-        setOffers(data.offers || []);
+        await fetchOffers(); // Refresh data to ensure consistency
         toast.success('Offer created successfully!');
         resetForm();
         setIsAddDialogOpen(false);
@@ -169,7 +189,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
       console.log('Update response:', data);
 
       if (data.success) {
-        setOffers(data.offers || []);
+        await fetchOffers(); // Refresh data to ensure consistency
         toast.success('Offer updated successfully!');
         resetForm();
         setIsEditDialogOpen(false);
@@ -200,7 +220,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
       console.log('Delete response:', data);
 
       if (data.success) {
-        setOffers(data.offers || []);
+        await fetchOffers(); // Refresh data to ensure consistency
         toast.success('Offer deleted successfully!');
         onOffersChange?.(); // Notify parent about the change
       } else {
@@ -218,6 +238,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
       category: offer.category,
       offerTitle: offer.offerTitle,
       offerDescription: offer.offerDescription,
+      originalPrice: offer.originalPrice ?? 0,
       discountValue: offer.discountValue,
       discountPercent: offer.discountPercent,
       status: offer.status,
@@ -237,6 +258,10 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
     }
     if (!formData.offerDescription.trim()) {
       toast.error('Offer description is required');
+      return false;
+    }
+    if (!formData.originalPrice || formData.originalPrice <= 0) {
+      toast.error('Original price must be greater than 0');
       return false;
     }
     if (formData.discountValue <= 0 && formData.discountPercent <= 0) {
@@ -260,6 +285,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
       category: '',
       offerTitle: '',
       offerDescription: '',
+      originalPrice: 0,
       discountValue: 0,
       discountPercent: 0,
       status: 'Active',
@@ -283,7 +309,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
       const data = await response.json();
 
       if (data.success) {
-        setOffers(data.offers || []);
+        await fetchOffers(); // Refresh data to ensure consistency
         toast.success(data.message || 'Offers migrated successfully!');
       } else {
         toast.error(data.error || 'Failed to migrate offers');
@@ -296,130 +322,165 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
     }
   };
 
-  const renderOfferForm = (isEdit: boolean = false) => (
-    <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-      <div>
-        <Label htmlFor="category">Category *</Label>
-        <Input
-          id="category"
-          value={formData.category}
-          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          placeholder="e.g., Electronics, Fashion, Food"
-          className="mt-1"
-        />
-      </div>
+  const renderOfferForm = (isEdit: boolean = false) => {
+    const finalPrice = calculateFinalPrice({
+      originalPrice: formData.originalPrice,
+      discountValue: formData.discountValue,
+      discountPercent: formData.discountPercent
+    });
+    const hasDiscount = (formData.discountValue ?? 0) > 0 || (formData.discountPercent ?? 0) > 0;
+    const discountApplied = hasDiscount && finalPrice < (formData.originalPrice ?? 0);
 
-      <div>
-        <Label htmlFor="offerTitle">Offer Title *</Label>
-        <Input
-          id="offerTitle"
-          value={formData.offerTitle}
-          onChange={(e) => setFormData({ ...formData, offerTitle: e.target.value })}
-          placeholder="e.g., 20% Off on Electronics"
-          className="mt-1"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="offerDescription">Description *</Label>
-        <Textarea
-          id="offerDescription"
-          value={formData.offerDescription}
-          onChange={(e) => setFormData({ ...formData, offerDescription: e.target.value })}
-          placeholder="Describe your offer in detail"
-          className="mt-1"
-          rows={3}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+    return (
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
         <div>
-          <Label htmlFor="discountValue">Discount Value (₹)</Label>
+          <Label htmlFor="category">Category *</Label>
           <Input
-            id="discountValue"
-            type="number"
-            min="0"
-            value={formData.discountValue || ''}
-            onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
-            placeholder="e.g., 500"
+            id="category"
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            placeholder="e.g., Electronics, Fashion, Food"
             className="mt-1"
           />
         </div>
 
         <div>
-          <Label htmlFor="discountPercent">Discount Percent (%)</Label>
+          <Label htmlFor="offerTitle">Offer Title *</Label>
           <Input
-            id="discountPercent"
-            type="number"
-            min="0"
-            max="100"
-            value={formData.discountPercent || ''}
-            onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })}
-            placeholder="e.g., 20"
+            id="offerTitle"
+            value={formData.offerTitle}
+            onChange={(e) => setFormData({ ...formData, offerTitle: e.target.value })}
+            placeholder="e.g., 20% Off on Electronics"
             className="mt-1"
           />
         </div>
-      </div>
 
-      <div>
-        <Label htmlFor="status">Status *</Label>
-        <Select
-          value={formData.status}
-          onValueChange={(value: 'Active' | 'Inactive') => {
-            // Clear validUpto when status is set to Inactive
-            if (value === 'Inactive') {
-              setFormData({ ...formData, status: value, validUpto: '' });
-            } else {
-              setFormData({ ...formData, status: value });
-            }
-          }}
+        <div>
+          <Label htmlFor="offerDescription">Description *</Label>
+          <Textarea
+            id="offerDescription"
+            value={formData.offerDescription}
+            onChange={(e) => setFormData({ ...formData, offerDescription: e.target.value })}
+            placeholder="Describe your offer in detail"
+            className="mt-1"
+            rows={3}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="originalPrice">Original Price (₹) *</Label>
+          <Input
+            id="originalPrice"
+            type="number"
+            min="0"
+            value={formData.originalPrice || ''}
+            onChange={(e) => setFormData({ ...formData, originalPrice: Number(e.target.value) })}
+            placeholder="e.g., 2500"
+            className="mt-1"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="discountValue">Discount Value (₹)</Label>
+            <Input
+              id="discountValue"
+              type="number"
+              min="0"
+              value={formData.discountValue || ''}
+              onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
+              placeholder="e.g., 500"
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="discountPercent">Discount Percent (%)</Label>
+            <Input
+              id="discountPercent"
+              type="number"
+              min="0"
+              max="100"
+              value={formData.discountPercent || ''}
+              onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })}
+              placeholder="e.g., 20"
+              className="mt-1"
+            />
+          </div>
+        </div>
+
+        {formData.originalPrice ? (
+          <div className="rounded-md border bg-gray-50 px-3 py-2 space-y-1">
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <span>Original</span>
+              <span className={discountApplied ? "line-through" : undefined}>{formatCurrency(formData.originalPrice)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Final Price</span>
+              <span className="font-semibold text-blue-600">{formatCurrency(finalPrice)}</span>
+            </div>
+          </div>
+        ) : null}
+
+        <div>
+          <Label htmlFor="status">Status *</Label>
+          <Select
+            value={formData.status}
+            onValueChange={(value: 'Active' | 'Inactive') => {
+              if (value === 'Inactive') {
+                setFormData({ ...formData, status: value, validUpto: '' });
+              } else {
+                setFormData({ ...formData, status: value });
+              }
+            }}
+          >
+            <SelectTrigger className="mt-1">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Active">Active</SelectItem>
+              <SelectItem value="Inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="validUpto">
+            Valid Until {formData.status === 'Active' ? '*' : '(Optional)'}
+          </Label>
+          <Input
+            id="validUpto"
+            type="date"
+            value={formData.validUpto}
+            onChange={(e) => setFormData({ ...formData, validUpto: e.target.value })}
+            className="mt-1"
+            min={new Date().toISOString().split('T')[0]}
+            disabled={formData.status === 'Inactive'}
+          />
+          {formData.validUpto && (
+            <p className="text-xs text-gray-500 mt-1">
+              Selected: {convertYYYYMMDDToDDMMYYYY(formData.validUpto)}
+            </p>
+          )}
+        </div>
+
+        <Button
+          onClick={isEdit ? handleEditOffer : handleAddOffer}
+          className="w-full"
+          disabled={submitting}
         >
-          <SelectTrigger className="mt-1">
-            <SelectValue placeholder="Select status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Active">Active</SelectItem>
-            <SelectItem value="Inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
+          {submitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              {isEdit ? 'Updating...' : 'Creating...'}
+            </>
+          ) : (
+            isEdit ? 'Update Offer' : 'Create Offer'
+          )}
+        </Button>
       </div>
-
-      <div>
-        <Label htmlFor="validUpto">
-          Valid Until {formData.status === 'Active' ? '*' : '(Optional)'}
-        </Label>
-        <Input
-          id="validUpto"
-          type="date"
-          value={formData.validUpto}
-          onChange={(e) => setFormData({ ...formData, validUpto: e.target.value })}
-          className="mt-1"
-          min={new Date().toISOString().split('T')[0]}
-          disabled={formData.status === 'Inactive'}
-        />
-        {formData.validUpto && (
-          <p className="text-xs text-gray-500 mt-1">
-            Selected: {convertYYYYMMDDToDDMMYYYY(formData.validUpto)}
-          </p>
-        )}
-      </div>
-
-      <Button
-        onClick={isEdit ? handleEditOffer : handleAddOffer}
-        className="w-full"
-        disabled={submitting}
-      >
-        {submitting ? (
-          <>
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            {isEdit ? 'Updating...' : 'Creating...'}
-          </>
-        ) : (
-          isEdit ? 'Update Offer' : 'Create Offer'
-        )}
-      </Button>
-    </div>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -513,6 +574,13 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
           {offers.map((offer) => {
             const expired = isOfferExpired(offer.validUpto);
             const displayStatus = expired ? 'Expired' : offer.status;
+            const showPriceSummary = (offer.originalPrice ?? 0) > 0;
+            const finalOfferPrice = calculateFinalPrice({
+              originalPrice: offer.originalPrice,
+              discountValue: offer.discountValue,
+              discountPercent: offer.discountPercent
+            });
+            const discountApplied = finalOfferPrice < (offer.originalPrice ?? 0);
 
             return (
               <Card key={offer._id} className="hover:shadow-lg transition-shadow">
@@ -563,6 +631,18 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 mb-4 line-clamp-2">{offer.offerDescription}</p>
+                  {showPriceSummary && (
+                    <div className="mb-3 rounded-md border bg-gray-50 px-3 py-2 space-y-1">
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>Original</span>
+                        <span className={discountApplied ? "line-through" : undefined}>{formatCurrency(offer.originalPrice || 0)}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">Final Price</span>
+                        <span className="font-semibold text-blue-600">{formatCurrency(finalOfferPrice)}</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-2 text-sm">
                     {offer.discountPercent > 0 && (
                       <div className="flex items-center justify-between">

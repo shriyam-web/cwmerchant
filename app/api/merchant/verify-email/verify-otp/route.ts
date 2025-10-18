@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
+import { Types } from "mongoose";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,18 +12,20 @@ export async function POST(req: NextRequest) {
     }
 
     await dbConnect();
-    const partner = await Partner.findById(merchantId);
+    const partnerQuery = Types.ObjectId.isValid(merchantId)
+      ? { _id: merchantId }
+      : { merchantId };
+
+    const partner = await Partner.findOne(partnerQuery);
     
     if (!partner) {
       return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
     }
 
-    // Check if email is already verified
     if (partner.emailVerified) {
       return NextResponse.json({ error: "Email is already verified" }, { status: 400 });
     }
 
-    // Verify OTP
     if (
       partner.emailVerificationOtp !== otp || 
       !partner.emailVerificationOtpExpiry || 
@@ -31,22 +34,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
     }
 
-    // Mark email as verified
-    partner.emailVerified = true;
-    partner.emailVerificationOtp = undefined;
-    partner.emailVerificationOtpExpiry = undefined;
-    await partner.save();
+    const updatedPartner = await Partner.findByIdAndUpdate(
+      partner._id,
+      {
+        $set: { emailVerified: true },
+        $unset: {
+          emailVerificationOtp: "",
+          emailVerificationOtpExpiry: ""
+        }
+      },
+      { new: true, runValidators: false }
+    );
 
     return NextResponse.json({ 
       success: true, 
       message: "Email verified successfully!",
       merchant: {
-        id: partner._id,
-        email: partner.email,
-        emailVerified: partner.emailVerified,
-        businessName: partner.businessName,
-        displayName: partner.displayName,
-        status: partner.status
+        id: updatedPartner?._id,
+        email: updatedPartner?.email,
+        emailVerified: updatedPartner?.emailVerified,
+        businessName: updatedPartner?.businessName,
+        displayName: updatedPartner?.displayName,
+        status: updatedPartner?.status
       }
     });
   } catch (err) {

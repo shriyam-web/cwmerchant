@@ -112,7 +112,6 @@ Added email verification functionality to the merchant dashboard with OTP-based 
 - ✅ Verify button with loading state
 
 ---
-
 ## 🔒 Security Features
 
 1. **OTP Expiry**: 10 minutes validity

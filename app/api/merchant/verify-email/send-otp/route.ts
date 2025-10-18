@@ -1,7 +1,9 @@
+// import { NextRequest, NextResponse } from "next/server";
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
 import sendEmail from "@/lib/nodemailer";
+import { Types } from "mongoose";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +13,11 @@ export async function POST(req: NextRequest) {
     }
 
     await dbConnect();
-    const partner = await Partner.findById(merchantId);
+    const partnerQuery = Types.ObjectId.isValid(merchantId)
+      ? { _id: merchantId }
+      : { merchantId };
+
+    const partner = await Partner.findOne(partnerQuery);
     
     if (!partner) {
       return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
@@ -25,9 +31,17 @@ export async function POST(req: NextRequest) {
     // Generate random 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    partner.emailVerificationOtp = otp;
-    partner.emailVerificationOtpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins expiry
-    await partner.save();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    await Partner.updateOne(
+      { _id: partner._id },
+      {
+        $set: {
+          emailVerificationOtp: otp,
+          emailVerificationOtpExpiry: otpExpiry
+        }
+      },
+      { runValidators: false }
+    );
 
     // Send OTP email
     await sendEmail({

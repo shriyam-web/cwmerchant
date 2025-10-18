@@ -22,9 +22,21 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
         }
 
+        const offers = (partner.offlineDiscount || []).map((offer: any) => ({
+            _id: offer._id,
+            category: offer.category,
+            offerTitle: offer.offerTitle,
+            offerDescription: offer.offerDescription,
+            originalPrice: offer.originalPrice,
+            discountValue: offer.discountValue,
+            discountPercent: offer.discountPercent,
+            status: offer.status,
+            validUpto: offer.validUpto
+        }));
+
         return NextResponse.json({
             success: true,
-            offers: partner.offlineDiscount || []
+            offers: offers
         });
     } catch (err) {
         console.error("Error fetching offers:", err);
@@ -52,10 +64,21 @@ export async function POST(req: Request) {
             }
         }
 
+        if (!offerData.originalPrice || offerData.originalPrice <= 0) {
+            return NextResponse.json({ error: "Original price must be greater than 0" }, { status: 400 });
+        }
+
         // Validate at least one discount type is provided
         if ((!offerData.discountValue || offerData.discountValue <= 0) &&
             (!offerData.discountPercent || offerData.discountPercent <= 0)) {
             return NextResponse.json({ error: "At least one discount type (value or percent) must be greater than 0" }, { status: 400 });
+        }
+
+        if (offerData.discountValue && offerData.discountPercent) {
+            const valueFromPercent = offerData.originalPrice * (offerData.discountPercent / 100);
+            if (valueFromPercent !== offerData.discountValue) {
+                return NextResponse.json({ error: "Discount value must align with discount percent" }, { status: 400 });
+            }
         }
 
         // Validate validUpto is required for Active offers
@@ -73,9 +96,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
         }
 
-        // Add the new offer
+        const originalPrice = Math.max(Number(offerData.originalPrice || 0), 0);
+        const discountValue = Math.min(Math.max(Number(offerData.discountValue || 0), 0), originalPrice);
+        const discountPercent = Math.min(Math.max(Number(offerData.discountPercent || 0), 0), 100);
+
         partner.offlineDiscount.push({
             ...offerData,
+            originalPrice,
+            discountValue,
+            discountPercent,
             status: offerData.status || 'Active'
         });
 
@@ -126,11 +155,23 @@ export async function PUT(req: Request) {
         }
 
         // Update the offer - preserve existing values if not provided
+        const originalPrice = Math.max(Number((updateData.originalPrice ?? partner.offlineDiscount[offerIndex].originalPrice) ?? 0), 0);
+        const discountValue = updateData.discountValue !== undefined
+            ? Math.min(Math.max(Number(updateData.discountValue || 0), 0), originalPrice)
+            : Math.min(partner.offlineDiscount[offerIndex].discountValue || 0, originalPrice);
+        const discountPercent = updateData.discountPercent !== undefined
+            ? Math.min(Math.max(Number(updateData.discountPercent || 0), 0), 100)
+            : Math.min(partner.offlineDiscount[offerIndex].discountPercent || 0, 100);
+
         Object.keys(updateData).forEach(key => {
             if (updateData[key] !== undefined) {
                 partner.offlineDiscount[offerIndex][key] = updateData[key];
             }
         });
+
+        partner.offlineDiscount[offerIndex].originalPrice = originalPrice;
+        partner.offlineDiscount[offerIndex].discountValue = discountValue;
+        partner.offlineDiscount[offerIndex].discountPercent = discountPercent;
 
         await partner.save();
 

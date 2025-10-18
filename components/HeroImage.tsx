@@ -1,12 +1,13 @@
 // import Image from 'next/image';
 'use client'; // ⚠️ Add this at the top
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function HeroImage() {
     const dataPoints = [50, 150, 250, 350, 450, 550, 650, 750];
     const yPoints = [330, 290, 260, 200, 150, 120, 80, 60];
     const [emojiBurst, setEmojiBurst] = useState<{ x: number; y: number; symbol: string }[]>([]);
+    const [sparklePositions, setSparklePositions] = useState<{ top: number; left: number; delay: number }[]>([]);
 
     const floatingEmojis = [
         { symbol: '💰', top: 50, left: 100, delay: 0 },
@@ -15,6 +16,16 @@ export default function HeroImage() {
         { symbol: '💵', top: 80, left: 550, delay: 0.9 },
         { symbol: '🎉', top: 150, left: 650, delay: 1.2 },
     ];
+
+    // Generate sparkle positions only on client to avoid hydration mismatch
+    useEffect(() => {
+        const positions = [...Array(10)].map((_, i) => ({
+            top: Math.random() * 350,
+            left: Math.random() * 750,
+            delay: Math.random() * 2,
+        }));
+        setSparklePositions(positions);
+    }, []);
 
     const handlePointHover = (x: number, y: number) => {
         const burst = ['💰', '📈', '🤑', '💵', '🎉'].map((symbol) => ({
@@ -122,16 +133,16 @@ export default function HeroImage() {
                     </motion.div>
                 ))}
 
-                {[...Array(10)].map((_, i) => (
+                {sparklePositions.map((sparkle, i) => (
                     <motion.div
                         key={i}
                         className="absolute text-yellow-400 text-xl select-none pointer-events-none"
-                        style={{ top: Math.random() * 350, left: Math.random() * 750 }}
+                        style={{ top: sparkle.top, left: sparkle.left }}
                         animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
                         transition={{
                             duration: 2 + Math.random() * 2,
                             repeat: Infinity,
-                            delay: Math.random() * 2,
+                            delay: sparkle.delay,
                         }}
                     >
                         ✨

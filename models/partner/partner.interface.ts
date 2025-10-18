@@ -10,6 +10,8 @@ export interface IPartner extends Document {
     merchantSlug?: string;
     email: string;
     emailVerified?: boolean;
+    emailVerificationOtp?: string;
+    emailVerificationOtpExpiry?: Date;
     phone: string;
     phoneVerified?: boolean;
     password: string;
@@ -77,8 +79,6 @@ export interface IPartner extends Document {
     };
     otpCode?: string;
     otpExpiry?: Date;
-    emailVerificationOtp?: string;
-    emailVerificationOtpExpiry?: Date;
     paymentMethodAccepted?: string[];
     qrcodeLink?: string;
     businessHours?: {
@@ -144,6 +144,7 @@ export interface IPartner extends Document {
         category: string;
         offerTitle: string;
         offerDescription: string;
+        originalPrice?: number;
         discountValue: number;
         discountPercent: number;
         status: "Active" | "Inactive";
