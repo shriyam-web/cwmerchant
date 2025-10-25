@@ -115,11 +115,16 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
   const isLastStep = currentStep === steps.length - 1;
   const isEditing = !!form.getValues('productId');
 
+  console.log('BottomNavigation: currentStep=', currentStep, 'steps.length=', steps.length, 'isLastStep=', isLastStep);
+
   const handleNext = async () => {
     if (loading) return;
 
     if (!isLastStep) {
+      console.log('handleNext: not last step, calling goToNextStep');
       await goToNextStep();
+    } else {
+      console.log('handleNext: is last step, should submit');
     }
     // If it's the last step, the form submit will be triggered by the submit button
   };

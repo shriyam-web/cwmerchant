@@ -64,6 +64,7 @@ export const formSchema = z
           answer: z.string().min(1, 'Answer is required'),
         })
       )
+      .min(1, 'Add at least one FAQ')
       .default([]),
   })
   .refine(
@@ -478,10 +479,6 @@ export const steps = [
     description: 'Add FAQs or extra info.',
     color: 'from-blue-500 to-blue-400',
     fields: [
-      'cityWittyAssured',
-      'isPriority',
-      'sponsored',
-      'bestsellerBadge',
       'additionalInfo',
       'faq',
     ] as const,

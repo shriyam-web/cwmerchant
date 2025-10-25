@@ -84,16 +84,22 @@ export const useProductsForm = () => {
     }, [isAddDialogOpen, closeIntent, form]);
 
     const goToNextStep = async () => {
+        console.log('goToNextStep called at step index:', currentStep);
         const canProceed = await validateStep(currentStep);
+        console.log('canProceed:', canProceed);
         if (!canProceed) {
+            console.log('Validation failed, staying at step:', currentStep);
             return false;
         }
 
         if (currentStep >= steps.length - 1) {
+            console.log('Already at last step');
             return false;
         }
 
-        setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+        const nextStep = currentStep + 1;
+        console.log('Moving to step index:', nextStep);
+        setCurrentStep(nextStep);
         return true;
     };
 
@@ -123,21 +129,34 @@ export const useProductsForm = () => {
 
     const validateStep = async (stepIndex: number) => {
         const step = steps[stepIndex];
-        if (!step) return false;
+        console.log(`validateStep for index ${stepIndex}, step:`, step?.title, 'fields:', step?.fields);
+        if (!step) {
+            console.log('Step not found at index:', stepIndex);
+            return false;
+        }
 
         const fields = step.fields;
         const result = await form.trigger(fields as any, { shouldFocus: true });
+        console.log(`validateStep result for ${step.title}:`, result);
         return result;
     };
 
     const fetchProducts = async () => {
-        if (!merchant?.id) return;
+        if (!merchant?.id) {
+            console.log('fetchProducts: No merchant ID');
+            return;
+        }
 
         try {
-            const response = await fetch(`/api/merchant/products?merchantId=${merchant.id}`);
+            const url = `/api/merchant/products?merchantId=${merchant.id}`;
+            console.log('Fetching products from:', url);
+            const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
+                console.log('Products fetched:', data);
                 setProducts(data.products || []);
+            } else {
+                console.error('Failed to fetch products:', response.status, response.statusText);
             }
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -188,7 +207,10 @@ export const useProductsForm = () => {
     };
 
     const handleSubmitProduct = async (values: ProductFormValues) => {
-        if (!merchant?.id) return;
+        if (!merchant?.id) {
+            console.error('No merchant ID available');
+            return;
+        }
 
         setLoading(true);
         try {
@@ -201,6 +223,7 @@ export const useProductsForm = () => {
 
             // Check if we're editing an existing product
             const isEditing = Boolean(existingProduct);
+            console.log('Submitting product:', { isEditing, productIdValue, merchantId: merchant.id });
 
             const productData = {
                 productId: productIdValue,
@@ -271,18 +294,31 @@ export const useProductsForm = () => {
             });
 
             if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('API response error:', errorData);
                 throw new Error(isEditing ? 'Failed to update product' : 'Failed to save product');
             }
 
-            toast({
+            const responseData = await response.json();
+            console.log('Product saved successfully:', responseData);
+
+            console.log('About to show toast notification');
+            const toastResult = toast({
                 title: isEditing ? 'Product updated' : 'Product added',
                 description: isEditing
                     ? 'Product has been successfully updated.'
                     : 'Product has been successfully added.',
             });
+            console.log('Toast shown:', toastResult);
 
             // Refresh products list
+            console.log('Refreshing products list...');
             await fetchProducts();
+            
+            // Reset form to initial state
+            form.reset(createEmptyFormValues());
+            setCurrentStep(0);
+            
             setCloseIntent('submit');
             setIsAddDialogOpen(false);
         } catch (error) {
@@ -299,6 +335,7 @@ export const useProductsForm = () => {
     };
 
     useEffect(() => {
+        console.log('useEffect triggered - merchant.id:', merchant?.id);
         fetchProducts();
     }, [merchant?.id]);
 

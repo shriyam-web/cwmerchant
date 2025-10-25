@@ -25,16 +25,22 @@ export async function GET(request: NextRequest) {
         // Find partner and return embedded products
         const partner = await Partner.findById(merchantId);
         if (!partner) {
+            console.log('Partner not found:', merchantId);
             return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
         }
 
+        console.log('Partner found - products:', partner.products?.length || 0);
         return NextResponse.json({
             products: partner.products || [],
-            total: partner.products?.length || 0
+            total: partner.products?.length || 0,
+            debug: { partnerId: partner._id, hasProducts: !!partner.products }
         });
     } catch (error) {
         console.error('Error fetching products:', error);
-        return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+        return NextResponse.json({ 
+            error: 'Failed to fetch products',
+            debug: error instanceof Error ? error.message : String(error)
+        }, { status: 500 });
     }
 }
 
@@ -45,6 +51,8 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { merchantId, productData } = body;
 
+        console.log('POST /api/merchant/products - merchantId:', merchantId, 'productName:', productData?.productName);
+
         if (!merchantId || !productData) {
             return NextResponse.json({ error: 'Merchant ID and product data required' }, { status: 400 });
         }
@@ -52,6 +60,7 @@ export async function POST(request: NextRequest) {
         // Find the partner
         const partner = await Partner.findById(merchantId);
         if (!partner) {
+            console.log('Partner not found:', merchantId);
             return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
         }
 
@@ -59,24 +68,27 @@ export async function POST(request: NextRequest) {
         const newProduct = {
             ...productData,
             productId: productData.productId || `CW-${Date.now()}`,
+            _id: new mongoose.Types.ObjectId(),
         };
 
         // Add product to partner's products array and save partner
         partner.products = partner.products || [];
-        partner.products.push({
-            ...newProduct,
-            _id: new mongoose.Types.ObjectId(),
-        });
-        await partner.save({ validateModifiedOnly: true });
+        partner.products.push(newProduct);
+        
+        console.log('Saving partner with product - total products:', partner.products.length);
+        await partner.save({ validateBeforeSave: false });
+        console.log('Partner saved successfully');
 
         return NextResponse.json({
             message: 'Product added successfully',
-            product: newProduct
+            product: newProduct,
+            debug: { totalProducts: partner.products.length }
         });
     } catch (error) {
         console.error('Error saving product:', error);
         return NextResponse.json({
-            error: error instanceof Error ? error.message : 'Failed to save product'
+            error: error instanceof Error ? error.message : 'Failed to save product',
+            debug: error instanceof Error ? error.stack : undefined
         }, { status: 500 });
     }
 }
@@ -112,7 +124,7 @@ export async function PUT(request: NextRequest) {
             ...productData,
         };
 
-        await partner.save({ validateModifiedOnly: true });
+        await partner.save({ validateBeforeSave: false });
 
         return NextResponse.json({
             message: 'Product updated successfully',
@@ -134,18 +146,23 @@ export async function DELETE(request: NextRequest) {
         const merchantId = url.searchParams.get('merchantId');
         const productId = url.searchParams.get('productId');
 
+        console.log('DELETE /api/merchant/products - merchantId:', merchantId, 'productId:', productId);
+
         if (!merchantId || !productId) {
             return NextResponse.json({ error: 'Merchant ID and Product ID required' }, { status: 400 });
         }
 
         const partner = await Partner.findById(merchantId);
         if (!partner) {
+            console.log('Partner not found:', merchantId);
             return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
         }
 
         const productIndex = partner.products?.findIndex(
             (prod: any) => prod.productId === productId
         );
+
+        console.log('Product index:', productIndex, 'Total products:', partner.products?.length);
 
         if (productIndex === undefined || productIndex === -1) {
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
@@ -154,7 +171,7 @@ export async function DELETE(request: NextRequest) {
         const product = partner.products![productIndex];
 
         // Delete images from Cloudinary
-        const deleteImagePromises = product.productImages.map(async (imageUrl: string) => {
+        const deleteImagePromises = product.productImages?.map(async (imageUrl: string) => {
             try {
                 // Extract public_id from Cloudinary URL
                 const urlParts = imageUrl.split('/');
@@ -169,21 +186,25 @@ export async function DELETE(request: NextRequest) {
                 console.error('Error deleting image from Cloudinary:', error);
                 // Continue even if image deletion fails
             }
-        });
+        }) || [];
 
         await Promise.allSettled(deleteImagePromises);
 
         partner.products!.splice(productIndex, 1);
-        await partner.save({ validateModifiedOnly: true });
+        await partner.save({ validateBeforeSave: false });
+        
+        console.log('Product deleted successfully - remaining products:', partner.products?.length);
 
         return NextResponse.json({
             message: 'Product and images deleted successfully',
-            productId
+            productId,
+            debug: { remainingProducts: partner.products?.length }
         });
     } catch (error) {
         console.error('Error deleting product:', error);
         return NextResponse.json({
-            error: error instanceof Error ? error.message : 'Failed to delete product'
+            error: error instanceof Error ? error.message : 'Failed to delete product',
+            debug: error instanceof Error ? error.stack : undefined
         }, { status: 500 });
     }
 }

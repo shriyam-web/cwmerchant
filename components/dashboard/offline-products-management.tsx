@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Plus, Package, Store, ShoppingBag, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -8,9 +8,12 @@ import { useProductsForm } from './products-management/use-products-form';
 import { ProductsFormContext } from './products-management/components/StepsContext';
 import { StepNavigation, RenderStep, BottomNavigation } from './products-management/components/steps';
 import { ProductsList } from './products-management/components/steps';
-import { Form } from '@/components/ui/form';
+import { useMerchantAuth } from '@/lib/auth-context';
+import { toast } from '@/hooks/use-toast';
 
 export const OfflineProductsManagement = () => {
+    const { merchant } = useMerchantAuth();
+    
     const {
         form,
         products,
@@ -69,9 +72,45 @@ export const OfflineProductsManagement = () => {
         loading,
     };
 
-    const handleDeleteProduct = (productId: string) => {
-        setProducts((prev) => prev.filter((product) => product.productId !== productId));
+    const handleDeleteProduct = async (productId: string) => {
+        if (!merchant?.id) {
+            console.error('No merchant ID available for deletion');
+            return;
+        }
+
+        try {
+            const url = `/api/merchant/products?merchantId=${merchant.id}&productId=${productId}`;
+            console.log('Deleting product from:', url);
+            
+            const response = await fetch(url, { method: 'DELETE' });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Delete API error:', errorData);
+                throw new Error('Failed to delete product');
+            }
+
+            const responseData = await response.json();
+            console.log('Product deleted successfully:', responseData);
+
+            setProducts((prev) => prev.filter((product) => product.productId !== productId));
+            toast({
+                title: 'Product deleted',
+                description: 'Product has been successfully removed.',
+            });
+        } catch (error) {
+            console.error('Delete error:', error);
+            toast({
+                title: 'Failed to delete product',
+                description: error instanceof Error ? error.message : 'Please try again later.',
+                variant: 'destructive',
+            });
+        }
     };
+
+    useEffect(() => {
+        console.log('OfflineProductsManagement mounted - products:', products);
+    }, [products]);
 
     return (
         <div className="space-y-8">
@@ -102,7 +141,7 @@ export const OfflineProductsManagement = () => {
                                 </DialogTitle>
                             </DialogHeader>
                             <ProductsFormContext.Provider value={contextValue}>
-                                <Form {...form}>
+                                <form onSubmit={form.handleSubmit(handleSubmitProduct)}>
                                     <div className="space-y-6">
                                         <StepNavigation context={contextValue} />
                                         <RenderStep
@@ -111,7 +150,7 @@ export const OfflineProductsManagement = () => {
                                         />
                                         <BottomNavigation context={contextValue} form={form} />
                                     </div>
-                                </Form>
+                                </form>
                             </ProductsFormContext.Provider>
                         </DialogContent>
                     </Dialog>

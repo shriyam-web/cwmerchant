@@ -9,6 +9,7 @@ import { DsWeblogSchema } from './ds_weblog.schema';
 import { PodcastLogSchema } from './podcastLog.schema';
 import { OfflineDiscountSchema } from './offlineDiscount.schema';
 import { BranchLocationSchema } from './branchLocation.schema';
+import { ProductSchema } from './product/product.schema';
 
 const PartnerSchema = new Schema<IPartner>({
   merchantId: { type: String, required: true, unique: true },
@@ -48,7 +49,7 @@ const PartnerSchema = new Schema<IPartner>({
     facebook: { type: String },
   },
   agreeToTerms: { type: Boolean, required: true },
-  products: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+  products: [ProductSchema],
   logo: { type: String },
   storeImages: [{ type: String }],
   customOffer: { type: String },

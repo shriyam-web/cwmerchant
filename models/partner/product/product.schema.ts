@@ -10,10 +10,15 @@ export const ProductSchema = new Schema<any>(
         productName: { type: String, },
         productImages: {
             type: [String],
-            validate: {
-                validator: (arr: string[]) => arr.length >= 1 && arr.length <= 5,
-                message: "Product must have between 1 and 5 images",
-            },
+            validate: [
+                {
+                    validator: function(arr: any) {
+                        if (!arr || !Array.isArray(arr)) return true;
+                        return arr.length <= 5;
+                    },
+                    message: "Product can have up to 5 images",
+                }
+            ],
         },
         productDescription: { type: String, },
         productCategory: { type: String, },
