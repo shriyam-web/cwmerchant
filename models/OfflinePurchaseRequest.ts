@@ -1,47 +1,49 @@
-import mongoose, { Schema, Document, model, models } from "mongoose";
+import { Schema, Document, model, models } from "mongoose";
 
-// ---------------- Interface ----------------
-export interface IOfflinePurchaseRequest extends Document {
-    offlinePurchaseId: string;            // Unique ID for the offline purchase
-    userId: string;                        // User making the purchase
-    userName: string;                      // Name of the user
-    merchantId: string;                    // Merchant/store reference
-    date: Date;                             // Date of purchase
-    actualPrice: number;                    // Original product price
-    discount: number;                       // Discount applied
-    finalPrice: number;                      // Price after discount
-    status: "approved" | "rejected" | "expired" | "pending"; // Request status
-    userMobileNo: string;                   // User’s mobile number
-    productPurchased: string;               // Product name/details
-    createdAt?: Date;                        // Auto from timestamps
-    updatedAt?: Date;                        // Auto from timestamps
+export interface IPurchaseRequest extends Document {
+    offlinePurchaseId?: string;
+    userId: string;
+    userName: string;
+    userMobileNo: string;
+    merchantId: string;
+    merchantSlug: string;
+    purchaseAmount: number;
+    finalAmount: number;
+    finalPrice?: number;
+    actualPrice?: number;
+    discountApplied: number;
+    productPurchased: string;
+    status: 'pending' | 'approved' | 'rejected' | 'expired';
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
-// ---------------- Schema ----------------
-const OfflinePurchaseRequestSchema = new Schema<IOfflinePurchaseRequest>(
+const PurchaseRequestSchema = new Schema<IPurchaseRequest>(
     {
-        offlinePurchaseId: { type: String, required: true, unique: true },
+        offlinePurchaseId: { type: String },
         userId: { type: String, required: true },
         userName: { type: String, required: true },
-        merchantId: { type: String, required: true },
-        date: { type: Date, required: true },
-        actualPrice: { type: Number, required: true },
-        discount: { type: Number, default: 0 },
-        finalPrice: { type: Number, required: true },
-        status: {
-            type: String,
-            enum: ["approved", "rejected", "expired", "pending"],
-            default: "pending",
-        },
         userMobileNo: { type: String, required: true },
+        merchantId: { type: String, required: true },
+        merchantSlug: { type: String, required: true },
+        purchaseAmount: { type: Number, required: true },
+        finalAmount: { type: Number, required: true },
+        finalPrice: { type: Number },
+        actualPrice: { type: Number },
+        discountApplied: { type: Number, required: true },
         productPurchased: { type: String, required: true },
+        status: { 
+            type: String, 
+            enum: ['pending', 'approved', 'rejected', 'expired'],
+            default: 'pending',
+            required: true 
+        },
     },
-    { timestamps: true } // adds createdAt & updatedAt automatically
+    {
+        timestamps: true,
+        collection: "purchase-requests",
+    }
 );
 
-// Prevent model overwrite in Next.js hot-reload
-export default models.OfflinePurchaseRequest ||
-    model<IOfflinePurchaseRequest>(
-        "OfflinePurchaseRequest",
-        OfflinePurchaseRequestSchema
-    );
+export default models.PurchaseRequest ||
+    model<IPurchaseRequest>("PurchaseRequest", PurchaseRequestSchema);

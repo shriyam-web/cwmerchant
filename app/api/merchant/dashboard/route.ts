@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
+import OfflinePurchaseRequest from "@/models/OfflinePurchaseRequest";
 export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   try {
@@ -19,7 +20,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
     }
 
-    // Example stats
     const stats = [
       {
         title: "Total Products",
@@ -65,7 +65,7 @@ export async function GET(req: Request) {
       },
       {
         title: "Active Offers",
-        value: partner.products?.length || 0, // Assuming offers are tied to products
+        value: partner.products?.length || 0,
         change: "+1 this month",
         changeType: "positive",
         icon: "AlertTriangle",
@@ -86,23 +86,40 @@ export async function GET(req: Request) {
       },
     ];
 
-    // Recent Requests (demo)
-    const requests = [
-      {
-        id: "1",
-        customer: "Rahul Sharma",
-        amount: "1,250",
-        status: "pending",
-        time: "2 hours ago",
-      },
-      {
-        id: "2",
-        customer: "Priya Singh",
-        amount: "850",
-        status: "approved",
-        time: "5 hours ago",
-      },
-    ];
+    console.log("Partner ID:", partner._id, "Partner merchantId:", partner.merchantId);
+    
+    let offlineRequests: any[] = [];
+    
+    if (partner.merchantId) {
+      console.log("Querying OfflinePurchaseRequest with merchantId:", partner.merchantId);
+      offlineRequests = await OfflinePurchaseRequest.find({ 
+        merchantId: partner.merchantId 
+      }).sort({ createdAt: -1 }).lean();
+    }
+    
+    if (offlineRequests.length === 0) {
+      console.log("No requests found with merchantId, trying with Partner ID");
+      offlineRequests = await OfflinePurchaseRequest.find({ 
+        merchantId: partner._id.toString()
+      }).sort({ createdAt: -1 }).lean();
+    }
+    
+    console.log("Found offline requests:", offlineRequests.length);
+
+    const requests = offlineRequests.map((request: any) => {
+      const timestamp = request.createdAt || request.date;
+      const amount = typeof request.finalPrice === "number" ? request.finalPrice : Number(String(request.finalPrice || request.actualPrice || 0).replace(/[^0-9.-]/g, "")) || 0;
+      const status = String(request.status || "pending").toLowerCase();
+      return {
+        id: request.offlinePurchaseId || String(request._id),
+        customerName: request.userName || "",
+        amount,
+        product: request.productPurchased || "",
+        submittedAt: timestamp ? new Date(timestamp).toISOString() : new Date().toISOString(),
+        status,
+        customerPhone: request.userMobileNo || "",
+      };
+    });
 
     const response = {
       merchant: {
@@ -150,7 +167,6 @@ export async function GET(req: Request) {
         logo: partner.logo || "",
         bankDetails: partner.bankDetails || {},
         status: partner.status || "pending",
-        // Digital Support Data
         totalGraphics: partner.totalGraphics || 0,
         totalReels: partner.totalReels || 0,
         totalPodcast: partner.totalPodcast || 0,

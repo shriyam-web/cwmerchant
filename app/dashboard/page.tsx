@@ -50,10 +50,12 @@ interface Stat {
 
 interface Request {
   id: string;
-  customer: string;
-  time: string;
+  customerName: string;
+  submittedAt: string;
   amount: string | number;
   status: "approved" | "pending" | "rejected";
+  product?: string;
+  customerPhone?: string;
 }
 
 // Extended Merchant interface for dashboard with all profile fields
@@ -1113,11 +1115,11 @@ export default function Dashboard() {
                       >
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0">
-                            {request.customer.charAt(0).toUpperCase()}
+                            {request.customerName?.charAt(0).toUpperCase() || "?"}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
-                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{request.customer}</h4>
+                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{request.customerName}</h4>
                               <Badge
                                 className={`px-2 py-1 text-xs font-medium rounded-full ml-2 flex-shrink-0 ${request.status === "approved"
                                   ? "bg-green-100 text-green-800 border border-green-200"
@@ -1132,7 +1134,7 @@ export default function Dashboard() {
                             <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
                               <span className="flex items-center gap-1">
                                 <Menu className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                <span>{request.time}</span>
+                                <span>{new Date(request.submittedAt).toLocaleString()}</span>
                               </span>
                               <span className="flex items-center gap-1">
                                 <IndianRupee className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />

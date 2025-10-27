@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,62 +8,90 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { CheckCircle, X, Clock, Filter, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useMerchantAuth } from '@/lib/auth-context';
+
+type PurchaseRequestStatus = 'approved' | 'rejected' | 'pending' | 'expired';
+
+interface PurchaseRequest {
+  id: string;
+  customerName: string;
+  amount: number;
+  product: string;
+  submittedAt: string;
+  status: PurchaseRequestStatus;
+  customerPhone: string;
+}
+
+const normalizeStatus = (value: string): PurchaseRequestStatus => {
+  const status = value.toLowerCase();
+  if (status === 'approved' || status === 'rejected' || status === 'expired') {
+    return status;
+  }
+  return 'pending';
+};
+
+const formatAmount = (value: number) =>
+  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
 
 export function PurchaseRequests() {
-  const [requests, setRequests] = useState([
-    {
-      id: '1',
-      customerName: 'Rahul Sharma',
-      amount: '₹1,250',
-      product: 'iPhone Cable',
-      submittedAt: '2025-01-15 14:30',
-      status: 'pending',
-      customerPhone: '+91 98765 43210',
-      billImage: 'receipt-1.jpg'
-    },
-    {
-      id: '2',
-      customerName: 'Priya Singh',
-      amount: '₹850',
-      product: 'Wireless Earphones',
-      submittedAt: '2025-01-15 11:20',
-      status: 'approved',
-      customerPhone: '+91 87654 32109',
-      billImage: 'receipt-2.jpg'
-    },
-    {
-      id: '3',
-      customerName: 'Amit Kumar',
-      amount: '₹2,100',
-      product: 'Power Bank',
-      submittedAt: '2025-01-14 16:45',
-      status: 'pending',
-      customerPhone: '+91 76543 21098',
-      billImage: 'receipt-3.jpg'
-    },
-    {
-      id: '4',
-      customerName: 'Sneha Patel',
-      amount: '₹450',
-      product: 'Phone Cover',
-      submittedAt: '2025-01-14 09:15',
-      status: 'rejected',
-      customerPhone: '+91 65432 10987',
-      billImage: 'receipt-4.jpg'
-    }
-  ]);
-
+  const { merchant } = useMerchantAuth();
+  const [requests, setRequests] = useState<PurchaseRequest[]>([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
+  useEffect(() => {
+    if (!merchant?.id) {
+      return;
+    }
+    let cancelled = false;
+    const fetchRequests = async () => {
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('merchantToken') : null;
+        const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+        const response = await fetch(`/api/merchant/dashboard?merchantId=${merchant.id}`, { headers });
+        if (!response.ok) {
+          throw new Error('Failed to fetch purchase requests');
+        }
+        const data = await response.json();
+        if (cancelled) {
+          return;
+        }
+        const normalized = (data.requests || []).map((request: any): PurchaseRequest => {
+          const rawAmount = request.amount ?? request.finalPrice ?? request.actualPrice ?? 0;
+          const numericAmount = typeof rawAmount === 'number'
+            ? rawAmount
+            : Number(String(rawAmount).replace(/[^0-9.-]/g, '')) || 0;
+          const timestamp = request.submittedAt || request.createdAt || request.date;
+          return {
+            id: request.id || request.offlinePurchaseId || String(request._id || ''),
+            customerName: request.customerName || request.userName || 'Unknown',
+            amount: numericAmount,
+            product: request.product || request.productPurchased || 'N/A',
+            submittedAt: timestamp ? new Date(timestamp).toISOString() : new Date().toISOString(),
+            status: normalizeStatus(request.status || 'pending'),
+            customerPhone: request.customerPhone || request.userMobileNo || 'N/A',
+          };
+        });
+        setRequests(normalized);
+      } catch (error) {
+        console.error(error);
+        setRequests([]);
+      }
+    };
+    fetchRequests();
+    return () => {
+      cancelled = true;
+    };
+  }, [merchant?.id]);
+
   const handleApprove = (id: string) => {
-    setRequests(requests.map(req =>
+    setRequests(prev => prev.map(req =>
       req.id === id ? { ...req, status: 'approved' } : req
     ));
   };
 
   const handleReject = (id: string) => {
-    setRequests(requests.map(req =>
+    setRequests(prev => prev.map(req =>
       req.id === id ? { ...req, status: 'rejected' } : req
     ));
   };
@@ -75,11 +103,12 @@ export function PurchaseRequests() {
     return matchesFilter && matchesSearch;
   });
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: PurchaseRequestStatus) => {
     switch (status) {
       case 'approved': return 'bg-green-600';
       case 'rejected': return 'bg-red-500';
       case 'pending': return 'bg-orange-500';
+      case 'expired': return 'bg-gray-500';
       default: return 'bg-gray-500';
     }
   };
@@ -152,7 +181,7 @@ export function PurchaseRequests() {
                 </div>
 
                 <div className="flex w-full sm:w-auto flex-col gap-2 sm:items-end">
-                  <div className="text-xl font-bold text-gray-900">{request.amount}</div>
+                  <div className="text-xl font-bold text-gray-900">{formatAmount(request.amount)}</div>
                   <div className="text-sm text-gray-600 sm:text-right">{request.product}</div>
                   <Badge
                     variant="secondary"
