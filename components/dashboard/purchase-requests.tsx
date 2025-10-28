@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { CheckCircle, X, Clock, Filter, Search } from 'lucide-react';
+import { CheckCircle, X, Clock, Filter, Search, Phone, Sparkles, Shield } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useMerchantAuth } from '@/lib/auth-context';
@@ -38,6 +38,7 @@ export function PurchaseRequests() {
   const [requests, setRequests] = useState<PurchaseRequest[]>([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [loadingStates, setLoadingStates] = useState<Record<string, 'approving' | 'rejecting' | null>>({});
 
   useEffect(() => {
     if (!merchant?.id) {
@@ -57,7 +58,7 @@ export function PurchaseRequests() {
           return;
         }
         const normalized = (data.requests || []).map((request: any): PurchaseRequest => {
-          const rawAmount = request.amount ?? request.finalPrice ?? request.actualPrice ?? 0;
+          const rawAmount = request.amount ?? request.finalAmount ?? request.purchaseAmount ?? 0;
           const numericAmount = typeof rawAmount === 'number'
             ? rawAmount
             : Number(String(rawAmount).replace(/[^0-9.-]/g, '')) || 0;
@@ -84,16 +85,64 @@ export function PurchaseRequests() {
     };
   }, [merchant?.id]);
 
-  const handleApprove = (id: string) => {
-    setRequests(prev => prev.map(req =>
-      req.id === id ? { ...req, status: 'approved' } : req
-    ));
+  const handleApprove = async (id: string) => {
+    try {
+      setLoadingStates(prev => ({ ...prev, [id]: 'approving' }));
+      const token = typeof window !== 'undefined' ? localStorage.getItem('merchantToken') : null;
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      const response = await fetch('/api/merchant/dashboard', {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify({ requestId: id, status: 'approved' })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to approve request');
+      }
+
+      setRequests(prev => prev.map(req =>
+        req.id === id ? { ...req, status: 'approved' } : req
+      ));
+    } catch (error) {
+      console.error('Error approving request:', error);
+      alert('Failed to approve request. Please try again.');
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [id]: null }));
+    }
   };
 
-  const handleReject = (id: string) => {
-    setRequests(prev => prev.map(req =>
-      req.id === id ? { ...req, status: 'rejected' } : req
-    ));
+  const handleReject = async (id: string) => {
+    try {
+      setLoadingStates(prev => ({ ...prev, [id]: 'rejecting' }));
+      const token = typeof window !== 'undefined' ? localStorage.getItem('merchantToken') : null;
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      const response = await fetch('/api/merchant/dashboard', {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify({ requestId: id, status: 'rejected' })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reject request');
+      }
+
+      setRequests(prev => prev.map(req =>
+        req.id === id ? { ...req, status: 'rejected' } : req
+      ));
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+      alert('Failed to reject request. Please try again.');
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [id]: null }));
+    }
   };
 
   const filteredRequests = requests.filter(request => {
@@ -173,7 +222,10 @@ export function PurchaseRequests() {
 
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-gray-900 truncate">{request.customerName}</div>
-                    <div className="text-sm text-gray-600 break-words">{request.customerPhone}</div>
+                    <div className="flex items-center gap-1.5 text-sm text-gray-600 break-words">
+                      <Phone className="h-3.5 w-3.5 flex-shrink-0" />
+                      {request.customerPhone}
+                    </div>
                     <div className="text-sm text-gray-500 mt-1">
                       Submitted on {new Date(request.submittedAt).toLocaleString()}
                     </div>
@@ -196,26 +248,50 @@ export function PurchaseRequests() {
               </div>
 
               {request.status === 'pending' && (
-                <div className="flex flex-col sm:flex-row gap-2 mt-2 pt-4 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2 pt-4 border-t border-gray-200 sm:justify-between">
                   <Button
-                    size="sm"
-                    className="w-full sm:w-auto bg-green-600 hover:bg-green-700"
+                    size="default"
+                    disabled={!!loadingStates[request.id]}
+                    className="w-full sm:flex-1 relative overflow-hidden bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border-0 group"
                     onClick={() => handleApprove(request.id)}
                   >
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    Approve
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <div className="relative flex items-center justify-center gap-2">
+                      {loadingStates[request.id] === 'approving' ? (
+                        <>
+                          <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Approving...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
+                          <span className="font-semibold">Approve Request</span>
+                          <Sparkles className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </>
+                      )}
+                    </div>
                   </Button>
                   <Button
-                    size="sm"
-                    variant="destructive"
-                    className="w-full sm:w-auto"
+                    size="default"
+                    disabled={!!loadingStates[request.id]}
+                    className="w-full sm:flex-1 relative overflow-hidden bg-gradient-to-r from-red-500 via-red-600 to-rose-600 hover:from-red-600 hover:via-red-700 hover:to-rose-700 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border-0 group"
                     onClick={() => handleReject(request.id)}
                   >
-                    <X className="h-4 w-4 mr-1" />
-                    Reject
-                  </Button>
-                  <Button size="sm" variant="outline" className="w-full sm:w-auto">
-                    View Receipt
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <div className="relative flex items-center justify-center gap-2">
+                      {loadingStates[request.id] === 'rejecting' ? (
+                        <>
+                          <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Rejecting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <X className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                          <span className="font-semibold">Reject Request</span>
+                          <Shield className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </>
+                      )}
+                    </div>
                   </Button>
                 </div>
               )}

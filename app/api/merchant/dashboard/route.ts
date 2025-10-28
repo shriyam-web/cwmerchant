@@ -87,28 +87,28 @@ export async function GET(req: Request) {
     ];
 
     console.log("Partner ID:", partner._id, "Partner merchantId:", partner.merchantId);
-    
+
     let offlineRequests: any[] = [];
-    
+
     if (partner.merchantId) {
       console.log("Querying OfflinePurchaseRequest with merchantId:", partner.merchantId);
-      offlineRequests = await OfflinePurchaseRequest.find({ 
-        merchantId: partner.merchantId 
+      offlineRequests = await OfflinePurchaseRequest.find({
+        merchantId: partner.merchantId
       }).sort({ createdAt: -1 }).lean();
     }
-    
+
     if (offlineRequests.length === 0) {
       console.log("No requests found with merchantId, trying with Partner ID");
-      offlineRequests = await OfflinePurchaseRequest.find({ 
+      offlineRequests = await OfflinePurchaseRequest.find({
         merchantId: partner._id.toString()
       }).sort({ createdAt: -1 }).lean();
     }
-    
+
     console.log("Found offline requests:", offlineRequests.length);
 
     const requests = offlineRequests.map((request: any) => {
       const timestamp = request.createdAt || request.date;
-      const amount = typeof request.finalPrice === "number" ? request.finalPrice : Number(String(request.finalPrice || request.actualPrice || 0).replace(/[^0-9.-]/g, "")) || 0;
+      const amount = typeof request.finalAmount === "number" ? request.finalAmount : Number(String(request.finalAmount || request.purchaseAmount || 0).replace(/[^0-9.-]/g, "")) || 0;
       const status = String(request.status || "pending").toLowerCase();
       return {
         id: request.offlinePurchaseId || String(request._id),
@@ -185,5 +185,47 @@ export async function GET(req: Request) {
   } catch (err) {
     console.error("Error in GET /dashboard:", err);
     return NextResponse.json({ error: "Failed to load dashboard" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    await dbConnect();
+    const body = await req.json();
+    const { requestId, status } = body;
+
+    if (!requestId || !status) {
+      return NextResponse.json({ error: "Request ID and status are required" }, { status: 400 });
+    }
+
+    if (!['approved', 'rejected', 'pending', 'expired'].includes(status)) {
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
+
+    // Try finding by offlinePurchaseId first, then by _id
+    let purchaseRequest = await OfflinePurchaseRequest.findOne({ offlinePurchaseId: requestId });
+
+    if (!purchaseRequest) {
+      purchaseRequest = await OfflinePurchaseRequest.findById(requestId);
+    }
+
+    if (!purchaseRequest) {
+      return NextResponse.json({ error: "Purchase request not found" }, { status: 404 });
+    }
+
+    purchaseRequest.status = status;
+    await purchaseRequest.save();
+
+    return NextResponse.json({
+      success: true,
+      message: `Purchase request ${status}`,
+      request: {
+        id: purchaseRequest.offlinePurchaseId || purchaseRequest._id.toString(),
+        status: purchaseRequest.status
+      }
+    });
+  } catch (err) {
+    console.error("Error in PATCH /dashboard:", err);
+    return NextResponse.json({ error: "Failed to update purchase request" }, { status: 500 });
   }
 }
