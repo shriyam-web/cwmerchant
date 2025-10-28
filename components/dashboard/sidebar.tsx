@@ -38,9 +38,11 @@ interface DashboardSidebarProps {
   merchantStatus: string;
   isTourRunning: boolean;
   activeOffersCount?: number;
+  pendingRequestsCount?: number;
+  unreadNotificationsCount?: number;
 }
 
-export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSidebarOpen, merchantStatus, isTourRunning, activeOffersCount = 0 }: DashboardSidebarProps) {
+export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSidebarOpen, merchantStatus, isTourRunning, activeOffersCount = 0, pendingRequestsCount = 0, unreadNotificationsCount = 0 }: DashboardSidebarProps) {
   const router = useRouter();
   const { merchant, logout } = useMerchantAuth(); // ✅ Auth context
   const [merchantInfo, setMerchantInfo] = useState<any>(null);
@@ -59,10 +61,11 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
 
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
+    { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadNotificationsCount > 0 ? unreadNotificationsCount.toString() : null },
     { id: 'offers', label: 'Offers', icon: Gift, badge: activeOffersCount > 0 ? activeOffersCount.toString() : null },
     { id: 'products', label: 'CityWitty Store', icon: Package, badge: null },
     { id: 'offline-products', label: 'Your Offline Store', icon: Package, badge: null },
-    { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: '5' },
+    { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: pendingRequestsCount > 0 ? pendingRequestsCount.toString() : null },
     { id: 'profile', label: 'Profile Settings', icon: Settings, badge: null },
     { id: 'support', label: 'Digital Support', icon: HelpCircle, badge: null }
   ];
@@ -171,17 +174,6 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 <Eye className="h-4 w-4 mr-2 text-slate-600" />
                 <span className="font-medium text-slate-700">Preview Store</span>
                 <ExternalLink className="h-3 w-3 ml-auto text-slate-400" />
-              </Button>
-              <Button
-                id="tour-notifications"
-                variant="outline"
-                size="sm"
-                className="w-full justify-start bg-white/40 border-slate-200 hover:bg-white hover:border-blue-300 transition-all duration-200 rounded-lg py-2 text-sm"
-                disabled={merchantStatus === "pending"}
-              >
-                <Bell className="h-4 w-4 mr-2 text-slate-600" />
-                <span className="font-medium text-slate-700">Notifications</span>
-                <Badge variant="secondary" className="ml-auto bg-red-100 text-red-700 text-xs font-semibold">2</Badge>
               </Button>
               <Button
                 id="tour-logout"

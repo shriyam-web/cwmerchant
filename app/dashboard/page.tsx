@@ -15,6 +15,7 @@ import { PurchaseRequests } from "@/components/dashboard/purchase-requests";
 import { ProfileSettings } from "@/components/dashboard/profile-settings";
 import DigitalSupport from "@/components/dashboard/digital-support";
 import { SupportWidget } from "@/components/dashboard/support-widget";
+import { Notifications } from "@/components/dashboard/notifications";
 import { Toaster } from "@/components/ui/sonner";
 import Joyride, { Step } from "react-joyride";
 import {
@@ -131,6 +132,12 @@ export default function Dashboard() {
   const [tourSteps, setTourSteps] = useState<Step[]>([]);
   const [currentTourIndex, setCurrentTourIndex] = useState<number>(0);
   const [activeOffersCount, setActiveOffersCount] = useState<number>(0);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState<number>(0);
+
+  // Calculate pending requests count
+  const pendingRequestsCount = useMemo(() => {
+    return requests.filter(req => req.status === 'pending').length;
+  }, [requests]);
 
   useEffect(() => {
     setSidebarOpen(window.innerWidth >= 1024);
@@ -332,6 +339,22 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch unread notifications count
+  const fetchUnreadNotificationsCount = async () => {
+    if (!merchant?.id) return;
+
+    try {
+      const response = await fetch(`/api/merchant/notifications?merchantId=${merchant.id}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setUnreadNotificationsCount(data.unreadCount || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications count:', error);
+    }
+  };
+
   useEffect(() => {
     if (!merchant?.id) {
       setLoading(false); // set loading to false if no id
@@ -369,6 +392,7 @@ export default function Dashboard() {
 
     fetchDashboard();
     fetchActiveOffersCount();
+    fetchUnreadNotificationsCount();
   }, [merchant?.id]); // only refetch if merchant id changes
 
   // Tour functions
@@ -733,6 +757,8 @@ export default function Dashboard() {
       } else {
         // Show actual features for educational purposes when status is pending
         switch (activeTab) {
+          case "notifications":
+            return <div id="tour-notifications"><Notifications /></div>;
           case "offers":
             return <div id="tour-offers"><OffersManagement onOffersChange={fetchActiveOffersCount} /></div>;
           case "products":
@@ -760,6 +786,8 @@ export default function Dashboard() {
     }
 
     switch (activeTab) {
+      case "notifications":
+        return <Notifications />;
       case "offers":
         return <OffersManagement onOffersChange={fetchActiveOffersCount} />;
       case "products":
@@ -1243,6 +1271,8 @@ export default function Dashboard() {
           merchantStatus={merchant.status}
           isTourRunning={runTour}
           activeOffersCount={activeOffersCount}
+          pendingRequestsCount={pendingRequestsCount}
+          unreadNotificationsCount={unreadNotificationsCount}
         />
         <div className="flex-1 lg:ml-64 pt-2 sm:pt-3 md:pt-4 pb-4 md:pb-8 px-4 sm:px-6 md:px-8">
           {/* Menu Button */}
