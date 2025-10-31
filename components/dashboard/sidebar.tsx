@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Gift,
   Package,
+  Store,
   FileText,
   Settings,
   HelpCircle,
@@ -48,7 +49,9 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
   const [merchantInfo, setMerchantInfo] = useState<any>(null);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [emoji, setEmoji] = useState('😟');
-
+  const [offersBadgeCount, setOffersBadgeCount] = useState(activeOffersCount);
+  const [requestsBadgeCount, setRequestsBadgeCount] = useState(pendingRequestsCount);
+  const [notificationsBadgeCount, setNotificationsBadgeCount] = useState(unreadNotificationsCount);
 
   useEffect(() => {
     if (merchant) {
@@ -59,13 +62,60 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
     }
   }, [merchant]);
 
+  useEffect(() => {
+    setOffersBadgeCount(activeOffersCount);
+    setRequestsBadgeCount(pendingRequestsCount);
+    setNotificationsBadgeCount(unreadNotificationsCount);
+  }, [activeOffersCount, pendingRequestsCount, unreadNotificationsCount]);
+
+  useEffect(() => {
+    if (!merchant?.id) {
+      return;
+    }
+    let cancelled = false;
+    const fetchBadgeCounts = async () => {
+      try {
+        const [offersRes, notificationsRes, dashboardRes] = await Promise.all([
+          fetch(`/api/merchant/offers?merchantId=${merchant.id}`),
+          fetch(`/api/merchant/notifications?merchantId=${merchant.id}`),
+          fetch(`/api/merchant/dashboard?merchantId=${merchant.id}`)
+        ]);
+        const [offersData, notificationsData, dashboardData] = await Promise.all([
+          offersRes.json(),
+          notificationsRes.json(),
+          dashboardRes.json()
+        ]);
+        if (cancelled) {
+          return;
+        }
+        if (offersRes.ok && offersData?.success && Array.isArray(offersData.offers)) {
+          const activeCount = offersData.offers.filter((offer: any) => String(offer.status).toLowerCase() === 'active').length;
+          setOffersBadgeCount(activeCount);
+        }
+        if (notificationsRes.ok && notificationsData?.success) {
+          setNotificationsBadgeCount(Number(notificationsData.unreadCount) || 0);
+        }
+        if (dashboardRes.ok && Array.isArray(dashboardData?.requests)) {
+          const pendingCount = dashboardData.requests.filter((request: any) => String(request.status).toLowerCase() === 'pending').length;
+          setRequestsBadgeCount(pendingCount);
+        }
+      } catch (error) {
+        console.error('Failed to fetch sidebar badge counts:', error);
+      }
+    };
+    fetchBadgeCounts();
+    return () => {
+      cancelled = true;
+    };
+  }, [merchant?.id]);
+
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
-    { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadNotificationsCount > 0 ? unreadNotificationsCount.toString() : null },
-    { id: 'offers', label: 'Offers', icon: Gift, badge: activeOffersCount > 0 ? activeOffersCount.toString() : null },
+    { id: 'notifications', label: 'Notifications', icon: Bell, badge: notificationsBadgeCount > 0 ? notificationsBadgeCount.toString() : null },
+    { id: 'offers', label: 'Offers', icon: Gift, badge: offersBadgeCount > 0 ? offersBadgeCount.toString() : null },
     { id: 'products', label: 'CityWitty Store', icon: Package, badge: null },
-    { id: 'offline-products', label: 'Your Offline Store', icon: Package, badge: null },
-    { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: pendingRequestsCount > 0 ? pendingRequestsCount.toString() : null },
+    { id: 'offline-shopping', label: 'Your Offline Store', icon: Store, badge: null },
+    { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: requestsBadgeCount > 0 ? requestsBadgeCount.toString() : null },
     { id: 'profile', label: 'Profile Settings', icon: Settings, badge: null },
     { id: 'support', label: 'Digital Support', icon: HelpCircle, badge: null }
   ];
@@ -135,6 +185,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                 <button
                   key={item.id}
                   id={`tour-sidebar-${item.id}`}
+                  data-tab-id={item.id}
                   onClick={() => {
                     if (!isDisabled || allowOpenForTour) {
                       onTabChange(item.id);
@@ -173,7 +224,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
               >
                 <Eye className="h-4 w-4 mr-2 text-slate-600" />
                 <span className="font-medium text-slate-700">Preview Store</span>
-                <ExternalLink className="h-3 w-3 ml-auto text-slate-400" />
+                <ExternalLink className="h-3 w-3.ml-auto text-slate-400" />
               </Button>
               <Button
                 id="tour-logout"

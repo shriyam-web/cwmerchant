@@ -464,7 +464,7 @@ export default function Dashboard() {
             content: "Once approved, you'll be able to add and manage your products and services here.",
           },
         ];
-      case "offline-products":
+      case "offline-shopping":
         return [
           {
             target: "#tour-products-main",
@@ -763,7 +763,7 @@ export default function Dashboard() {
             return <div id="tour-offers"><OffersManagement onOffersChange={fetchActiveOffersCount} /></div>;
           case "products":
             return <div id="tour-products"><ProductsManagement /></div>;
-          case "offline-products":
+          case "offline-shopping":
             return <div id="tour-offline-products"><OfflineProductsManagement /></div>;
           case "requests":
             return <div id="tour-requests"><PurchaseRequests /></div>;
@@ -792,7 +792,7 @@ export default function Dashboard() {
         return <OffersManagement onOffersChange={fetchActiveOffersCount} />;
       case "products":
         return <ProductsManagement />;
-      case "offline-products":
+      case "offline-shopping":
         return <OfflineProductsManagement />;
       case "requests":
         return <PurchaseRequests />;

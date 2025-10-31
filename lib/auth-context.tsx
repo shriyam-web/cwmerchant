@@ -90,6 +90,7 @@ import {
 
 interface Merchant {
   id: string;
+  merchantId?: string;
   email: string;
   businessName: string;
   displayName?: string;

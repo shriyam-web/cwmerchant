@@ -3,6 +3,30 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
 import OfflinePurchaseRequest from "@/models/OfflinePurchaseRequest";
+
+const parseNumericValue = (value: unknown) => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+  if (typeof value === "string") {
+    const numeric = Number(value.replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(numeric) ? numeric : 0;
+  }
+  return 0;
+};
+
+const parseAmount = (value: unknown) => parseNumericValue(value);
+
+const resolveAmount = (...values: unknown[]) => {
+  for (const value of values) {
+    const parsed = parseAmount(value);
+    if (parsed > 0) {
+      return parsed;
+    }
+  }
+  return 0;
+};
+
 export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   try {
@@ -108,12 +132,48 @@ export async function GET(req: Request) {
 
     const requests = offlineRequests.map((request: any) => {
       const timestamp = request.createdAt || request.date;
-      const amount = typeof request.finalAmount === "number" ? request.finalAmount : Number(String(request.finalAmount || request.purchaseAmount || 0).replace(/[^0-9.-]/g, "")) || 0;
+      const purchaseAmountValue = resolveAmount(
+        request.purchaseAmount,
+        request.originalAmount,
+        request.actualPrice,
+        request.originalPrice,
+        request.amountBeforeDiscount,
+        request.amount
+      );
+      const finalAmountValue = resolveAmount(
+        request.finalAmount,
+        request.finalPrice,
+        request.amountAfterDiscount,
+        request.discountedAmount,
+        request.discountedPrice,
+        request.amount,
+        purchaseAmountValue
+      );
+      const discountRaw = parseAmount(
+        request.discountApplied ??
+        request.discountAmount ??
+        request.discount ??
+        request.savings ??
+        0
+      );
+      const discountAmount = discountRaw > 0
+        ? discountRaw
+        : purchaseAmountValue > 0 && finalAmountValue > 0
+          ? Math.max(purchaseAmountValue - finalAmountValue, 0)
+          : undefined;
+      const discountPercent = discountAmount && purchaseAmountValue > 0
+        ? Math.round((discountAmount / purchaseAmountValue) * 100)
+        : undefined;
       const status = String(request.status || "pending").toLowerCase();
       return {
         id: request.offlinePurchaseId || String(request._id),
         customerName: request.userName || "",
-        amount,
+        amount: finalAmountValue || purchaseAmountValue || 0,
+        originalAmount: purchaseAmountValue > 0 ? purchaseAmountValue : undefined,
+        purchaseAmount: purchaseAmountValue > 0 ? purchaseAmountValue : undefined,
+        finalAmount: finalAmountValue > 0 ? finalAmountValue : undefined,
+        discountAmount,
+        discountPercent,
         product: request.productPurchased || "",
         submittedAt: timestamp ? new Date(timestamp).toISOString() : new Date().toISOString(),
         status,

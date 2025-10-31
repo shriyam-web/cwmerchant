@@ -1,84 +1,65 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
+
+export type NotificationType = "info" | "success" | "warning" | "error" | "announcement";
+export type NotificationStatus = "draft" | "sent" | "archived";
+export type NotificationTarget = "all" | "merchant" | "customer" | "user" | "franchise" | "specific";
+export type NotificationPriority = "low" | "medium" | "high" | "urgent";
 
 export interface INotification extends Document {
-  _id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error' | 'announcement';
-  status: 'draft' | 'sent' | 'archived';
-  target_audience: 'all' | 'merchant' | 'customer' | 'specific';
-  target_ids: string[] | null; // null means all users of target_audience
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  link?: string; // Optional link for action
-  icon?: string; // Optional icon name
-  createdAt: Date;
-  updatedAt: Date;
-  expiresAt?: Date; // Optional expiration date
-  readBy?: string[]; // Array of user IDs who have read this notification
+  type: NotificationType;
+  status: NotificationStatus;
+  target_audience: NotificationTarget;
+  target_ids?: string[] | null;
+  icon?: string;
+  link?: string;
+  priority: NotificationPriority;
+  readBy: string[];
+  expiresAt?: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const NotificationSchema: Schema = new Schema(
+const NotificationSchema = new Schema<INotification>(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    message: {
-      type: String,
-      required: true,
-    },
+    title: { type: String, required: true, trim: true },
+    message: { type: String, required: true, trim: true },
     type: {
       type: String,
-      enum: ['info', 'success', 'warning', 'error', 'announcement'],
-      default: 'info',
+      enum: ["info", "success", "warning", "error", "announcement"],
+      default: "info",
     },
     status: {
       type: String,
-      enum: ['draft', 'sent', 'archived'],
-      default: 'draft',
+      enum: ["draft", "sent", "archived"],
+      default: "sent",
     },
     target_audience: {
       type: String,
-      enum: ['all', 'merchant', 'customer', 'specific'],
+      enum: ["all", "merchant", "customer", "user", "franchise", "specific"],
       required: true,
+      default: "merchant",
     },
     target_ids: {
       type: [String],
-      default: null,
+      default: [],
     },
+    icon: { type: String, default: "" },
+    link: { type: String, default: "" },
     priority: {
       type: String,
-      enum: ['low', 'medium', 'high', 'urgent'],
-      default: 'medium',
-    },
-    link: {
-      type: String,
-      trim: true,
-    },
-    icon: {
-      type: String,
-      trim: true,
-    },
-    expiresAt: {
-      type: Date,
+      enum: ["low", "medium", "high", "urgent"],
+      default: "medium",
     },
     readBy: {
       type: [String],
       default: [],
     },
+    expiresAt: { type: Date, default: null },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Add index for efficient querying
-NotificationSchema.index({ status: 1, target_audience: 1 });
-NotificationSchema.index({ target_ids: 1 });
-NotificationSchema.index({ createdAt: -1 });
-
-const Notification: Model<INotification> =
-  mongoose.models.Notification || mongoose.model<INotification>('Notification', NotificationSchema);
-
-export default Notification;
+export default mongoose.models.Notification ||
+  mongoose.model<INotification>("Notification", NotificationSchema);

@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 
 type NotificationType = 'info' | 'success' | 'warning' | 'error' | 'announcement';
 type NotificationPriority = 'low' | 'medium' | 'high' | 'urgent';
+type NotificationStatus = 'draft' | 'sent' | 'archived';
 
 interface Notification {
   id: string;
@@ -31,11 +32,16 @@ interface Notification {
   message: string;
   type: NotificationType;
   priority: NotificationPriority;
+  status: NotificationStatus;
   link?: string;
   icon?: string;
   createdAt: string;
+  expiresAt: string | null;
   isRead: boolean;
 }
+
+const TYPE_VALUES: NotificationType[] = ['info', 'success', 'warning', 'error', 'announcement'];
+const PRIORITY_VALUES: NotificationPriority[] = ['low', 'medium', 'high', 'urgent'];
 
 const getTypeIcon = (type: NotificationType) => {
   switch (type) {
@@ -82,6 +88,26 @@ const getPriorityBadge = (priority: NotificationPriority) => {
   );
 };
 
+const getStatusBadge = (status: NotificationStatus) => {
+  if (status === 'draft') {
+    return (
+      <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-200">
+        Draft
+      </Badge>
+    );
+  }
+
+  if (status === 'archived') {
+    return (
+      <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-200">
+        Archived
+      </Badge>
+    );
+  }
+
+  return null;
+};
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const now = new Date();
@@ -109,20 +135,25 @@ export function Notifications() {
   const [filter, setFilter] = useState<'all' | 'unread' | NotificationType>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [markingRead, setMarkingRead] = useState<Record<string, boolean>>({});
+  const merchantIdentifier = merchant?.merchantId || merchant?.id;
 
   useEffect(() => {
-    if (!merchant?.id) {
+    if (!merchantIdentifier) {
       setLoading(false);
       return;
     }
 
-    fetchNotifications();
-  }, [merchant?.id]);
+    fetchNotifications(merchantIdentifier);
+  }, [merchantIdentifier]);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (merchantIdParam = merchantIdentifier) => {
+    if (!merchantIdParam) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
-      const url = `/api/merchant/notifications?merchantId=${merchant?.id}`;
+      const url = `/api/merchant/notifications?merchantId=${merchantIdParam}`;
       console.log('[Notifications] Fetching from:', url);
       
       const response = await fetch(url);
@@ -139,9 +170,16 @@ export function Notifications() {
         data: data
       });
       
-      if (data.success) {
-        setNotifications(data.notifications || []);
+      if (data.success && Array.isArray(data.notifications)) {
+        setNotifications(
+          data.notifications.map((notif: any) => ({
+            ...notif,
+            status: (notif.status ?? 'sent') as NotificationStatus,
+            expiresAt: notif.expiresAt ?? null,
+          }))
+        );
       } else {
+        setNotifications([]);
         console.error('[Notifications] API error:', data.message);
         toast.error(data.message || 'Failed to load notifications');
       }
@@ -154,6 +192,9 @@ export function Notifications() {
   };
 
   const markAsRead = async (notificationId: string) => {
+    if (!merchantIdentifier) {
+      return;
+    }
     try {
       setMarkingRead(prev => ({ ...prev, [notificationId]: true }));
 
@@ -164,7 +205,7 @@ export function Notifications() {
         },
         body: JSON.stringify({
           notificationId,
-          merchantId: merchant?.id,
+          merchantId: merchantIdentifier,
         }),
       });
 
@@ -186,6 +227,9 @@ export function Notifications() {
   };
 
   const markAllAsRead = async () => {
+    if (!merchantIdentifier) {
+      return;
+    }
     const unreadNotifications = notifications.filter(n => !n.isRead);
     
     for (const notif of unreadNotifications) {
@@ -196,6 +240,10 @@ export function Notifications() {
   };
 
   const filteredNotifications = notifications.filter(notif => {
+    if (notif.status === 'archived') {
+      return false;
+    }
+
     const matchesSearch = notif.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          notif.message.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -320,7 +368,10 @@ export function Notifications() {
                         <h4 className={`text-sm font-semibold ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
                           {notification.title}
                         </h4>
-                        {getPriorityBadge(notification.priority)}
+                        <div className="flex items-center gap-2">
+                          {getStatusBadge(notification.status)}
+                          {getPriorityBadge(notification.priority)}
+                        </div>
                       </div>
 
                       <p className="text-sm text-gray-600 mb-3 whitespace-pre-wrap">
