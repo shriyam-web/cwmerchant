@@ -1,4 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+'use client';
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { ChangeEvent } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -10,6 +13,8 @@ import {
     Pencil,
     Trash2,
     Layers,
+    Upload,
+    Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -28,7 +33,6 @@ const offlineProductSchema = z
     .object({
         offlineProductId: z.string().optional(),
         productName: z.string().min(1, "Product name is required"),
-        sku: z.string().optional(),
         category: z.string().min(1, "Category is required"),
         description: z.string().min(10, "Description must be at least 10 characters"),
         price: z
@@ -54,8 +58,6 @@ const offlineProductSchema = z
         unit: z.string().optional(),
         brand: z.string().optional(),
         tags: z.string().optional(),
-        imageUrls: z.string().optional(),
-        barcode: z.string().optional(),
         status: z.enum(["active", "inactive"]).default("active"),
     })
     .superRefine((values, ctx) => {
@@ -79,7 +81,6 @@ type OfflineProductRecord = {
     offlineProductId: string;
     merchantId: string;
     productName: string;
-    sku?: string;
     category: string;
     description: string;
     price: number;
@@ -89,7 +90,6 @@ type OfflineProductRecord = {
     brand?: string;
     tags?: string[];
     imageUrls?: string[];
-    barcode?: string;
     status: "active" | "inactive";
     createdAt?: string;
     updatedAt?: string;
@@ -98,7 +98,6 @@ type OfflineProductRecord = {
 const getEmptyFormValues = (): OfflineProductFormValues => ({
     offlineProductId: "",
     productName: "",
-    sku: "",
     category: "",
     description: "",
     price: "",
@@ -107,8 +106,6 @@ const getEmptyFormValues = (): OfflineProductFormValues => ({
     unit: "",
     brand: "",
     tags: "",
-    imageUrls: "",
-    barcode: "",
     status: "active",
 });
 
@@ -130,6 +127,9 @@ export const OfflineProductsManagement = () => {
     const [submitting, setSubmitting] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editingProductId, setEditingProductId] = useState<string | null>(null);
+    const [imageUrls, setImageUrls] = useState<string[]>([]);
+    const [uploadingImages, setUploadingImages] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const form = useForm<OfflineProductFormValues>({
         resolver: zodResolver(offlineProductSchema),
@@ -171,6 +171,10 @@ export const OfflineProductsManagement = () => {
     const resetForm = () => {
         form.reset(getEmptyFormValues());
         setEditingProductId(null);
+        setImageUrls([]);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
 
     const handleDialogChange = (open: boolean) => {
@@ -183,10 +187,13 @@ export const OfflineProductsManagement = () => {
     const handleEditProduct = (product: OfflineProductRecord) => {
         setEditingProductId(product.offlineProductId);
         setIsAddDialogOpen(true);
+        setImageUrls(product.imageUrls || []);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
         form.reset({
             offlineProductId: product.offlineProductId,
             productName: product.productName ?? "",
-            sku: product.sku ?? "",
             category: product.category ?? "",
             description: product.description ?? "",
             price: product.price?.toString() ?? "",
@@ -195,13 +202,54 @@ export const OfflineProductsManagement = () => {
             unit: product.unit ?? "",
             brand: product.brand ?? "",
             tags: (product.tags || []).join(", "),
-            imageUrls: (product.imageUrls || []).join("\n"),
-            barcode: product.barcode ?? "",
             status: product.status ?? "active",
         });
     };
 
+    const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(event.target.files || []);
+        if (files.length === 0) {
+            return;
+        }
+
+        const totalFiles = imageUrls.length + files.length;
+        if (totalFiles > 5) {
+            toast({ title: "Image limit reached", description: "You can upload up to 5 images", variant: "destructive" });
+            return;
+        }
+
+        setUploadingImages(true);
+        try {
+            const formData = new FormData();
+            files.forEach((file) => formData.append("files", file));
+            const response = await fetch("/api/upload-product-images", {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to upload images");
+            }
+
+            setImageUrls((prev) => [...prev, ...data.urls]);
+            toast({ title: "Images uploaded", description: `${data.urls.length} image(s) added` });
+        } catch (error) {
+            toast({ title: "Image upload failed", description: error instanceof Error ? error.message : "Please try again later", variant: "destructive" });
+        } finally {
+            setUploadingImages(false);
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setImageUrls((prev) => prev.filter((_, idx) => idx !== index));
+    };
+
     const handleSubmit = form.handleSubmit(async (values) => {
+        if (imageUrls.length === 0) {
+            toast({ title: "Add at least one image", description: "Upload product images before saving", variant: "destructive" });
+            return;
+        }
         if (!merchant?.id) {
             toast({ title: "Merchant information missing", description: "Please log in again", variant: "destructive" });
             return;
@@ -214,7 +262,6 @@ export const OfflineProductsManagement = () => {
 
             const payload = {
                 productName: values.productName.trim(),
-                sku: values.sku?.trim() ? values.sku.trim() : undefined,
                 category: values.category.trim(),
                 description: values.description.trim(),
                 price: priceValue,
@@ -223,8 +270,7 @@ export const OfflineProductsManagement = () => {
                 unit: values.unit?.trim() ? values.unit.trim() : undefined,
                 brand: values.brand?.trim() ? values.brand.trim() : undefined,
                 tags: parseListInput(values.tags),
-                imageUrls: parseListInput(values.imageUrls),
-                barcode: values.barcode?.trim() ? values.barcode.trim() : undefined,
+                imageUrls,
                 status: values.status ?? "active",
             };
 
@@ -257,6 +303,10 @@ export const OfflineProductsManagement = () => {
                 description: isEditing ? "The product has been updated successfully" : "The product has been added successfully",
             });
             handleDialogChange(false);
+            setImageUrls([]);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
         } catch (error) {
             toast({ title: "Something went wrong", description: error instanceof Error ? error.message : "Please try again later", variant: "destructive" });
         } finally {
@@ -331,19 +381,6 @@ export const OfflineProductsManagement = () => {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="sku"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>SKU</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Optional SKU" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
                                             name="category"
                                             render={({ field }) => (
                                                 <FormItem>
@@ -363,6 +400,19 @@ export const OfflineProductsManagement = () => {
                                                     <FormLabel>Brand</FormLabel>
                                                     <FormControl>
                                                         <Input placeholder="Brand name" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="unit"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Unit</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Pieces, Kg, etc." {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -423,28 +473,15 @@ export const OfflineProductsManagement = () => {
                                             )}
                                         />
                                     </div>
-                                    <div className="grid gap-4 md:grid-cols-3">
+                                    <div className="grid gap-4 md:grid-cols-2">
                                         <FormField
                                             control={form.control}
-                                            name="unit"
+                                            name="tags"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Unit</FormLabel>
+                                                    <FormLabel>Tags</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Pieces, Kg, etc." {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="barcode"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Barcode</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Optional barcode" {...field} />
+                                                        <Textarea rows={3} placeholder="Comma separated tags" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -472,41 +509,60 @@ export const OfflineProductsManagement = () => {
                                             )}
                                         />
                                     </div>
-                                    <div className="grid gap-4 md:grid-cols-2">
-                                        <FormField
-                                            control={form.control}
-                                            name="tags"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Tags</FormLabel>
-                                                    <FormControl>
-                                                        <Textarea rows={3} placeholder="Comma separated tags" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
+                                    <div className="space-y-4">
+                                        <div className="rounded-lg border border-dashed border-orange-300 bg-orange-50/40 p-4">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div>
+                                                    <h4 className="text-sm font-semibold text-orange-800">Product Images</h4>
+                                                    <p className="text-xs text-orange-600">Upload up to 5 images (max 5MB each)</p>
+                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    disabled={uploadingImages || imageUrls.length >= 5}
+                                                    className="gap-2"
+                                                >
+                                                    {uploadingImages ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                                                    {uploadingImages ? "Uploading..." : "Upload Images"}
+                                                </Button>
+                                                <input
+                                                    ref={fileInputRef}
+                                                    type="file"
+                                                    accept="image/*"
+                                                    multiple
+                                                    className="hidden"
+                                                    onChange={handleImageUpload}
+                                                />
+                                            </div>
+                                            {imageUrls.length === 0 ? (
+                                                <p className="text-xs text-orange-700">No images uploaded yet.</p>
+                                            ) : (
+                                                <div className="grid gap-3 md:grid-cols-2">
+                                                    {imageUrls.map((url, index) => (
+                                                        <div key={url} className="flex items-center gap-3 rounded-md border border-orange-200 bg-white p-2 shadow-sm">
+                                                            <img src={url} alt={`Product ${index + 1}`} className="h-16 w-16 rounded-md object-cover" />
+                                                            <div className="flex-1">
+                                                                <p className="text-sm font-medium text-gray-800">Image {index + 1}</p>
+                                                                {index === 0 && <p className="text-xs text-orange-500">Cover Image</p>}
+                                                            </div>
+                                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeImage(index)} className="text-red-500 hover:text-red-600">
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="imageUrls"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Image URLs</FormLabel>
-                                                    <FormControl>
-                                                        <Textarea rows={3} placeholder="Separate by newline or comma" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="flex justify-end gap-2">
-                                        <Button type="button" variant="outline" onClick={() => handleDialogChange(false)} disabled={submitting}>
-                                            Cancel
-                                        </Button>
-                                        <Button type="submit" disabled={submitting}>
-                                            {submitting ? (editingProductId ? "Updating..." : "Saving...") : editingProductId ? "Update Product" : "Add Product"}
-                                        </Button>
+                                        </div>
+                                        <div className="flex justify-end gap-2">
+                                            <Button type="button" variant="outline" onClick={() => handleDialogChange(false)} disabled={submitting}>
+                                                Cancel
+                                            </Button>
+                                            <Button type="submit" disabled={submitting}>
+                                                {submitting ? (editingProductId ? "Updating..." : "Saving...") : editingProductId ? "Update Product" : "Add Product"}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </form>
                             </Form>

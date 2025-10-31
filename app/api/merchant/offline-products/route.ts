@@ -99,7 +99,6 @@ export async function POST(request: NextRequest) {
             offlineProductId: sanitizeString(productData.offlineProductId) ?? generateOfflineProductId(),
             merchantId,
             productName: sanitizeString(productData.productName),
-            sku: sanitizeString(productData.sku),
             category: sanitizeString(productData.category),
             description: sanitizeString(productData.description),
             price,
@@ -109,12 +108,15 @@ export async function POST(request: NextRequest) {
             brand: sanitizeString(productData.brand),
             tags: sanitizeStringArray(productData.tags),
             imageUrls: sanitizeStringArray(productData.imageUrls),
-            barcode: sanitizeString(productData.barcode),
             status,
         };
 
         if (!payload.productName || !payload.category || !payload.description) {
             return NextResponse.json({ error: "Product name, category, and description are required" }, { status: 400 });
+        }
+
+        if (!payload.imageUrls || payload.imageUrls.length === 0) {
+            return NextResponse.json({ error: "At least one product image is required" }, { status: 400 });
         }
 
         const existing = await OfflineProduct.findOne({ merchantId, offlineProductId: payload.offlineProductId });
@@ -159,7 +161,6 @@ export async function PUT(request: NextRequest) {
         const updatePayload: Record<string, unknown> = {};
 
         if (productData.productName !== undefined) updatePayload.productName = sanitizeString(productData.productName);
-        if (productData.sku !== undefined) updatePayload.sku = sanitizeString(productData.sku);
         if (productData.category !== undefined) updatePayload.category = sanitizeString(productData.category);
         if (productData.description !== undefined) updatePayload.description = sanitizeString(productData.description);
         if (price !== undefined) updatePayload.price = price;
@@ -168,8 +169,12 @@ export async function PUT(request: NextRequest) {
         if (productData.unit !== undefined) updatePayload.unit = sanitizeString(productData.unit);
         if (productData.brand !== undefined) updatePayload.brand = sanitizeString(productData.brand);
         if (productData.tags !== undefined) updatePayload.tags = sanitizeStringArray(productData.tags);
-        if (productData.imageUrls !== undefined) updatePayload.imageUrls = sanitizeStringArray(productData.imageUrls);
-        if (productData.barcode !== undefined) updatePayload.barcode = sanitizeString(productData.barcode);
+        if (productData.imageUrls !== undefined) {
+            const images = sanitizeStringArray(productData.imageUrls);
+            if (images.length > 0) {
+                updatePayload.imageUrls = images;
+            }
+        }
         if (productData.status !== undefined) {
             const status = sanitizeString(productData.status);
             if (status && ["active", "inactive"].includes(status)) {
