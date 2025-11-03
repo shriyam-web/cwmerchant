@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import debounce from "lodash.debounce";
 import jsPDF from 'jspdf';
+import QRCode from 'qrcode';
 import { benefits, categories, indianStatesAndUTs } from '@/constants/registerConstants';
 
 const isValidEmail = (email: string) => {
@@ -523,204 +524,316 @@ export const usePartnerRegistration = () => {
         return f;
     };
 
+    const downloadPDF = async () => {
+        const doc = new jsPDF({ compress: true });
+        doc.setProperties({
+            title: 'CityWitty Merchant Registration Preview',
+            subject: 'Merchant application summary',
+            author: 'CityWitty Merchant Hub',
+            creator: 'CityWitty Merchant Hub'
+        });
+        let pageWidth = doc.internal.pageSize.getWidth();
+        let pageHeight = doc.internal.pageSize.getHeight();
+        const currentDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        const defaultTextColor: [number, number, number] = [33, 37, 41];
+        const firstPageMarginTop = 48;
+        const internalMarginTop = 24;
+        const baseBottomMargin = 24;
+        const footerHeight = 80;
+        let y = 0;
 
-    const downloadPDF = () => {
-        const doc = new jsPDF() as any;
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        let y = 10;
-
-        // --- Header with branding ---
-        // Header background - simple solid color
-        doc.setFillColor(187, 222, 251); // Light blue solid background
-        doc.rect(0, 0, pageWidth, 40);
-
-        // Header border
-        doc.setDrawColor(25, 118, 210);
-        doc.setLineWidth(1);
-        doc.rect(0, 0, pageWidth, 40);
-
-        // Logo
-        doc.addImage('https://partner.citywitty.com/logo2.png', 'PNG', 10, 5, 60, 20);
-
-        // Subtitle
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(0, 0, 0);
-        doc.text("Merchant Registration Confirmation Preview", 20, 35);
-
-        // Date
-        doc.setFontSize(8);
-        doc.text(`Generated on: ${new Date().toISOString().split('T')[0]}`, pageWidth - 60, 20);
-
-        // Add a decorative line below header
-        doc.setDrawColor(25, 118, 210);
-        doc.setLineWidth(0.5);
-        doc.line(0, 42, pageWidth, 42);
-
-        // Reset text color
-        doc.setTextColor(0, 0, 0);
-        y = 50;
-
-        // --- Merchant ID Badge ---
-        // Green gradient background using horizontal stripes
-        for (let i = 0; i < 15; i++) {
-            const ratio = i / 15;
-            const r = Math.round(129 + (56 - 129) * ratio);
-            const g = Math.round(199 + (142 - 199) * ratio);
-            const b = Math.round(132 + (60 - 132) * ratio);
-            doc.setFillColor(r, g, b);
-            doc.rect(15, y - 5 + i, 60, 1);
-        }
-
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(255, 255, 255);
-        doc.text(`ID: ${formData.merchantId || 'Pending'}`, 25, y + 3);
-        doc.setTextColor(0, 0, 0);
-        y += 25;
-
-        // Helper functions
-        const addSectionHeader = (title: string, icon?: string) => {
-            // Section background
-            doc.setFillColor(248, 249, 250);
-            doc.rect(15, y - 3, pageWidth - 30, 12);
-
-            // Section border
-            doc.setDrawColor(25, 118, 210);
-            doc.setLineWidth(0.5);
-            doc.rect(15, y - 3, pageWidth - 30, 12);
-
-            // Section title
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.setTextColor(25, 118, 210);
-            doc.text(title, 20, y + 4);
-            y += 18;
-        };
-
-        const addField = (label: string, value: any, isImportant = false) => {
-            if (y > pageHeight - 30) {
-                doc.addPage();
-                y = 20;
-            }
-
-            // Label
-            doc.setFontSize(11);
-            doc.setFont("helvetica", "bold");
-            doc.setTextColor(69, 90, 100);
-            doc.text(`${label}:`, 20, y);
-
-            // Value
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(...(isImportant ? [25, 118, 210] : [33, 33, 33]));
-
-            let displayValue = value || "-";
+        const formatValue = (value: any) => {
             if (Array.isArray(value)) {
-                displayValue = value.join(', ');
+                const filtered = value.filter(Boolean);
+                return filtered.length ? filtered.join(', ') : 'Not provided';
             }
+            if (typeof value === 'string') {
+                return value.trim() || 'Not provided';
+            }
+            if (typeof value === 'boolean') {
+                return value ? 'Yes' : 'No';
+            }
+            if (value === null || value === undefined || value === '') {
+                return 'Not provided';
+            }
+            return String(value);
+        };
 
-            const safeValue = displayValue.replace(/[^\x00-\x7F]/g, '');
-            const maxWidth = pageWidth - 80;
-            const splitText = doc.splitTextToSize(safeValue, maxWidth);
-
-            splitText.forEach((line: string, index: number) => {
-                if (index === 0) {
-                    doc.text(line, 80, y);
-                } else {
-                    doc.text(line, 80, y + (index * 6));
-                }
+        const applyWatermark = () => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(46);
+            doc.setTextColor(227, 231, 236);
+            const centerX = pageWidth / 2;
+            const centerY = pageHeight / 2;
+            [-70, 0, 70].forEach(offset => {
+                doc.text('citywitty merchant hub', centerX, centerY + offset, { align: 'center', angle: 45 });
             });
-
-            y += Math.max(8, splitText.length * 6);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(...defaultTextColor);
         };
 
-        const addDivider = () => {
-            doc.setDrawColor(224, 224, 224);
-            doc.setLineWidth(0.3);
-            doc.line(20, y, pageWidth - 20, y);
-            y += 8;
+        const addHeader = async () => {
+            doc.setFillColor(248, 250, 252);
+            doc.rect(0, 0, pageWidth, 40, 'F');
+            doc.setDrawColor(222, 231, 240);
+            doc.line(0, 40, pageWidth, 40);
+            doc.addImage('https://partner.citywitty.com/logo2.png', 'PNG', 15, 10, 38, 18);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(25, 118, 210);
+            doc.text('CityWitty Merchant Registration Preview', 60, 20);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(120, 128, 138);
+            doc.text(`Generated ${currentDate}`, 60, 30);
+
+            const qrSize = 28;
+            const qrX = pageWidth - qrSize - 20;
+            const qrY = 8;
+            doc.text(`Reference ${formatValue(formData.merchantId)}`, qrX - 12, 30, { align: 'right' });
+
+            if (formData.merchantId) {
+                try {
+                    const qrDataURL = await QRCode.toDataURL(`https://partner.citywitty.com/application/${formData.merchantId}`, {
+                        width: 60,
+                        margin: 1,
+                        color: {
+                            dark: '#1976D2',
+                            light: '#FFFFFF'
+                        }
+                    });
+                    doc.addImage(qrDataURL, 'PNG', qrX, qrY, qrSize, qrSize);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(6);
+                    doc.setTextColor(120, 128, 138);
+                    doc.text('Scan to track application', qrX + qrSize / 2, qrY + qrSize + 6, { align: 'center' });
+                } catch (error) {
+                    console.error('Error generating QR code:', error);
+                }
+            }
         };
 
-        // --- Business Information ---
-        addSectionHeader("Business Information");
-        addField("Legal Name", formData.legalName, true);
-        addField("Display Name", formData.displayName, true);
-        addField("Merchant Slug", formData.merchantSlug, true);
-        addField("Category", formData.category);
-        addField("Business Type", formData.businessType);
-        addDivider();
+        const ensureSpace = async (spaceNeeded = 0) => {
+            if (y + spaceNeeded > pageHeight - baseBottomMargin) {
+                doc.addPage();
+                pageWidth = doc.internal.pageSize.getWidth();
+                pageHeight = doc.internal.pageSize.getHeight();
+                applyWatermark();
+                y = internalMarginTop;
+            }
+        };
 
-        addField("Street Address", formData.streetAddress);
-        addField("Locality", formData.locality);
-        addField("City", formData.city);
-        addField("State", formData.state);
-        addField("Pincode", formData.pincode);
-        addField("Country", formData.country);
-        y += 10;
+        const prepareFooterPage = () => {
+            const totalPages = doc.getNumberOfPages();
+            doc.setPage(totalPages);
+            pageWidth = doc.internal.pageSize.getWidth();
+            pageHeight = doc.internal.pageSize.getHeight();
+            if (y > pageHeight - footerHeight) {
+                doc.addPage();
+                pageWidth = doc.internal.pageSize.getWidth();
+                pageHeight = doc.internal.pageSize.getHeight();
+                applyWatermark();
+                y = internalMarginTop;
+            }
+        };
 
-        // --- Contact Information ---
-        addSectionHeader("Contact Information");
-        addField("Email", formData.email, true);
-        addField("Phone", formData.phone, true);
-        addField("WhatsApp", formData.whatsapp);
-        addField("Website", formData.website);
-        y += 10;
+        const addSectionHeader = async (title: string) => {
+            await ensureSpace(22);
+            doc.setFillColor(240, 245, 252);
+            doc.roundedRect(15, y, pageWidth - 30, 16, 3, 3, 'F');
+            doc.setDrawColor(207, 221, 235);
+            doc.roundedRect(15, y, pageWidth - 30, 16, 3, 3);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(25, 118, 210);
+            doc.text(title.toUpperCase(), 22, y + 11);
+            y += 24;
+        };
 
-        // Social Links
-        if (Object.values(formData.socialLinks).some(link => link)) {
-            addSectionHeader("Social Media Links");
-            if (formData.socialLinks.linkedin) addField("LinkedIn", formData.socialLinks.linkedin);
-            if (formData.socialLinks.x) addField("X (Twitter)", formData.socialLinks.x);
-            if (formData.socialLinks.youtube) addField("YouTube", formData.socialLinks.youtube);
-            if (formData.socialLinks.instagram) addField("Instagram", formData.socialLinks.instagram);
-            if (formData.socialLinks.facebook) addField("Facebook", formData.socialLinks.facebook);
-            y += 10;
+        type FieldConfig = { label: string; value: any; isImportant?: boolean };
+
+        const addFieldRow = async (fields: FieldConfig[]) => {
+            if (!fields.length) {
+                return;
+            }
+            await ensureSpace(18);
+            const columnWidth = (pageWidth - 60) / fields.length;
+            let rowHeight = 0;
+            fields.forEach((field, index) => {
+                const columnX = 25 + index * columnWidth;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8);
+                doc.setTextColor(138, 152, 168);
+                doc.text(field.label.toUpperCase(), columnX, y);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                const color = field.isImportant ? [25, 118, 210] : defaultTextColor;
+                doc.setTextColor(color[0], color[1], color[2]);
+                const text = formatValue(field.value);
+                const lines = doc.splitTextToSize(text.replace(/[^\x00-\x7F]/g, ''), columnWidth - 6);
+                lines.forEach((line: string, lineIndex: number) => {
+                    doc.text(line, columnX, y + 6 + lineIndex * 5);
+                });
+                rowHeight = Math.max(rowHeight, 6 + lines.length * 5);
+            });
+            y += rowHeight + 6;
+            doc.setTextColor(...defaultTextColor);
+        };
+
+        const addSummaryCard = async () => {
+            await ensureSpace(30);
+            doc.setFillColor(247, 249, 252);
+            doc.roundedRect(15, y, pageWidth - 30, 26, 4, 4, 'F');
+            doc.setDrawColor(222, 231, 240);
+            doc.roundedRect(15, y, pageWidth - 30, 26, 4, 4);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(25, 118, 210);
+            doc.text(formatValue(formData.displayName), 25, y + 11);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(90, 102, 121);
+            doc.text(`Legal Name: ${formatValue(formData.legalName)}`, 25, y + 19);
+            doc.text(`Application ID: ${formatValue(formData.merchantId)}`, pageWidth - 25, y + 11, { align: 'right' });
+            doc.text(`Category: ${formatValue(formData.category)}`, pageWidth - 25, y + 19, { align: 'right' });
+            y += 38;
+        };
+
+        const addFooter = () => {
+            const totalPages = doc.getNumberOfPages();
+            const lastPage = totalPages;
+            doc.setPage(lastPage);
+            const width = doc.internal.pageSize.getWidth();
+            const height = doc.internal.pageSize.getHeight();
+            doc.setDrawColor(222, 231, 240);
+            doc.line(15, height - 64, width - 15, height - 64);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(120, 128, 138);
+            doc.text('This application will be reviewed and you will be informed via email about your activation status.', 15, height - 56);
+            doc.text('CityWitty Partner Success Team', 15, height - 44);
+            doc.text('support@citywitty.com | partner.citywitty.com', 15, height - 34);
+            doc.text(`Page ${lastPage} of ${totalPages}`, width - 15, height - 34, { align: 'right' });
+            doc.setFontSize(7);
+            doc.text('This document is confidential and intended solely for the entity to whom it is issued. Unauthorized reproduction or distribution is prohibited.', 15, height - 24, { maxWidth: width - 30 });
+            doc.text('CityWitty reserves the right to verify all submitted information and may request additional documentation to authenticate merchant credentials.', 15, height - 16, { maxWidth: width - 30 });
+            doc.text('Acceptance into the CityWitty Merchant Program is subject to compliance with our Merchant Terms and Privacy Policy.', 15, height - 8, { maxWidth: width - 30 });
+            doc.setPage(lastPage);
+            doc.setTextColor(...defaultTextColor);
+        };
+
+        const socialFields: FieldConfig[] = [
+            { label: 'LinkedIn', value: formData.socialLinks.linkedin },
+            { label: 'X (Twitter)', value: formData.socialLinks.x },
+            { label: 'YouTube', value: formData.socialLinks.youtube },
+            { label: 'Instagram', value: formData.socialLinks.instagram },
+            { label: 'Facebook', value: formData.socialLinks.facebook }
+        ].filter(field => formatValue(field.value) !== 'Not provided');
+        const socialRows: FieldConfig[][] = [];
+        for (let index = 0; index < socialFields.length; index += 2) {
+            socialRows.push(socialFields.slice(index, index + 2));
         }
 
-        // --- Legal Information ---
-        addSectionHeader("Legal Information");
-        addField("GST Number", formData.gstNumber);
-        addField("PAN Number", formData.panNumber, true);
-        addField("Business License", formData.businessLicenseNumber);
-        y += 10;
+        const sections: { title: string; rows: FieldConfig[][] }[] = [
+            {
+                title: 'Business Information',
+                rows: [
+                    [
+                        { label: 'Legal Name', value: formData.legalName, isImportant: true },
+                        { label: 'Display Name', value: formData.displayName, isImportant: true }
+                    ],
+                    [
+                        { label: 'Merchant Slug', value: formData.merchantSlug, isImportant: true },
+                        { label: 'Business Type', value: formData.businessType }
+                    ],
+                    [
+                        { label: 'Profile URL (Post Verification)', value: `citywitty.com/merchants/${formData.merchantSlug}` }
+                    ],
+                    [
+                        { label: 'Street Address', value: formData.streetAddress }
+                    ],
+                    [
+                        { label: 'Locality', value: formData.locality },
+                        { label: 'City', value: formData.city }
+                    ],
+                    [
+                        { label: 'State', value: formData.state },
+                        { label: 'Pincode', value: formData.pincode },
+                        { label: 'Country', value: formData.country }
+                    ]
+                ]
+            },
+            {
+                title: 'Contact Information',
+                rows: [
+                    [
+                        { label: 'Email', value: formData.email, isImportant: true },
+                        { label: 'Phone', value: formData.phone, isImportant: true }
+                    ],
+                    [
+                        { label: 'WhatsApp', value: formData.whatsapp },
+                        { label: 'Website', value: formData.website }
+                    ]
+                ]
+            },
+            ...(socialRows.length ? [{
+                title: 'Social Media',
+                rows: socialRows
+            }] : []),
+            {
+                title: 'Compliance',
+                rows: [
+                    [
+                        { label: 'GST Number', value: formData.gstNumber },
+                        { label: 'PAN Number', value: formData.panNumber, isImportant: true }
+                    ],
+                    [
+                        { label: 'Business License', value: formData.businessLicenseNumber }
+                    ]
+                ]
+            },
+            {
+                title: 'Business Details',
+                rows: [
+                    [
+                        { label: 'Years in Business', value: formData.yearsInBusiness },
+                        { label: 'Average Monthly Revenue', value: formData.averageMonthlyRevenue }
+                    ],
+                    [
+                        { label: 'Business Description', value: formData.description }
+                    ]
+                ]
+            },
+            {
+                title: 'Operating Schedule',
+                rows: [
+                    [
+                        { label: 'Opening Time', value: formData.businessHours.open },
+                        { label: 'Closing Time', value: formData.businessHours.close }
+                    ],
+                    [
+                        { label: 'Operating Days', value: formData.businessHours.days }
+                    ]
+                ]
+            }
+        ];
 
-        // --- Business Details ---
-        addSectionHeader("Business Details");
-        addField("Years in Business", formData.yearsInBusiness);
-        addField("Monthly Revenue", formData.averageMonthlyRevenue);
-        addField("Business Description", formData.description);
-        y += 10;
-
-        // Business Hours
-        addSectionHeader("Business Hours");
-        addField("Opening Time", formData.businessHours.open);
-        addField("Closing Time", formData.businessHours.close);
-        addField("Operating Days", formData.businessHours.days.join(', '));
-        y += 15;
-
-        // --- Footer ---
-        if (y > pageHeight - 40) {
-            doc.addPage();
-            y = 20;
+        applyWatermark();
+        await addHeader();
+        y = firstPageMarginTop;
+        await addSummaryCard();
+        for (const section of sections) {
+            if (!section.rows.length) {
+                continue;
+            }
+            await addSectionHeader(section.title);
+            for (const row of section.rows) {
+                await addFieldRow(row);
+            }
         }
-
-        // Footer background
-        doc.setFillColor(248, 249, 250);
-        doc.rect(0, pageHeight - 25, pageWidth, 25, "F");
-
-        // Footer text
-        doc.setFontSize(9);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(117, 117, 117);
-        doc.text("This document confirms your registration with CityWitty Merchant Hub.", 20, pageHeight - 18);
-        doc.text("This is a digitally generated preview and hence doesn't require to be signed.", 20, pageHeight - 12);
-        doc.text("For support, contact us at support@citywitty.com", 20, pageHeight - 6);
-
-        // Page number
-        doc.text(`Page 1 of 1`, pageWidth - 30, pageHeight - 8);
-
-        // Save PDF
+        prepareFooterPage();
+        addFooter();
         doc.save(`${formData.displayName || 'CityWitty_Application'}_Registration.pdf`);
     };
     const [isSubmitting, setIsSubmitting] = useState(false);
