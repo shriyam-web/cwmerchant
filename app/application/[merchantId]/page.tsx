@@ -200,6 +200,37 @@ export default function ApplicationStatusPage() {
                     </p>
                 </div>
 
+                {/* Email Verification Alert */}
+                {!applicationData.emailVerified && (
+                    <Card className="border-2 border-red-200 bg-red-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-red-600">
+                                <AlertCircle className="h-6 w-6" />
+                                Email Verification Required
+                            </CardTitle>
+                            <CardDescription className="text-red-700 text-base">
+                                Your email address needs to be verified before we can process your application further.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-3">
+                                <p className="text-sm text-red-600">
+                                    ✓ Check your inbox for a verification email sent to <strong>{applicationData.email}</strong>
+                                </p>
+                                <p className="text-sm text-red-600">
+                                    ✓ Click the verification link in the email to confirm your address
+                                </p>
+                                <p className="text-sm text-red-600">
+                                    ✓ If you don't see the email, check your spam or junk folder
+                                </p>
+                                <p className="text-sm text-red-600 font-medium mt-4">
+                                    ⚠️ Once verified, complete all remaining steps to activate your merchant profile
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
                 {/* Status Card */}
                 <Card className={`border-2 ${statusConfig.borderColor}`}>
                     <CardHeader className={statusConfig.bgColor}>
@@ -224,9 +255,17 @@ export default function ApplicationStatusPage() {
                         </div>
                     </CardHeader>
                     <CardContent className="pt-6">
-                        <p className="text-gray-700 text-center md:text-left">
-                            {statusConfig.description}
-                        </p>
+                        <div className="space-y-2">
+                            <p className="text-gray-700 text-center md:text-left">
+                                {statusConfig.description}
+                            </p>
+                            {applicationData.emailVerified && (
+                                <p className="text-sm text-green-600 flex items-center gap-2">
+                                    <CheckCircle className="h-4 w-4" />
+                                    Email verified
+                                </p>
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -238,7 +277,9 @@ export default function ApplicationStatusPage() {
                             Profile Completion
                         </CardTitle>
                         <CardDescription>
-                            Complete your profile to increase visibility
+                            {applicationData.status === "pending"
+                                ? "Fill out all required fields to move your application to review"
+                                : "Complete your profile to increase visibility and reach more customers"}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -258,6 +299,20 @@ export default function ApplicationStatusPage() {
                             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                                 <p className="text-sm font-medium text-yellow-800">
                                     {applicationData.missingFieldsCount} required {applicationData.missingFieldsCount === 1 ? "field" : "fields"} remaining
+                                </p>
+                                <p className="text-xs text-yellow-700 mt-1">
+                                    {applicationData.completionPercentage < 100
+                                        ? "View the 'Missing Information' section below to see what needs to be filled"
+                                        : ""}
+                                </p>
+                            </div>
+                        )}
+
+                        {applicationData.completionPercentage === 100 && (
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <p className="text-sm font-medium text-green-800 flex items-center gap-2">
+                                    <CheckCircle className="h-4 w-4" />
+                                    Profile 100% complete!
                                 </p>
                             </div>
                         )}
@@ -406,8 +461,8 @@ export default function ApplicationStatusPage() {
                     </Card>
                 </div>
 
-                {/* Next Steps */}
-                {applicationData.nextSteps.length > 0 && (
+                {/* Next Steps - Only show after email verification */}
+                {applicationData.emailVerified && applicationData.nextSteps.length > 0 && (
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -415,7 +470,11 @@ export default function ApplicationStatusPage() {
                                 Next Steps
                             </CardTitle>
                             <CardDescription>
-                                Complete these steps to activate your merchant profile
+                                {applicationData.status === "pending"
+                                    ? "Follow these steps to complete your application and get activated"
+                                    : applicationData.status === "active"
+                                        ? "Continue building your merchant profile"
+                                        : "Complete these steps to resolve your account status"}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -433,40 +492,7 @@ export default function ApplicationStatusPage() {
                     </Card>
                 )}
 
-                {/* Missing Fields */}
-                {applicationData.missingFieldsCount > 0 && (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <AlertCircle className="h-5 w-5 text-orange-500" />
-                                Missing Information
-                            </CardTitle>
-                            <CardDescription>
-                                Complete these fields to reach 100% profile completion
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-6">
-                                {Object.entries(applicationData.missingFields).map(([category, fields]) => (
-                                    <div key={category} className="space-y-2">
-                                        <h4 className="font-semibold text-gray-900">{category}</h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                                            {fields.map((field: any) => (
-                                                <div
-                                                    key={field.key}
-                                                    className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-md px-3 py-2"
-                                                >
-                                                    <XCircle className="h-4 w-4 text-red-400" />
-                                                    {field.label}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
+
 
                 {/* Actions */}
                 <Card>

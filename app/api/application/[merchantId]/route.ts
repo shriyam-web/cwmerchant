@@ -97,7 +97,8 @@ export async function GET(
                     label: field.label,
                     category: field.category,
                 });
-            } else if (!isMissing) {
+            } else if (!isMissing && !field.optional) {
+                // Only count required fields as completed
                 completedFields.push({
                     key: field.key,
                     label: field.label,
@@ -108,7 +109,7 @@ export async function GET(
 
         // Calculate completion percentage
         const requiredFieldsCount = profileFields.filter(f => !f.optional).length;
-        const completedRequiredCount = requiredFieldsCount - missingFields.length;
+        const completedRequiredCount = completedFields.length;
         const completionPercentage = Math.round((completedRequiredCount / requiredFieldsCount) * 100);
 
         // Group missing fields by category
