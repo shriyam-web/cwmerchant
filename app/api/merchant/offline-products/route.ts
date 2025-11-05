@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import OfflineProduct from "@/models/OfflineProduct";
 
-const generateOfflineProductId = () => `OFF-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+const generateOfflineProductId = (merchantId: string) => `${merchantId}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
 
 const sanitizeString = (value?: string | null) => {
     if (!value) {
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         }
 
         const payload = {
-            offlineProductId: sanitizeString(productData.offlineProductId) ?? generateOfflineProductId(),
+            offlineProductId: sanitizeString(productData.offlineProductId) ?? generateOfflineProductId(merchantId),
             merchantId,
             productName: sanitizeString(productData.productName),
             category: sanitizeString(productData.category),

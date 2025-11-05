@@ -50,6 +50,7 @@ export async function POST(req: Request) {
       token,
       merchant: {
         id: partner._id.toString(),
+        merchantId: partner.merchantId,
         email: partner.email,
         businessName: partner.displayName || partner.legalName,
         role: "merchant",

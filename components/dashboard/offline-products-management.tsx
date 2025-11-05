@@ -146,12 +146,12 @@ export const OfflineProductsManagement = () => {
     );
 
     const fetchProducts = async () => {
-        if (!merchant?.id) {
+        if (!merchant?.merchantId) {
             return;
         }
         setLoadingProducts(true);
         try {
-            const response = await fetch(`/api/merchant/offline-products?merchantId=${merchant.id}`);
+            const response = await fetch(`/api/merchant/offline-products?merchantId=${merchant.merchantId}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch offline products");
             }
@@ -166,7 +166,7 @@ export const OfflineProductsManagement = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, [merchant?.id]);
+    }, [merchant?.merchantId]);
 
     const resetForm = () => {
         form.reset(getEmptyFormValues());
@@ -250,7 +250,7 @@ export const OfflineProductsManagement = () => {
             toast({ title: "Add at least one image", description: "Upload product images before saving", variant: "destructive" });
             return;
         }
-        if (!merchant?.id) {
+        if (!merchant?.merchantId) {
             toast({ title: "Merchant information missing", description: "Please log in again", variant: "destructive" });
             return;
         }
@@ -281,14 +281,14 @@ export const OfflineProductsManagement = () => {
                 body: JSON.stringify(
                     isEditing
                         ? {
-                              merchantId: merchant.id,
-                              offlineProductId: editingProductId,
-                              productData: payload,
-                          }
+                            merchantId: merchant.merchantId,
+                            offlineProductId: editingProductId,
+                            productData: payload,
+                        }
                         : {
-                              merchantId: merchant.id,
-                              productData: payload,
-                          }
+                            merchantId: merchant.merchantId,
+                            productData: payload,
+                        }
                 ),
             });
 
@@ -315,12 +315,12 @@ export const OfflineProductsManagement = () => {
     });
 
     const handleDeleteProduct = async (productId: string) => {
-        if (!merchant?.id) {
+        if (!merchant?.merchantId) {
             return;
         }
         setDeletingId(productId);
         try {
-            const response = await fetch(`/api/merchant/offline-products?merchantId=${merchant.id}&offlineProductId=${productId}`, {
+            const response = await fetch(`/api/merchant/offline-products?merchantId=${merchant.merchantId}&offlineProductId=${productId}`, {
                 method: "DELETE",
             });
             if (!response.ok) {
