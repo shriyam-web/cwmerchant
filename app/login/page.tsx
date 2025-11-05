@@ -123,7 +123,7 @@ export default function Login() {
       }
 
       // Store token and merchant data
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('merchantToken', data.token);
       localStorage.setItem('merchant', JSON.stringify(data.merchant));
 
       toast({
@@ -166,8 +166,8 @@ export default function Login() {
       <div className="flex flex-1 pt-10">
         {/* Left branding section */}
         <div className={`hidden lg:flex lg:w-1/2 ${isRemoteAccess
-            ? 'bg-gradient-to-br from-orange-600 via-red-600 to-pink-600'
-            : 'bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600'
+          ? 'bg-gradient-to-br from-orange-600 via-red-600 to-pink-600'
+          : 'bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600'
           } text-white items-center justify-center relative overflow-hidden transition-all duration-500`}>
           <div className="absolute inset-0 opacity-20" />
           <div className="relative z-10 max-w-md text-center p-10">
@@ -195,8 +195,8 @@ export default function Login() {
               {/* Header */}
               <div className="text-center mb-8">
                 <div className={`w-16 h-16 ${isRemoteAccess
-                    ? 'bg-gradient-to-br from-orange-100 to-red-100'
-                    : 'bg-gradient-to-br from-blue-100 to-indigo-100'
+                  ? 'bg-gradient-to-br from-orange-100 to-red-100'
+                  : 'bg-gradient-to-br from-blue-100 to-indigo-100'
                   } rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner transition-all duration-300`}>
                   {isRemoteAccess ? (
                     <Shield className="h-8 w-8 text-orange-600" />
@@ -356,8 +356,8 @@ export default function Login() {
                 <Button
                   type="submit"
                   className={`w-full h-12 text-lg font-medium rounded-xl shadow-lg transition-all ${isRemoteAccess
-                      ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
-                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
                     }`}
                   disabled={isRemoteAccess ? (verifyingOtp || !otpSent) : loading}
                 >

@@ -4,7 +4,6 @@ import { RemoteAccessOTP } from '@/models/RemoteAccessOTP';
 import Partner from '@/models/partner';
 import jwt from 'jsonwebtoken';
 
-const ADMIN_EMAIL = 'citywittymerchant@gmail.com';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function POST(request: NextRequest) {
@@ -20,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate admin email
-    if (email !== ADMIN_EMAIL) {
+    if (email !== process.env.REMOTE_ACCESS_ADMIN_EMAIL) {
       return NextResponse.json(
         { error: 'Unauthorized email address' },
         { status: 403 }
@@ -93,7 +92,7 @@ export async function POST(request: NextRequest) {
       success: true,
       token,
       merchant: {
-        id: merchant._id,
+        id: merchant._id.toString(),
         email: merchant.email,
         businessName: merchant.businessName,
         role: 'merchant',
@@ -101,6 +100,7 @@ export async function POST(request: NextRequest) {
         merchantId: merchant.merchantId,
         displayName: merchant.displayName,
         remoteAccess: true,
+        isAdmin: true,
       },
     });
   } catch (error) {

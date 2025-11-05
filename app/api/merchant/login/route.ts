@@ -46,6 +46,12 @@ export async function POST(req: Request) {
       { expiresIn: "7d" }
     );
 
+    // Check if this is an admin account
+    const adminEmail = process.env.REMOTE_ACCESS_ADMIN_EMAIL?.toLowerCase();
+    const isAdmin = adminEmail
+      ? String(partner.email || "").toLowerCase() === adminEmail
+      : false;
+
     return NextResponse.json({
       token,
       merchant: {
@@ -55,6 +61,7 @@ export async function POST(req: Request) {
         businessName: partner.displayName || partner.legalName,
         role: "merchant",
         status: partner.status,
+        isAdmin,
       },
     });
   } catch (err) {

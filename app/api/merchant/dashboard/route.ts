@@ -181,6 +181,12 @@ export async function GET(req: Request) {
       };
     });
 
+    // Check if this is an admin account
+    const adminEmail = process.env.REMOTE_ACCESS_ADMIN_EMAIL?.toLowerCase();
+    const isAdmin = adminEmail
+      ? String(partner.email || "").toLowerCase() === adminEmail
+      : false;
+
     const response = {
       merchant: {
         id: partner._id.toString(),
@@ -236,6 +242,7 @@ export async function GET(req: Request) {
         ds_reel: partner.ds_reel || [],
         ds_weblog: partner.ds_weblog || [],
         podcastLog: partner.podcastLog || [],
+        isAdmin,
       },
       stats,
       requests,

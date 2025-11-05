@@ -98,6 +98,7 @@ interface Merchant {
   role: "merchant";
   status: "active" | "pending" | "suspended" | "inactive";
   emailVerified?: boolean;
+  isAdmin?: boolean;
 }
 
 interface MerchantRegisterData {
@@ -123,6 +124,24 @@ interface MerchantAuthContextType {
 const MerchantAuthContext = createContext<MerchantAuthContextType | undefined>(
   undefined
 );
+
+// Helper function to ensure isAdmin flag is always properly set
+const ensureAdminFlag = (merchant: any): Merchant => {
+  if (!merchant) return merchant;
+  const adminEmail = (
+    process.env.NEXT_PUBLIC_REMOTE_ACCESS_ADMIN_EMAIL ||
+    process.env.REMOTE_ACCESS_ADMIN_EMAIL ||
+    ""
+  ).toLowerCase();
+  const merchantEmail = String(merchant.email || "").toLowerCase();
+  const isAdmin = adminEmail
+    ? merchantEmail === adminEmail || Boolean(merchant.isAdmin)
+    : Boolean(merchant.isAdmin);
+  return {
+    ...merchant,
+    isAdmin,
+  } as Merchant;
+};
 
 export function MerchantAuthProvider({ children }: { children: ReactNode }) {
   const [merchant, setMerchant] = useState<Merchant | null>(null);
@@ -184,8 +203,11 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
 
       // ✅ All good → set merchant and clear any previous profile removed notice
       setProfileRemovedNotice(false);
-      setMerchant(data.merchant);
-      localStorage.setItem("merchant", JSON.stringify(data.merchant));
+      // Ensure isAdmin flag is always properly calculated
+      const updatedMerchant = ensureAdminFlag(data.merchant);
+      console.log('📊 Profile fetched. isAdmin:', updatedMerchant.isAdmin, 'email:', updatedMerchant.email);
+      setMerchant(updatedMerchant);
+      localStorage.setItem("merchant", JSON.stringify(updatedMerchant));
     } catch (err) {
       console.error("Failed to fetch merchant profile", err);
       setError("Something went wrong while fetching your profile.");
@@ -199,7 +221,10 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
     const storedMerchant = localStorage.getItem("merchant");
 
     if (storedMerchant) {
-      setMerchant(JSON.parse(storedMerchant));
+      const parsedMerchant = JSON.parse(storedMerchant);
+      const merchantWithAdmin = ensureAdminFlag(parsedMerchant);
+      console.log('🔄 Loaded from localStorage. isAdmin:', merchantWithAdmin.isAdmin, 'email:', merchantWithAdmin.email);
+      setMerchant(merchantWithAdmin);
     }
 
     if (token) {
@@ -235,8 +260,10 @@ export function MerchantAuthProvider({ children }: { children: ReactNode }) {
 
       // ✅ Success - clear any previous profile removed notice
       setProfileRemovedNotice(false);
-      setMerchant(data.merchant);
-      localStorage.setItem("merchant", JSON.stringify(data.merchant));
+      const merchantWithAdmin = ensureAdminFlag(data.merchant);
+      console.log('🔐 Login successful. isAdmin:', merchantWithAdmin.isAdmin, 'email:', merchantWithAdmin.email);
+      setMerchant(merchantWithAdmin);
+      localStorage.setItem("merchant", JSON.stringify(merchantWithAdmin));
       localStorage.setItem("merchantToken", data.token);
       return true;
     } catch (err) {

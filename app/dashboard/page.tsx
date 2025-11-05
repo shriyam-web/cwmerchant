@@ -6,6 +6,7 @@ import ProfileRemovedNotice from "@/components/ui/ProfileRemovedNotice";
 import WelcomePendingModal from "@/components/ui/WelcomePendingModal";
 import { EmailVerificationBanner } from "@/components/ui/EmailVerificationBanner";
 import { MerchantPlanBanner } from "@/components/ui/MerchantPlanBanner";
+import { AdminAccessBanner } from "@/components/ui/AdminAccessBanner";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { OffersManagement } from "@/components/dashboard/offers-management";
@@ -116,7 +117,26 @@ interface ExtendedMerchant {
   logo?: string;
   storeImages?: string[];
   mapLocation?: string;
+  isAdmin?: boolean;
 }
+
+// Helper function to ensure isAdmin is always properly set
+const ensureAdminFlag = (merchant: any): any => {
+  if (!merchant) return merchant;
+  const adminEmail = (
+    process.env.NEXT_PUBLIC_REMOTE_ACCESS_ADMIN_EMAIL ||
+    process.env.REMOTE_ACCESS_ADMIN_EMAIL ||
+    ""
+  ).toLowerCase();
+  const merchantEmail = String(merchant.email || "").toLowerCase();
+  const isAdmin = adminEmail
+    ? merchantEmail === adminEmail || Boolean(merchant.isAdmin)
+    : Boolean(merchant.isAdmin);
+  return {
+    ...merchant,
+    isAdmin,
+  };
+};
 
 export default function Dashboard() {
   const { merchant, setMerchant, loadingProfile, profileRemovedNotice, clearProfileRemovedNotice } = useMerchantAuth();
@@ -355,6 +375,17 @@ export default function Dashboard() {
     }
   };
 
+  // Debug: Log merchant isAdmin flag
+  useEffect(() => {
+    console.log('🔍 MERCHANT STATE CHANGED:', {
+      email: merchant?.email,
+      isAdmin: merchant?.isAdmin,
+      id: merchant?.id,
+      status: merchant?.status,
+      fullMerchant: merchant,
+    });
+  }, [merchant]);
+
   useEffect(() => {
     if (!merchant?.id) {
       setLoading(false); // set loading to false if no id
@@ -373,12 +404,24 @@ export default function Dashboard() {
         const data = await res.json();
 
         if (res.ok) {
+          console.log('📊 Dashboard API response:', {
+            merchantIsAdmin: data.merchant?.isAdmin,
+            merchantEmail: data.merchant?.email,
+          });
+
           // ✅ set stats & requests from API
           setStats(data.stats || []);
           setRequests(data.requests || []);
 
           // ✅ update merchant state with fresh data for calculation
-          setMerchant?.(data.merchant);
+          // Merge merchant data and ensure isAdmin is properly set
+          const mergedMerchant = {
+            ...merchant,
+            ...data.merchant,
+          };
+          const updatedMerchant = ensureAdminFlag(mergedMerchant);
+          console.log('✅ Updated merchant with isAdmin:', updatedMerchant.isAdmin);
+          setMerchant?.(updatedMerchant);
 
         } else {
           console.error("Dashboard fetch failed:", data);
@@ -1306,6 +1349,12 @@ export default function Dashboard() {
           {!(merchant as ExtendedMerchant).purchasedPackage?.variantName && (
             <MerchantPlanBanner merchantId={merchant.id} />
           )}
+
+          {/* Admin Access Banner */}
+          {(() => {
+            console.log('🎯 Checking Admin Banner. isAdmin:', merchant?.isAdmin, 'email:', merchant?.email);
+            return merchant?.isAdmin && <AdminAccessBanner />;
+          })()}
 
           {/* Pending Account Banner */}
           {merchant.status === "pending" && (
