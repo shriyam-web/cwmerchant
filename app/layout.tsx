@@ -53,6 +53,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <meta name="google-site-verification" content="3dC7KNGbUBtF_hgQLY5FgUfpgEf2GVtxBh_dQkohPU0" />
       </head>
       <body className={inter.className}>
         <MerchantAuthProvider>

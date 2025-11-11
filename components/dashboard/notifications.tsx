@@ -43,6 +43,10 @@ interface Notification {
 const TYPE_VALUES: NotificationType[] = ['info', 'success', 'warning', 'error', 'announcement'];
 const PRIORITY_VALUES: NotificationPriority[] = ['low', 'medium', 'high', 'urgent'];
 
+interface NotificationsProps {
+  onUnreadCountChange?: (count: number) => void;
+}
+
 const getTypeIcon = (type: NotificationType) => {
   switch (type) {
     case 'success':
@@ -128,7 +132,7 @@ const formatDate = (dateString: string) => {
   });
 };
 
-export function Notifications() {
+export function Notifications({ onUnreadCountChange }: NotificationsProps) {
   const { merchant } = useMerchantAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -178,6 +182,7 @@ export function Notifications() {
             expiresAt: notif.expiresAt ?? null,
           }))
         );
+        onUnreadCountChange?.(data.unreadCount || 0);
       } else {
         setNotifications([]);
         console.error('[Notifications] API error:', data.message);
@@ -212,11 +217,14 @@ export function Notifications() {
       const data = await response.json();
 
       if (data.success) {
-        setNotifications(prev =>
-          prev.map(notif =>
+        setNotifications(prev => {
+          const updated = prev.map(notif =>
             notif.id === notificationId ? { ...notif, isRead: true } : notif
-          )
-        );
+          );
+          const newUnreadCount = updated.filter(n => !n.isRead).length;
+          onUnreadCountChange?.(newUnreadCount);
+          return updated;
+        });
       }
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -232,11 +240,30 @@ export function Notifications() {
     }
     const unreadNotifications = notifications.filter(n => !n.isRead);
     
-    for (const notif of unreadNotifications) {
-      await markAsRead(notif.id);
+    try {
+      for (const notif of unreadNotifications) {
+        await fetch('/api/merchant/notifications', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            notificationId: notif.id,
+            merchantId: merchantIdentifier,
+          }),
+        });
+      }
+      
+      setNotifications(prev =>
+        prev.map(notif => ({ ...notif, isRead: true }))
+      );
+      
+      onUnreadCountChange?.(0);
+      toast.success('All notifications marked as read');
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+      toast.error('Failed to mark all as read');
     }
-    
-    toast.success('All notifications marked as read');
   };
 
   const filteredNotifications = notifications.filter(notif => {

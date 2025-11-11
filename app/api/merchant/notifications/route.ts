@@ -193,10 +193,8 @@ export async function GET(req: NextRequest) {
       }
 
       if (audience === 'merchant') {
-        if (targetIds.length === 0) {
-          return status === 'sent';
-        }
-        return hasMerchantMatch;
+        // For merchant audience, show to all merchants
+        return status === 'sent';
       }
 
       if (audience === 'specific' || audience === 'merchant_specific' || audience === 'targeted') {

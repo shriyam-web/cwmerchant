@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { AlertCircle } from "lucide-react";
 
 interface Step3Props {
@@ -18,26 +19,45 @@ export default function Step3LegalInfo({ formData, handleInputChange, fieldError
 
             <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label htmlFor="gstNumber">GST Number</Label>
-                    <Input
-                        id="gstNumber"
-                        value={formData.gstNumber}
-                        onChange={(e) => {
-                            if (e.target.value.length <= 15) {
-                                handleInputChange('gstNumber', e.target.value.toUpperCase());
-                            }
-                        }}
-                        onBlur={() => formData.gstNumber && checkingField.gstNumber}
-                        placeholder="Enter GST number"
-                        className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
-                    />
-                    {checkingField.gstNumber ? (
-                        <p className="text-sm text-gray-500 mt-1">Checking GST…</p>
-                    ) : fieldErrors.gstNumber ? (
-                        <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4" /> {fieldErrors.gstNumber}
-                        </p>
-                    ) : null}
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="hasGstNumber"
+                            checked={formData.hasGstNumber}
+                            onCheckedChange={(checked) => {
+                                handleInputChange('hasGstNumber', checked);
+                                if (!checked) {
+                                    handleInputChange('gstNumber', '');
+                                }
+                            }}
+                        />
+                        <Label htmlFor="hasGstNumber" className="text-sm font-normal">
+                            Do you have GST number available?
+                        </Label>
+                    </div>
+                    {formData.hasGstNumber && (
+                        <>
+                            <Label htmlFor="gstNumber">GST Number</Label>
+                            <Input
+                                id="gstNumber"
+                                value={formData.gstNumber}
+                                onChange={(e) => {
+                                    if (e.target.value.length <= 15) {
+                                        handleInputChange('gstNumber', e.target.value.toUpperCase());
+                                    }
+                                }}
+                                onBlur={() => formData.gstNumber && checkingField.gstNumber}
+                                placeholder="Enter GST number"
+                                className="h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
+                            />
+                            {checkingField.gstNumber ? (
+                                <p className="text-sm text-gray-500 mt-1">Checking GST…</p>
+                            ) : fieldErrors.gstNumber ? (
+                                <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" /> {fieldErrors.gstNumber}
+                                </p>
+                            ) : null}
+                        </>
+                    )}
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="panNumber">PAN Number (Business Owner) <span className="text-red-500">*</span></Label>

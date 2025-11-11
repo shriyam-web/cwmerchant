@@ -14,9 +14,7 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  Bell,
-  ExternalLink,
-  Eye
+  Tag
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 // ✅ If you’re using Auth Context
@@ -111,8 +109,8 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
 
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
-    { id: 'notifications', label: 'Notifications', icon: Bell, badge: notificationsBadgeCount > 0 ? notificationsBadgeCount.toString() : null },
     { id: 'offers', label: 'Offers', icon: Gift, badge: offersBadgeCount > 0 ? offersBadgeCount.toString() : null },
+    { id: 'coupons', label: 'Coupons', icon: Tag, badge: null },
     { id: 'products', label: 'CityWitty Store', icon: Package, badge: null },
     { id: 'offline-shopping', label: 'Your Offline Store', icon: Store, badge: null },
     { id: 'requests', label: 'Purchase Requests', icon: FileText, badge: requestsBadgeCount > 0 ? requestsBadgeCount.toString() : null },
@@ -143,35 +141,36 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
           {/* ✅ Merchant Info Dynamic */}
           {merchantInfo && (
             <div className="p-3 mb-4">
-              <div className="flex items-center space-x-3">
-                {/* avatar: never shrink */}
-                {merchantInfo.logo ? (
-                  <img
-                    src={merchantInfo.logo}
-                    alt="Merchant Logo"
-                    className="flex-shrink-0 w-14 h-14 rounded-full border-4 border-white object-contain hover:scale-105 transform transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center border-4 border-white hover:scale-105 transform transition-transform duration-300">
-                    <span className="text-white font-extrabold text-xl select-none">
-                      {(merchantInfo.displayName || merchantInfo.businessName)?.charAt(0) || "M"}
-                    </span>
-                  </div>
-                )}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3 flex-1 min-w-0">
+                  {/* avatar: never shrink */}
+                  {merchantInfo.logo ? (
+                    <img
+                      src={merchantInfo.logo}
+                      alt="Merchant Logo"
+                      className="flex-shrink-0 w-14 h-14 rounded-full border-4 border-white object-contain hover:scale-105 transform transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center border-4 border-white hover:scale-105 transform transition-transform duration-300">
+                      <span className="text-white font-extrabold text-xl select-none">
+                        {(merchantInfo.displayName || merchantInfo.businessName)?.charAt(0) || "M"}
+                      </span>
+                    </div>
+                  )}
 
-                {/* text area: allow truncation (min-w-0 required inside flex) */}
-                <div className="min-w-0 flex-1">
-                  <div className="font-bold text-gray-900 text-lg truncate tracking-wide">
-                    {merchantInfo.displayName || merchantInfo.businessName}
-                  </div>
-                  <div className="text-xs text-gray-600 truncate italic tracking-wide">
-                    {merchantInfo.email}
+                  {/* text area: allow truncation (min-w-0 required inside flex) */}
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-gray-900 text-lg truncate tracking-wide">
+                      {merchantInfo.displayName || merchantInfo.businessName}
+                    </div>
+                    <div className="text-xs text-gray-600 truncate italic tracking-wide">
+                      {merchantInfo.email}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
-
 
           {/* Navigation Menu */}
           <nav className="flex-1">
@@ -214,18 +213,6 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
           {/* Quick Actions */}
           <div className="mt-4 pt-4 border-t border-slate-200 flex-shrink-0">
             <div className="space-y-2">
-              <Button
-                id="tour-preview-shop"
-                variant="outline"
-                size="sm"
-                className="w-full justify-start bg-white/40 border-slate-200 hover:bg-white hover:border-blue-300 transition-all duration-200 rounded-lg py-2 text-sm"
-                onClick={() => merchantInfo.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchantInfo.merchantSlug}`, '_blank')}
-                disabled={merchantStatus === "pending"}
-              >
-                <Eye className="h-4 w-4 mr-2 text-slate-600" />
-                <span className="font-medium text-slate-700">Preview Store</span>
-                <ExternalLink className="h-3 w-3.ml-auto text-slate-400" />
-              </Button>
               <Button
                 id="tour-logout"
                 variant="destructive"

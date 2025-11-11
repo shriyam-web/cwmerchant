@@ -34,13 +34,27 @@ async function testNotifications() {
     const merchant = await Notification.countDocuments({ target_audience: 'merchant' });
     console.log(`Merchant audience notifications: ${merchant}`);
 
-    const sample = await Notification.find({ status: 'sent' }).limit(3).lean();
-    console.log(`\nSample notifications:`);
-    sample.forEach(n => {
-      console.log(`  - ${n.title}`);
-      console.log(`    target_audience: ${n.target_audience}`);
-      console.log(`    target_ids: ${JSON.stringify(n.target_ids)}`);
-      console.log(`    status: ${n.status}`);
+    const allSent = await Notification.find({ status: 'sent' }).lean();
+    console.log(`\nAll sent notifications (${allSent.length}):`);
+    allSent.forEach((n, i) => {
+      console.log(`  ${i+1}. ${n.title}`);
+      console.log(`     status: ${n.status}`);
+      console.log(`     target_audience: ${n.target_audience}`);
+      console.log(`     target_ids: ${JSON.stringify(n.target_ids)}`);
+      console.log(`     ---`);
+    });
+
+    // Check all notifications regardless of status
+    const all = await Notification.find({}).lean();
+    console.log(`\nAll notifications (${all.length}):`);
+    all.forEach((n, i) => {
+      console.log(`  ${i+1}. ${n.title} - status: ${n.status}, expiresAt: ${n.expiresAt}, target_audience: ${n.target_audience}`);
+    });
+
+    const withTargetIds = await Notification.find({ status: 'sent', target_ids: { $ne: null, $exists: true } }).lean();
+    console.log(`\nNotifications with target_ids set (${withTargetIds.length}):`);
+    withTargetIds.forEach((n, i) => {
+      console.log(`  ${i+1}. ${n.title} - target_ids: ${JSON.stringify(n.target_ids)}`);
     });
 
   } catch (error) {

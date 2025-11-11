@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMerchantAuth } from "@/lib/auth-context";
 import ProfileRemovedNotice from "@/components/ui/ProfileRemovedNotice";
 import WelcomePendingModal from "@/components/ui/WelcomePendingModal";
@@ -8,6 +9,7 @@ import { EmailVerificationBanner } from "@/components/ui/EmailVerificationBanner
 import { MerchantPlanBanner } from "@/components/ui/MerchantPlanBanner";
 import { AdminAccessBanner } from "@/components/ui/AdminAccessBanner";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { OffersManagement } from "@/components/dashboard/offers-management";
 import { ProductsManagement } from "@/components/dashboard/products-management";
@@ -17,6 +19,7 @@ import { ProfileSettings } from "@/components/dashboard/profile-settings";
 import DigitalSupport from "@/components/dashboard/digital-support";
 import { SupportWidget } from "@/components/dashboard/support-widget";
 import { Notifications } from "@/components/dashboard/notifications";
+import { CouponsManagement } from "@/components/dashboard/coupons-management";
 import { Toaster } from "@/components/ui/sonner";
 import Joyride, { Step } from "react-joyride";
 import {
@@ -103,6 +106,9 @@ interface ExtendedMerchant {
   tags?: string[];
   purchasedPackage?: {
     variantName?: string;
+    purchaseDate?: string;
+    expiryDate?: string;
+    transactionId?: string;
   };
   paymentMethodAccepted?: string[];
   minimumOrderValue?: number;
@@ -140,6 +146,8 @@ const ensureAdminFlag = (merchant: any): any => {
 
 export default function Dashboard() {
   const { merchant, setMerchant, loadingProfile, profileRemovedNotice, clearProfileRemovedNotice } = useMerchantAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [stats, setStats] = useState<Stat[]>([]);
@@ -153,6 +161,8 @@ export default function Dashboard() {
   const [currentTourIndex, setCurrentTourIndex] = useState<number>(0);
   const [activeOffersCount, setActiveOffersCount] = useState<number>(0);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState<number>(0);
+  const [notificationCountLoading, setNotificationCountLoading] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   // Calculate pending requests count
   const pendingRequestsCount = useMemo(() => {
@@ -162,6 +172,31 @@ export default function Dashboard() {
   useEffect(() => {
     setSidebarOpen(window.innerWidth >= 1024);
   }, []);
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    const currentTabParam = searchParams.get("tab");
+    if (currentTabParam !== activeTab) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("tab", activeTab);
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  }, [activeTab, isInitialized, router]);
+
+  useEffect(() => {
+    if (activeTab !== 'notifications' && merchant?.id) {
+      fetchUnreadNotificationsCount();
+    }
+  }, [activeTab]);
 
   const profileFields: string[] = [
     "merchantId",
@@ -360,20 +395,34 @@ export default function Dashboard() {
   };
 
   // Fetch unread notifications count
-  const fetchUnreadNotificationsCount = async () => {
+  const fetchUnreadNotificationsCount = useCallback(async () => {
     if (!merchant?.id) return;
 
     try {
+      setNotificationCountLoading(true);
       const response = await fetch(`/api/merchant/notifications?merchantId=${merchant.id}`);
       const data = await response.json();
 
       if (data.success) {
+        console.log('[Dashboard] Notification count fetched:', data.unreadCount);
         setUnreadNotificationsCount(data.unreadCount || 0);
       }
     } catch (error) {
       console.error('Error fetching notifications count:', error);
+    } finally {
+      setNotificationCountLoading(false);
     }
-  };
+  }, [merchant?.id]);
+
+  // Fetch notification count on mount and merchant change
+  useEffect(() => {
+    if (!merchant?.id) return;
+    fetchUnreadNotificationsCount();
+  }, [merchant?.id]);
+
+  const handleUnreadCountChange = useCallback((count: number) => {
+    setUnreadNotificationsCount(count);
+  }, []);
 
   // Debug: Log merchant isAdmin flag
   useEffect(() => {
@@ -435,8 +484,7 @@ export default function Dashboard() {
 
     fetchDashboard();
     fetchActiveOffersCount();
-    fetchUnreadNotificationsCount();
-  }, [merchant?.id]); // only refetch if merchant id changes
+  }, [merchant?.id]);
 
   // Tour functions
   const startTour = () => {
@@ -801,9 +849,11 @@ export default function Dashboard() {
         // Show actual features for educational purposes when status is pending
         switch (activeTab) {
           case "notifications":
-            return <div id="tour-notifications"><Notifications /></div>;
+            return <div id="tour-notifications"><Notifications onUnreadCountChange={handleUnreadCountChange} /></div>;
           case "offers":
             return <div id="tour-offers"><OffersManagement onOffersChange={fetchActiveOffersCount} /></div>;
+          case "coupons":
+            return <div id="tour-coupons"><CouponsManagement /></div>;
           case "products":
             return <div id="tour-products"><ProductsManagement /></div>;
           case "offline-shopping":
@@ -830,9 +880,11 @@ export default function Dashboard() {
 
     switch (activeTab) {
       case "notifications":
-        return <Notifications />;
+        return <Notifications onUnreadCountChange={handleUnreadCountChange} />;
       case "offers":
         return <OffersManagement onOffersChange={fetchActiveOffersCount} />;
+      case "coupons":
+        return <CouponsManagement />;
       case "products":
         return <ProductsManagement />;
       case "offline-shopping":
@@ -1317,7 +1369,18 @@ export default function Dashboard() {
           pendingRequestsCount={pendingRequestsCount}
           unreadNotificationsCount={unreadNotificationsCount}
         />
-        <div className="flex-1 lg:ml-64 pt-2 sm:pt-3 md:pt-4 pb-4 md:pb-8 px-4 sm:px-6 md:px-8">
+        <div className="flex-1 lg:ml-64 flex flex-col">
+          <DashboardNavbar
+            merchantStatus={merchant.status}
+            merchantSlug={merchant.merchantSlug}
+            unreadNotificationsCount={unreadNotificationsCount}
+            notificationCountLoading={notificationCountLoading}
+            onNotificationClick={() => setActiveTab('notifications')}
+            onProfileSettingsClick={() => setActiveTab('profile')}
+            merchantName={(merchant as ExtendedMerchant).displayName || merchant.businessName}
+            purchasedPackage={(merchant as ExtendedMerchant).purchasedPackage}
+          />
+          <div className="flex-1 overflow-y-auto pt-2 sm:pt-3 md:pt-4 pb-4 md:pb-8 px-4 sm:px-6 md:px-8">
           {/* Menu Button */}
           <div className="flex items-center justify-between mb-3 sm:mb-4 lg:hidden">
             <Button
@@ -1399,6 +1462,7 @@ export default function Dashboard() {
           </div>
 
           {renderMainContent()}
+          </div>
         </div>
       </div>
 

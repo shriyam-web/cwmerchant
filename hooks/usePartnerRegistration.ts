@@ -78,6 +78,7 @@ export const usePartnerRegistration = () => {
         country: 'India',
         whatsapp: '',
         isWhatsappSame: false,
+        hasGstNumber: false,
         gstNumber: '',
         panNumber: '',
         businessLicenseNumber: '',
@@ -295,8 +296,8 @@ export const usePartnerRegistration = () => {
             hasChanges = true;
         }
 
-        // Validate pre-filled GST number
-        if (formData.gstNumber) {
+        // Validate GST number only if hasGstNumber is true
+        if (formData.hasGstNumber && formData.gstNumber) {
             if (formData.gstNumber.length > 0 && formData.gstNumber.length < 15) {
                 newFieldErrors.gstNumber = "GST Number must be exactly 15 characters";
             } else if (formData.gstNumber.length === 15 && !isValidGST(formData.gstNumber)) {
@@ -306,6 +307,9 @@ export const usePartnerRegistration = () => {
             } else if (formData.gstNumber.length > 15) {
                 newFieldErrors.gstNumber = "GST Number cannot exceed 15 characters";
             }
+        } else if (!formData.hasGstNumber) {
+            // Clear GST errors if GST is not required
+            delete newFieldErrors.gstNumber;
         }
 
         // Validate pre-filled PAN number
@@ -327,7 +331,7 @@ export const usePartnerRegistration = () => {
         }
 
         // Prevent infinite re-renders by only running when formData changes for these specific fields
-    }, [formData.gstNumber, formData.panNumber]);
+    }, [formData.gstNumber, formData.panNumber, formData.hasGstNumber]);
 
     // Handle pre-filled email validation immediately (without debounce delay)
     useEffect(() => {
@@ -785,13 +789,13 @@ export const usePartnerRegistration = () => {
                 title: 'Compliance',
                 rows: [
                     [
-                        { label: 'GST Number', value: formData.gstNumber },
+                        ...(formData.hasGstNumber ? [{ label: 'GST Number', value: formData.gstNumber }] : []),
                         { label: 'PAN Number', value: formData.panNumber, isImportant: true }
                     ],
                     [
                         { label: 'Business License', value: formData.businessLicenseNumber }
                     ]
-                ]
+                ].filter(row => row.length > 0)
             },
             {
                 title: 'Business Details',
@@ -1163,7 +1167,11 @@ export const usePartnerRegistration = () => {
         }
 
         // if changing certain identity fields, run uniqueness check (debounced)
-        if (["email", "phone", "gstNumber", "panNumber", "merchantSlug"].includes(field)) {
+        const fieldsToCheck = ["email", "phone", "panNumber", "merchantSlug"];
+        if (formData.hasGstNumber) {
+            fieldsToCheck.push("gstNumber");
+        }
+        if (fieldsToCheck.includes(field)) {
             setCheckedField(prev => ({ ...prev, [field]: false }));
             if (!value) {
                 setFieldErrors(prev => ({ ...prev, [field]: undefined }));
@@ -1179,7 +1187,7 @@ export const usePartnerRegistration = () => {
                     setFieldErrors(prev => ({ ...prev, [field]: undefined }));
                 }
             }
-            if (field === "gstNumber") {
+            if (field === "gstNumber" && formData.hasGstNumber) {
                 if (value.length > 0 && value.length < 15) {
                     setFieldErrors(prev => ({ ...prev, [field]: "GST Number must be exactly 15 characters" }));
                 } else if (value.length === 15 && !isValidGST(value)) {
@@ -1193,6 +1201,13 @@ export const usePartnerRegistration = () => {
                 } else if (value.length > 15) {
                     setFieldErrors(prev => ({ ...prev, [field]: "GST Number cannot exceed 15 characters" }));
                 }
+            } else if (field === "gstNumber" && !formData.hasGstNumber) {
+                // Clear GST errors if GST is not required
+                setFieldErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[field];
+                    return newErrors;
+                });
             }
             if (field === "panNumber") {
                 if (value.length > 0 && value.length < 10) {
