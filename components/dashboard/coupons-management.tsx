@@ -77,6 +77,8 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
   }, [merchant?.id]);
 
   const fetchCoupons = async () => {
+    if (!merchant?.id) return;
+
     try {
       setLoading(true);
       const response = await fetch(`/api/merchant/coupons?merchantId=${merchant.id}`);
@@ -139,6 +141,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!merchant?.id) {
+      toast.error('Merchant information not available');
+      return;
+    }
 
     if (!code || !discountValue || !expiryDate) {
       toast.error('Please fill in all required fields');
