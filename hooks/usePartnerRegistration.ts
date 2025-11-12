@@ -1115,11 +1115,19 @@ export const usePartnerRegistration = () => {
             };
 
             // Create payload without confirmPassword and convert values
-            const { confirmPassword, ...tempPayload } = {
+            let tempPayload: any = {
                 ...formData,
                 yearsInBusiness: yearsInBusinessMap[formData.yearsInBusiness] || 0,
                 averageMonthlyRevenue: revenueMap[formData.averageMonthlyRevenue] || 0,
             };
+
+            // Remove confirmPassword
+            delete tempPayload.confirmPassword;
+
+            // Remove gstNumber from payload if hasGstNumber is false
+            if (!tempPayload.hasGstNumber) {
+                delete tempPayload.gstNumber;
+            }
 
             // Submit to API
             const response = await fetch('/api/partnerApplication', {

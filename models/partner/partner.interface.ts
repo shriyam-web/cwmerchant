@@ -24,7 +24,8 @@ export interface IPartner extends Document {
     country?: string;
     whatsapp: string;
     isWhatsappSame: boolean;
-    gstNumber: string;
+    hasGstNumber: boolean;
+    gstNumber?: string;
     panNumber: string;
     businessType: string;
     yearsInBusiness: string;
