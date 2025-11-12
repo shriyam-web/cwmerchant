@@ -13,22 +13,28 @@ export async function POST(req: Request) {
     const data = await req.json();
 
     // 🔎 Duplicate Check (Email, Phone, GST, PAN, Merchant Slug, Username)
+    const duplicateConditions: any[] = [
+      { email: data.email?.toLowerCase() },
+      { phone: data.phone },
+      { panNumber: data.panNumber },
+      { merchantSlug: data.merchantSlug?.toLowerCase() },
+      // { username: data.username?.toLowerCase() },
+    ];
+
+    // Only check GST duplicates if GST is provided
+    if (data.hasGstNumber && data.gstNumber) {
+      duplicateConditions.push({ gstNumber: data.gstNumber });
+    }
+
     const existingPartner = await Partner.findOne({
-      $or: [
-        { email: data.email?.toLowerCase() },
-        { phone: data.phone },
-        { gstNumber: data.gstNumber },
-        { panNumber: data.panNumber },
-        { merchantSlug: data.merchantSlug?.toLowerCase() },
-        // { username: data.username?.toLowerCase() },
-      ],
+      $or: duplicateConditions,
     });
 
     if (existingPartner) {
       let conflictField = "";
       if (existingPartner.email === data.email?.toLowerCase()) conflictField = "Email ID";
       else if (existingPartner.phone === data.phone) conflictField = "Phone Number";
-      else if (existingPartner.gstNumber === data.gstNumber) conflictField = "GST Number";
+      else if (data.hasGstNumber && data.gstNumber && existingPartner.gstNumber === data.gstNumber) conflictField = "GST Number";
       else if (existingPartner.panNumber === data.panNumber) conflictField = "PAN Number";
       else if (existingPartner.merchantSlug === data.merchantSlug?.toLowerCase()) conflictField = "Merchant Slug";
       // else if (existingPartner.username === data.username?.toLowerCase()) conflictField = "Username";
