@@ -289,8 +289,8 @@ export default function Step5AccountSetup({
                     </div>
                     <div className="py-2 border-b border-gray-200">
                         <div className="flex flex-col sm:flex-row sm:justify-between">
-                            <span className="font-medium text-gray-700">GST Number:<span className="text-red-500">*</span></span>
-                            <span className="text-gray-900 break-words">{formData.gstNumber}</span>
+                            <span className="font-medium text-gray-700">GST Number:{formData.hasGstNumber && <span className="text-red-500">*</span>}</span>
+                            <span className="text-gray-900 break-words">{formData.gstNumber || 'Not provided'}</span>
                         </div>
                     </div>
                     <div className="py-2 border-b border-gray-200">
