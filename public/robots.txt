@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /categories
+Allow: /contact
+Allow: /merchant-packages
+Allow: /success-stories
+Allow: /privacy-policy
+Allow: /terms
+Allow: /cookies
+Allow: /register
+Allow: /login
+
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /application/
+Disallow: /forgot-password
+
+Sitemap: https://partner.citywitty.com/sitemap.xml
