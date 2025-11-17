@@ -99,6 +99,14 @@ interface Merchant {
   status: "active" | "pending" | "suspended" | "inactive";
   emailVerified?: boolean;
   isAdmin?: boolean;
+  category?: string;
+  streetAddress?: string;
+  locality?: string;
+  city?: string;
+  phone?: string;
+  state?: string;
+  pincode?: string;
+  country?: string;
 }
 
 interface MerchantRegisterData {
