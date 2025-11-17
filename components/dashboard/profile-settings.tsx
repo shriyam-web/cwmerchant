@@ -27,6 +27,10 @@ interface ExtendedMerchant {
   displayName?: string;
   emailVerified?: boolean;
   phone?: string;
+  username?: string;
+  whatsapp?: string;
+  agentId?: string;
+  agentName?: string;
   category?: string;
   city?: string;
   streetAddress?: string;
@@ -34,7 +38,6 @@ interface ExtendedMerchant {
   locality?: string;
   state?: string;
   country?: string;
-  whatsapp?: string;
   gstNumber?: string;
   panNumber?: string;
   businessType?: string;
@@ -109,12 +112,15 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
     ownerName: '',
     email: '',
     phone: '',
+    username: '',
+    whatsapp: '',
     address: '',
     city: '',
     state: '',
     pincode: '',
     locality: '',
     gst: '',
+    pan: '',
     description: '',
     mapLocation: '',
     logo: '',
@@ -141,7 +147,9 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
     // Additional Information
     tags: '',
     paymentMethods: [] as string[],
-    minOrderValue: 149
+    minOrderValue: 149,
+    agentId: '',
+    agentName: ''
   });
 
   const [initialProfile, setInitialProfile] = useState({
@@ -149,12 +157,15 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
     ownerName: '',
     email: '',
     phone: '',
+    username: '',
+    whatsapp: '',
     address: '',
     city: '',
     state: '',
     pincode: '',
     locality: '',
     gst: '',
+    pan: '',
     description: '',
     mapLocation: '',
     logo: '',
@@ -181,7 +192,9 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
     // Additional Information
     tags: '',
     paymentMethods: [] as string[],
-    minOrderValue: 149
+    minOrderValue: 149,
+    agentId: '',
+    agentName: ''
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -191,18 +204,22 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
   const [storeImagesLoading, setStoreImagesLoading] = useState(false);
 
   useEffect(() => {
+    console.log('Profile useEffect triggered, merchant:', merchant?.username);
     if (merchant) {
       const profileData = {
         businessName: merchant.businessName || '',
         ownerName: merchant.legalName || merchant.displayName || '',
         email: merchant.email || '',
         phone: merchant.phone || '',
+        username: merchant.username || '',
+        whatsapp: merchant.whatsapp || '',
         address: merchant.streetAddress || '',
         city: merchant.city || '',
         state: merchant.state || '',
         pincode: merchant.pincode || '',
         locality: merchant.locality || '',
         gst: merchant.gstNumber || '',
+        pan: merchant.panNumber || '',
         description: merchant.description || '',
         mapLocation: merchant.mapLocation || '',
         logo: merchant.logo || '',
@@ -225,7 +242,9 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
         youtube: merchant.socialLinks?.youtube || '',
         tags: merchant.tags?.join(', ') || '',
         paymentMethods: merchant.paymentMethodAccepted || [],
-        minOrderValue: merchant.minimumOrderValue || 149
+        minOrderValue: merchant.minimumOrderValue || 149,
+        agentId: merchant.agentId || '',
+        agentName: merchant.agentName || ''
       };
       setProfile(profileData);
       setInitialProfile(profileData);
@@ -370,16 +389,22 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
     setSaving(true);
     try {
       // Prepare the update data
+      console.log('Sending username:', profile.username);
       const updateData = {
         displayName: profile.businessName,
         legalName: profile.ownerName,
         phone: profile.phone,
+        whatsapp: profile.whatsapp,
+        username: profile.username,
+        agentId: profile.agentId,
+        agentName: profile.agentName,
         streetAddress: profile.address,
         city: profile.city,
         state: profile.state,
         pincode: profile.pincode,
         locality: profile.locality,
         gstNumber: profile.gst,
+        panNumber: profile.pan,
         description: profile.description,
         mapLocation: profile.mapLocation,
         logo: profile.logo,
@@ -423,14 +448,18 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
 
       const data = await response.json();
 
+      console.log('Profile update response:', response.status, data);
+
       if (response.ok) {
         // Update the merchant state with the new data
         if (setMerchant && data.merchant) {
+          console.log('Updating merchant with:', data.merchant.username);
           setMerchant(data.merchant);
         }
         setInitialProfile(profile);
         toast.success('Profile updated successfully!');
       } else {
+        console.error('Profile update failed:', data.error);
         toast.error(data.error || 'Failed to update profile');
       }
     } catch (error) {
@@ -539,6 +568,15 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                   />
                 </div>
                 <div>
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    value={profile.username}
+                    onChange={(e) => setProfile({ ...profile, username: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
@@ -555,6 +593,16 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                     value={profile.phone}
                     onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                     className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="whatsapp">WhatsApp Number</Label>
+                  <Input
+                    id="whatsapp"
+                    value={profile.whatsapp}
+                    onChange={(e) => setProfile({ ...profile, whatsapp: e.target.value })}
+                    className="mt-1"
+                    placeholder="+91"
                   />
                 </div>
               </div>
@@ -582,15 +630,28 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div>
-                <Label htmlFor="gst" className="text-sm font-medium">GST Number</Label>
-                <Input
-                  id="gst"
-                  value={profile.gst}
-                  onChange={(e) => setProfile({ ...profile, gst: e.target.value })}
-                  className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
-                  placeholder="Enter GST number"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="gst" className="text-sm font-medium">GST Number</Label>
+                  <Input
+                    id="gst"
+                    value={profile.gst}
+                    onChange={(e) => setProfile({ ...profile, gst: e.target.value })}
+                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    placeholder="Enter GST number"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="pan" className="text-sm font-medium">PAN Number</Label>
+                  <Input
+                    id="pan"
+                    value={profile.pan}
+                    onChange={(e) => setProfile({ ...profile, pan: e.target.value.toUpperCase() })}
+                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    placeholder="Enter PAN number"
+                    maxLength={10}
+                  />
+                </div>
               </div>
 
               <div>
@@ -916,6 +977,29 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                   min="0"
                   placeholder="Minimum order value"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="agentId" className="text-sm font-medium">Agent ID</Label>
+                  <Input
+                    id="agentId"
+                    value={profile.agentId}
+                    onChange={(e) => setProfile({ ...profile, agentId: e.target.value })}
+                    className="mt-2 focus:ring-2 focus:ring-pink-500 transition-all duration-200"
+                    placeholder="Enter agent ID"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="agentName" className="text-sm font-medium">Agent Name</Label>
+                  <Input
+                    id="agentName"
+                    value={profile.agentName}
+                    onChange={(e) => setProfile({ ...profile, agentName: e.target.value })}
+                    className="mt-2 focus:ring-2 focus:ring-pink-500 transition-all duration-200"
+                    placeholder="Enter agent name"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

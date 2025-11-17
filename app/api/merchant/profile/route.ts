@@ -9,9 +9,24 @@ export async function PUT(req: Request) {
         await dbConnect();
 
         const body = await req.json();
-        const { merchantId, ...updateData } = body;
+        const { merchantId, agentId, agentName, username, ...updateData } = body;
+
+        // Handle nested onboardingAgent structure
+        if (agentId !== undefined || agentName !== undefined) {
+            updateData.onboardingAgent = {
+                agentId: agentId || "",
+                agentName: agentName || "",
+            };
+        }
+
+        // Handle username (convert to lowercase like in registration)
+        if (username !== undefined && username !== null && username.trim() !== '') {
+            updateData.username = username.toLowerCase();
+        }
 
         console.log('PUT /api/merchant/profile - merchantId:', merchantId);
+        console.log('Original body username:', body.username);
+        console.log('Processed username:', updateData.username);
         console.log('updateData:', JSON.stringify(updateData, null, 2));
 
         if (!merchantId) {
@@ -26,6 +41,14 @@ export async function PUT(req: Request) {
             }
         }
 
+        // Check username uniqueness if changed and not empty
+        if (updateData.username && updateData.username.trim() !== '') {
+            const existingUsername = await Partner.findOne({ username: updateData.username, _id: { $ne: merchantId } });
+            if (existingUsername) {
+                return NextResponse.json({ error: "Username already taken" }, { status: 400 });
+            }
+        }
+
         // Find and update the partner
         const updatedPartner = await Partner.findByIdAndUpdate(
             merchantId,
@@ -35,7 +58,13 @@ export async function PUT(req: Request) {
 
         console.log('updatedPartner:', updatedPartner ? 'found' : 'not found');
         if (updatedPartner) {
-            console.log('bankDetails after update:', updatedPartner.bankDetails);
+            console.log('username after update:', updatedPartner.username);
+            console.log('All fields after update:', {
+                username: updatedPartner.username,
+                phone: updatedPartner.phone,
+                whatsapp: updatedPartner.whatsapp,
+                displayName: updatedPartner.displayName
+            });
         }
 
         if (!updatedPartner) {
@@ -53,6 +82,10 @@ export async function PUT(req: Request) {
             email: updatedPartner.email,
             emailVerified: updatedPartner.emailVerified,
             phone: updatedPartner.phone,
+            username: updatedPartner.username || '',
+            whatsapp: updatedPartner.whatsapp,
+            agentId: updatedPartner.onboardingAgent?.agentId || "",
+            agentName: updatedPartner.onboardingAgent?.agentName || "",
             category: updatedPartner.category,
             city: updatedPartner.city,
             streetAddress: updatedPartner.streetAddress || "",
@@ -60,7 +93,6 @@ export async function PUT(req: Request) {
             locality: updatedPartner.locality || "",
             state: updatedPartner.state || "",
             country: updatedPartner.country || "India",
-            whatsapp: updatedPartner.whatsapp,
             gstNumber: updatedPartner.gstNumber,
             panNumber: updatedPartner.panNumber,
             businessType: updatedPartner.businessType,
@@ -89,6 +121,8 @@ export async function PUT(req: Request) {
             bankDetails: updatedPartner.bankDetails || {},
             status: updatedPartner.status || "pending",
         };
+
+        console.log('API Response username:', response.username);
 
         return NextResponse.json({
             success: true,
