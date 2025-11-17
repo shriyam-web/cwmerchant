@@ -291,7 +291,7 @@ const CouponCard = ({
   useEffect(() => {
     const generateQR = async () => {
       try {
-        const qrData = `https://www.citywitty.com/coupon/${coupon.code}`;
+        const qrData = `https://partner.citywitty.com/coupon/${coupon.code}`;
         const qrCodeDataUrl = await QRCode.toDataURL(qrData, {
           width: 100,
           margin: 1,
@@ -529,7 +529,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
   const generateQRCode = async (coupon: Coupon) => {
     try {
-      const qrData = `https://www.citywitty.com/coupon/${coupon.code}`;
+      const qrData = `https://partner.citywitty.com/coupon/${coupon.code}`;
       const qrCodeDataUrl = await QRCode.toDataURL(qrData);
       setQrCodeUrl(qrCodeDataUrl);
       setSelectedCoupon(coupon);
