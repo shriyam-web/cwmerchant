@@ -1,7 +1,6 @@
 import { Document } from 'mongoose';
 
 export interface ICoupon extends Document {
-  _id: string;
   code: string;
   discountType: 'percentage' | 'fixed';
   discountValue: number;

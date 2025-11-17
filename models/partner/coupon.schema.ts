@@ -2,7 +2,6 @@ import { Schema } from 'mongoose';
 import { ICoupon } from './coupon.interface';
 
 export const CouponSchema = new Schema<ICoupon>({
-  _id: { type: Schema.Types.ObjectId, auto: true },
   code: { type: String, required: true },
   discountType: { type: String, enum: ['percentage', 'fixed'], required: true },
   discountValue: { type: Number, required: true },
