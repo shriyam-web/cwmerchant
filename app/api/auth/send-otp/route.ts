@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Partner from "@/models/partner";
-import sendEmail from "@/lib/nodemailer";   
+import sendEmail from "@/lib/nodemailer";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,10 +20,10 @@ export async function POST(req: NextRequest) {
     await partner.save();
 
     // Send OTP email
-   await sendEmail({
-  to: email,
-  subject: "CityWitty Merchant Hub: Password Reset OTP",
-  html: `
+    await sendEmail({
+      to: email,
+      subject: "CityWitty Merchant Hub: Password Reset OTP",
+      html: `
     <div style="font-family: 'Helvetica', Arial, sans-serif; background-color:#f4f4f7; padding:20px;">
       <div style="max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
         <!-- Header -->
@@ -61,10 +61,7 @@ export async function POST(req: NextRequest) {
       </div>
     </div>
   `
-});
-
-
-
+    });
 
     return NextResponse.json({ success: true, message: "OTP sent to email" });
   } catch (err) {

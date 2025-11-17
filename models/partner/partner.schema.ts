@@ -10,6 +10,7 @@ import { PodcastLogSchema } from './podcastLog.schema';
 import { OfflineDiscountSchema } from './offlineDiscount.schema';
 import { BranchLocationSchema } from './branchLocation.schema';
 import { ProductSchema } from './product/product.schema';
+import { CouponSchema } from './coupon.schema';
 
 const PartnerSchema = new Schema<IPartner>({
   merchantId: { type: String, required: true, unique: true },
@@ -51,6 +52,7 @@ const PartnerSchema = new Schema<IPartner>({
   },
   agreeToTerms: { type: Boolean, required: true },
   products: [ProductSchema],
+  coupons: [CouponSchema],
   logo: { type: String },
   storeImages: [{ type: String }],
   customOffer: { type: String },

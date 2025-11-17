@@ -1,6 +1,7 @@
 import { Document } from "mongoose";
 import { IProduct } from "./product/product.interface";
 import { IPartnerRating } from "./partnerRating.interface";
+import { ICoupon } from "./coupon.interface";
 
 export interface IPartner extends Document {
     merchantId: string;
@@ -43,6 +44,7 @@ export interface IPartner extends Document {
     agreeToTerms: boolean;
 
     products: IProduct[];
+    coupons?: ICoupon[];
     logo?: string;
     storeImages?: string[];
     customOffer?: string;
