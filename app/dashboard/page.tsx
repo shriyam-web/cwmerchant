@@ -1373,6 +1373,7 @@ export default function Dashboard() {
           <DashboardNavbar
             merchantStatus={merchant.status}
             merchantSlug={merchant.merchantSlug}
+            merchantId={merchant.merchantId}
             unreadNotificationsCount={unreadNotificationsCount}
             notificationCountLoading={notificationCountLoading}
             onNotificationClick={() => setActiveTab('notifications')}

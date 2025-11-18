@@ -15,6 +15,10 @@ interface Coupon {
   status: 'active' | 'inactive';
   usedCount?: number;
   theme?: string;
+  couponType?: 'regular' | 'happy-hour';
+  happyHourDays?: string[];
+  happyHourStartTime?: string;
+  happyHourEndTime?: string;
 }
 
 interface Merchant {
@@ -52,6 +56,11 @@ const themeConfig: Record<string, any> = {
     bgGradient: 'from-pink-50 to-purple-50',
     accentColor: '#db2777',
   },
+  'happy-hour': {
+    leftGradient: 'from-orange-600 to-yellow-600',
+    bgGradient: 'from-orange-50 to-yellow-50',
+    accentColor: '#ea580c',
+  },
 };
 
 const formatDateToDDMMYYYY = (dateString: string): string => {
@@ -65,6 +74,31 @@ const formatDateToDDMMYYYY = (dateString: string): string => {
 
 const isExpired = (expiryDate: string): boolean => {
   return new Date(expiryDate) < new Date();
+};
+
+const isHappyHourAvailable = (
+  happyHourDays?: string[],
+  happyHourStartTime?: string,
+  happyHourEndTime?: string
+): boolean => {
+  if (!happyHourDays || !happyHourStartTime || !happyHourEndTime) return true;
+
+  const now = new Date();
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const currentDay = dayNames[now.getDay()];
+  const currentHours = String(now.getHours()).padStart(2, '0');
+  const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+  const currentTime = `${currentHours}:${currentMinutes}`;
+
+  const isDayValid = !!happyHourDays.includes(currentDay);
+  const isTimeValid = currentTime >= happyHourStartTime && currentTime <= happyHourEndTime;
+
+  return isDayValid && isTimeValid;
+};
+
+const formatTimeRange = (startTime?: string, endTime?: string): string => {
+  if (!startTime || !endTime) return '';
+  return `${startTime} - ${endTime}`;
 };
 
 export default function CouponPage({ params }: { params: { code: string } }) {
@@ -138,6 +172,9 @@ export default function CouponPage({ params }: { params: { code: string } }) {
   }
 
   const expired = isExpired(coupon.expiryDate);
+  const isHappyHour = coupon.couponType === 'happy-hour';
+  const happyHourAvailable = isHappyHourAvailable(coupon.happyHourDays, coupon.happyHourStartTime, coupon.happyHourEndTime);
+  const canBeRedeemed = !expired && coupon.status === 'active' && (!isHappyHour || happyHourAvailable);
   const config = themeConfig[coupon.theme || 'classic'] || themeConfig.classic;
   const address = [merchant.streetAddress, merchant.locality, merchant.city]
     .filter(Boolean)
@@ -160,6 +197,22 @@ export default function CouponPage({ params }: { params: { code: string } }) {
           </h1>
           <p className="text-gray-600">{merchant.category}</p>
           {address && <p className="text-sm text-gray-500 mt-1">{address}</p>}
+        </div>
+
+        {/* Redemption Status Banner */}
+        <div className={`rounded-lg p-4 mb-6 border-2 ${canBeRedeemed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <p className={`font-semibold flex items-center gap-2 ${canBeRedeemed ? 'text-green-700' : 'text-red-700'}`}>
+            {canBeRedeemed ? (
+              <>✅ Ready for Use</>
+            ) : (
+              <>❌ Cannot Be Redeemed</>
+            )}
+          </p>
+          {isHappyHour && !happyHourAvailable && (
+            <p className="text-sm text-red-600 mt-2">
+              This is a Happy Hour coupon. Available on {coupon.happyHourDays?.join(', ')} from {coupon.happyHourStartTime} to {coupon.happyHourEndTime}
+            </p>
+          )}
         </div>
 
         {/* Status Banner */}
@@ -246,6 +299,22 @@ export default function CouponPage({ params }: { params: { code: string } }) {
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Terms & Conditions</h2>
             <ul className="space-y-2 text-sm text-gray-700">
+              {isHappyHour && (
+                <>
+                  <li className="flex items-start">
+                    <span className="text-blue-600 mr-2">⏰</span>
+                    <span className="font-semibold text-blue-700">Happy Hour Coupon</span>
+                  </li>
+                  <li className="flex items-start ml-6">
+                    <span className="text-blue-600 mr-2">→</span>
+                    Available on: {coupon.happyHourDays?.join(', ')}
+                  </li>
+                  <li className="flex items-start ml-6">
+                    <span className="text-blue-600 mr-2">→</span>
+                    Time: {formatTimeRange(coupon.happyHourStartTime, coupon.happyHourEndTime)}
+                  </li>
+                </>
+              )}
               {coupon.minPurchase && (
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
@@ -313,7 +382,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
         </div>
 
         {/* CTA Button */}
-        {!expired && coupon.status === 'active' && (
+        {canBeRedeemed && (
           <div className="mt-8 text-center">
             <Button
               onClick={handleCopyCode}

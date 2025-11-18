@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Edit2, Trash2, QrCode, Loader2, Tag, Calendar, Percent, IndianRupee, ChevronDown, ChevronRight, Copy, Download, Share2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, QrCode, Loader2, Tag, Calendar, Percent, IndianRupee, ChevronDown, ChevronRight, Copy, Download, Share2, Search, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import QRCode from 'qrcode';
 
@@ -29,7 +29,11 @@ interface Coupon {
   seriesId?: string;
   sequence?: number;
   seriesNote?: string;
-  theme?: 'classic' | 'friendship' | 'love' | 'gift' | 'festival' | 'sale' | 'emoji' | 'first-time' | 'missed-you' | 'birthday' | 'holiday' | 'seasonal' | 'weekend' | 'student' | 'senior' | 'bulk' | 'flash' | 'members' | 'loyalty' | 'launch' | 'bonus';
+  theme?: 'classic' | 'friendship' | 'love' | 'gift' | 'festival' | 'sale' | 'emoji' | 'first-time' | 'missed-you' | 'birthday' | 'holiday' | 'seasonal' | 'weekend' | 'student' | 'senior' | 'bulk' | 'flash' | 'members' | 'loyalty' | 'launch' | 'bonus' | 'happy-hour';
+  couponType?: 'regular' | 'happy-hour';
+  happyHourDays?: string[];
+  happyHourStartTime?: string;
+  happyHourEndTime?: string;
 }
 
 interface CouponsManagementProps {
@@ -262,6 +266,15 @@ const themeConfig: Record<string, any> = {
     emoji: '🎁',
     title: 'BONUS OFFER',
   },
+  'happy-hour': {
+    leftGradient: 'from-orange-500 to-yellow-500',
+    borderColor: 'border-orange-200',
+    bgGradient: 'from-orange-50 to-yellow-50',
+    accentColor: '#f97316',
+    leftAccent: '#f97316',
+    emoji: '⏰',
+    title: 'HAPPY HOUR',
+  },
 };
 
 const CouponCard = ({
@@ -274,6 +287,7 @@ const CouponCard = ({
   isPreview = false,
   onDownload,
   onShare,
+  onMarkUsed,
 }: {
   coupon: Coupon;
   sortedCoupons: Coupon[];
@@ -284,6 +298,7 @@ const CouponCard = ({
   isPreview?: boolean;
   onDownload?: (coupon: Coupon) => void;
   onShare?: (coupon: Coupon) => void;
+  onMarkUsed?: (couponId: string) => void;
 }) => {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const config = themeConfig[theme] || themeConfig.classic;
@@ -309,13 +324,14 @@ const CouponCard = ({
     <div className="flex gap-3 items-center">
       <div
         id={`coupon-visual-${coupon._id}`}
-        className={`relative overflow-hidden shadow-xl hover:shadow-2xl transition-shadow`}
+        className={`relative overflow-hidden shadow-xl hover:shadow-2xl transition-shadow ${coupon.usedCount > 0 ? 'opacity-50' : ''}`}
         style={{
           minHeight: '140px',
           width: '680px',
           borderRadius: '3px',
           background: 'linear-gradient(135deg, #fefdfb 0%, #faf9f7 50%, #f5f4f2 100%)',
-          boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.05)'
+          boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.05)',
+          filter: coupon.usedCount > 0 ? 'grayscale(100%)' : 'none'
         }}
       >
         <div className="absolute inset-0 opacity-40" style={{
@@ -325,6 +341,14 @@ const CouponCard = ({
           `,
           pointerEvents: 'none'
         }}></div>
+
+        {coupon.usedCount > 0 && (
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+            <div className="bg-red-600 text-white px-6 py-2 rounded-lg font-bold text-lg shadow-lg" style={{ transform: 'rotate(-15deg)' }}>
+              USED
+            </div>
+          </div>
+        )}
 
         <p className="absolute top-2.5 right-3 text-xs text-gray-400 font-semibold z-10">Powered by CityWitty</p>
         
@@ -383,6 +407,13 @@ const CouponCard = ({
               {coupon.maxDiscount && (
                 <p>Max Discount: <span className="font-bold">₹{coupon.maxDiscount}</span></p>
               )}
+              {coupon.couponType === 'happy-hour' && coupon.happyHourDays && coupon.happyHourDays.length > 0 && (
+                <div className="mt-2 pt-1 border-t border-gray-300">
+                  <p className="text-orange-700 font-bold">⏰ Happy Hour</p>
+                  <p className="text-orange-600">Days: {coupon.happyHourDays.join(', ')}</p>
+                  <p className="text-orange-600">Time: {coupon.happyHourStartTime} - {coupon.happyHourEndTime}</p>
+                </div>
+              )}
               <div className={`font-bold ${coupon.usedCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
                 {coupon.usedCount > 0 ? '✓ Used' : '○ Not Used'}
               </div>
@@ -403,13 +434,14 @@ const CouponCard = ({
       </div>
 
       {!isPreview && (
-        <div className="flex flex-col gap-2">
+        <div className={`flex flex-col gap-2 ${coupon.usedCount > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onGenerateQR(coupon)}
             className="h-8 w-8 p-0 hover:bg-gray-300"
             title="Generate QR Code"
+            disabled={coupon.usedCount > 0}
           >
             <QrCode className="h-4 w-4" />
           </Button>
@@ -420,6 +452,7 @@ const CouponCard = ({
               onClick={() => onDownload(coupon)}
               className="h-8 w-8 p-0 hover:bg-blue-100"
               title="Download as Image"
+              disabled={coupon.usedCount > 0}
             >
               <Download className="h-4 w-4 text-blue-600" />
             </Button>
@@ -431,8 +464,20 @@ const CouponCard = ({
               onClick={() => onShare(coupon)}
               className="h-8 w-8 p-0 hover:bg-green-100"
               title="Share Coupon"
+              disabled={coupon.usedCount > 0}
             >
               <Share2 className="h-4 w-4 text-green-600" />
+            </Button>
+          )}
+          {onMarkUsed && coupon.usedCount === 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onMarkUsed(coupon._id!)}
+              className="h-8 w-8 p-0 hover:bg-purple-100"
+              title="Mark as Used"
+            >
+              <CheckCircle2 className="h-4 w-4 text-purple-600" />
             </Button>
           )}
           <Button
@@ -441,6 +486,7 @@ const CouponCard = ({
             onClick={() => onEdit(coupon)}
             className="h-8 w-8 p-0 hover:bg-gray-300"
             title="Edit"
+            disabled={coupon.usedCount > 0}
           >
             <Edit2 className="h-4 w-4" />
           </Button>
@@ -468,6 +514,24 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [checkCouponDialogOpen, setCheckCouponDialogOpen] = useState(false);
+  const [checkCouponCode, setCheckCouponCode] = useState('');
+  const [checkedCoupon, setCheckedCoupon] = useState<Coupon | null>(null);
+  const [checkCouponLoading, setCheckCouponLoading] = useState(false);
+  const [checkCouponSearched, setCheckCouponSearched] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    message: string;
+    action: (() => void) | null;
+    confirmText?: string;
+    cancelText?: string;
+  }>({
+    isOpen: false,
+    message: '',
+    action: null,
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+  });
 
   // Form state
   const [code, setCode] = useState('');
@@ -477,7 +541,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
   const [maxDiscount, setMaxDiscount] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [status, setStatus] = useState<'active' | 'inactive'>('active');
-  const [theme, setTheme] = useState<'classic' | 'friendship' | 'love' | 'gift' | 'festival' | 'sale' | 'emoji' | 'first-time' | 'missed-you' | 'birthday' | 'holiday' | 'seasonal' | 'weekend' | 'student' | 'senior' | 'bulk' | 'flash' | 'members' | 'loyalty' | 'launch' | 'bonus'>('classic');
+  const [theme, setTheme] = useState<'classic' | 'friendship' | 'love' | 'gift' | 'festival' | 'sale' | 'emoji' | 'first-time' | 'missed-you' | 'birthday' | 'holiday' | 'seasonal' | 'weekend' | 'student' | 'senior' | 'bulk' | 'flash' | 'members' | 'loyalty' | 'launch' | 'bonus' | 'happy-hour'>('classic');
+  const [couponType, setCouponType] = useState<'regular' | 'happy-hour'>('regular');
+  const [happyHourDays, setHappyHourDays] = useState<string[]>([]);
+  const [happyHourStartTime, setHappyHourStartTime] = useState('');
+  const [happyHourEndTime, setHappyHourEndTime] = useState('');
 
   // Bulk and user-specific coupon state
   const [bulkGenerationCount, setBulkGenerationCount] = useState('');
@@ -672,11 +740,27 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
     }));
   };
 
+  const isHappyHourAvailable = (coupon: Coupon): boolean => {
+    if (coupon.couponType !== 'happy-hour') return true;
+    
+    const now = new Date();
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const currentDay = dayNames[now.getDay()];
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    const isAllowedDay = !!(coupon.happyHourDays && coupon.happyHourDays.includes(currentDay));
+    const isWithinTimeWindow = !!(coupon.happyHourStartTime && coupon.happyHourEndTime &&
+      currentTime >= coupon.happyHourStartTime && currentTime <= coupon.happyHourEndTime);
+
+    return isAllowedDay && isWithinTimeWindow;
+  };
+
   const getSeriesSummary = (couponsSeries: Coupon[]) => {
     const totalUsed = couponsSeries.reduce((sum, c) => sum + c.usedCount, 0);
     const totalRemaining = couponsSeries.length - totalUsed;
+    const hasHappyHour = couponsSeries.some(c => c.couponType === 'happy-hour');
     
-    return { totalUsed, totalRemaining };
+    return { totalUsed, totalRemaining, hasHappyHour };
   };
 
   const resetForm = () => {
@@ -694,6 +778,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
     setIsRestricted(false);
     setGenerationType('single');
     setSeriesNote('');
+    setCouponType('regular');
+    setHappyHourDays([]);
+    setHappyHourStartTime('');
+    setHappyHourEndTime('');
   };
 
   const openCreateDialog = () => {
@@ -711,6 +799,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
     setExpiryDate(formatDateToYYYYMMDD(coupon.expiryDate));
     setStatus(coupon.status);
     setTheme(coupon.theme || 'classic');
+    setCouponType(coupon.couponType || 'regular');
+    setHappyHourDays(coupon.happyHourDays || []);
+    setHappyHourStartTime(coupon.happyHourStartTime || '');
+    setHappyHourEndTime(coupon.happyHourEndTime || '');
     setDialogOpen(true);
   };
 
@@ -760,6 +852,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
           expiryDate,
           status,
           theme,
+          couponType,
+          happyHourDays: couponType === 'happy-hour' ? happyHourDays : undefined,
+          happyHourStartTime: couponType === 'happy-hour' ? happyHourStartTime : undefined,
+          happyHourEndTime: couponType === 'happy-hour' ? happyHourEndTime : undefined,
         }));
         isArray = true;
       } else if (generationType === 'user') {
@@ -774,6 +870,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
           userId,
           isRestricted,
           theme,
+          couponType,
+          happyHourDays: couponType === 'happy-hour' ? happyHourDays : undefined,
+          happyHourStartTime: couponType === 'happy-hour' ? happyHourStartTime : undefined,
+          happyHourEndTime: couponType === 'happy-hour' ? happyHourEndTime : undefined,
         }];
         endpoint = '/api/merchant/coupons/user-specific';
         isArray = true;
@@ -787,6 +887,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
           expiryDate,
           status,
           theme,
+          couponType,
+          happyHourDays: couponType === 'happy-hour' ? happyHourDays : undefined,
+          happyHourStartTime: couponType === 'happy-hour' ? happyHourStartTime : undefined,
+          happyHourEndTime: couponType === 'happy-hour' ? happyHourEndTime : undefined,
         };
 
         if (editingCoupon) {
@@ -870,67 +974,82 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
   };
 
   const handleDelete = async (couponId: string) => {
-    if (!confirm('Are you sure you want to delete this coupon?')) return;
+    setConfirmDialog({
+      isOpen: true,
+      message: 'Are you sure you want to delete this coupon?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      action: async () => {
+        if (!merchant?.id) {
+          toast.error('Merchant information not available');
+          return;
+        }
 
-    if (!merchant?.id) {
-      toast.error('Merchant information not available');
-      return;
-    }
+        try {
+          const response = await fetch(`/api/merchant/coupons/${couponId}?merchantId=${merchant.id}`, {
+            method: 'DELETE',
+          });
 
-    try {
-      const response = await fetch(`/api/merchant/coupons/${couponId}?merchantId=${merchant.id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        toast.success('Coupon deleted successfully');
-        fetchCoupons();
-        onCouponsChange?.();
-      } else {
-        toast.error('Failed to delete coupon');
-      }
-    } catch (error) {
-      console.error('Error deleting coupon:', error);
-      toast.error('Error deleting coupon');
-    }
+          if (response.ok) {
+            toast.success('Coupon deleted successfully');
+            fetchCoupons();
+            onCouponsChange?.();
+          } else {
+            toast.error('Failed to delete coupon');
+          }
+        } catch (error) {
+          console.error('Error deleting coupon:', error);
+          toast.error('Error deleting coupon');
+        }
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+      },
+    });
   };
 
   const handleDeleteSeries = async (seriesId: string, couponsCount: number) => {
-    if (!confirm(`Are you sure you want to delete all ${couponsCount} coupons in this series? This action cannot be undone.`)) return;
-
-    if (!merchant?.id) {
-      toast.error('Merchant information not available');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const couponsByIdToDelete = coupons.filter((c) => c.seriesId === seriesId).map((c) => c._id);
-      
-      let deletedCount = 0;
-      for (const couponId of couponsByIdToDelete) {
-        const response = await fetch(`/api/merchant/coupons/${couponId}?merchantId=${merchant.id}`, {
-          method: 'DELETE',
-        });
-        if (response.ok) {
-          deletedCount++;
+    setConfirmDialog({
+      isOpen: true,
+      message: `Are you sure you want to delete all ${couponsCount} coupons in this series? This action cannot be undone.`,
+      confirmText: 'Delete Series',
+      cancelText: 'Cancel',
+      action: async () => {
+        if (!merchant?.id) {
+          toast.error('Merchant information not available');
+          setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+          return;
         }
-      }
 
-      if (deletedCount === couponsByIdToDelete.length) {
-        toast.success(`Series deleted successfully (${deletedCount} coupons removed)`);
-        fetchCoupons();
-        onCouponsChange?.();
-      } else {
-        toast.warning(`Deleted ${deletedCount}/${couponsByIdToDelete.length} coupons`);
-        fetchCoupons();
-      }
-    } catch (error) {
-      console.error('Error deleting series:', error);
-      toast.error('Error deleting series');
-    } finally {
-      setLoading(false);
-    }
+        try {
+          setLoading(true);
+          const couponsByIdToDelete = coupons.filter((c) => c.seriesId === seriesId).map((c) => c._id);
+          
+          let deletedCount = 0;
+          for (const couponId of couponsByIdToDelete) {
+            const response = await fetch(`/api/merchant/coupons/${couponId}?merchantId=${merchant.id}`, {
+              method: 'DELETE',
+            });
+            if (response.ok) {
+              deletedCount++;
+            }
+          }
+
+          if (deletedCount === couponsByIdToDelete.length) {
+            toast.success(`Series deleted successfully (${deletedCount} coupons removed)`);
+            fetchCoupons();
+            onCouponsChange?.();
+          } else {
+            toast.warning(`Deleted ${deletedCount}/${couponsByIdToDelete.length} coupons`);
+            fetchCoupons();
+          }
+        } catch (error) {
+          console.error('Error deleting series:', error);
+          toast.error('Error deleting series');
+        } finally {
+          setLoading(false);
+          setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        }
+      },
+    });
   };
 
   const getFilteredCoupons = () => {
@@ -942,6 +1061,79 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
       }
       return true;
     });
+  };
+
+  const checkCouponStatus = async () => {
+    const codeToSearch = checkCouponCode.trim().toUpperCase();
+    
+    if (!codeToSearch) {
+      toast.error('Please enter a coupon code');
+      return;
+    }
+
+    if (!merchant?.id) {
+      toast.error('Merchant information not available');
+      return;
+    }
+
+    try {
+      setCheckCouponLoading(true);
+      setCheckCouponSearched(true);
+      
+      const coupon = coupons.find((c) => c.code.toUpperCase() === codeToSearch);
+      
+      if (coupon) {
+        setCheckedCoupon(coupon);
+        toast.success('Coupon found');
+      } else {
+        setCheckedCoupon(null);
+        toast.error('Coupon not found');
+      }
+    } catch (error) {
+      console.error('Error checking coupon:', error);
+      toast.error('Error checking coupon');
+    } finally {
+      setCheckCouponLoading(false);
+    }
+  };
+
+  const markCouponAsUsed = async (couponId: string) => {
+    if (!merchant?.id) {
+      toast.error('Merchant information not available');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/merchant/coupons/${couponId}/mark-used`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          merchantId: merchant.id,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success('Coupon marked as used');
+        fetchCoupons();
+        onCouponsChange?.();
+        
+        if (checkedCoupon?._id === couponId) {
+          const updatedCoupon = { ...checkedCoupon, usedCount: checkedCoupon.usedCount + 1 };
+          setCheckedCoupon(updatedCoupon);
+        }
+      } else {
+        const error = await response.json();
+        toast.error(error.message || 'Failed to mark coupon as used');
+      }
+    } catch (error) {
+      console.error('Error marking coupon as used:', error);
+      toast.error('Error marking coupon as used');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -962,10 +1154,21 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
           <h1 className="text-2xl font-bold text-gray-900">Coupons Management</h1>
           <p className="text-gray-600">Create and manage discount coupons for your store</p>
         </div>
-        <Button onClick={openCreateDialog} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Coupon
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={() => {
+            setCheckCouponDialogOpen(true);
+            setCheckCouponCode('');
+            setCheckedCoupon(null);
+            setCheckCouponSearched(false);
+          }} variant="outline" className="border-amber-300 hover:bg-amber-50">
+            <Search className="h-4 w-4 mr-2" />
+            Check Coupon
+          </Button>
+          <Button onClick={openCreateDialog} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Create Coupon
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-2 items-center">
@@ -1031,7 +1234,8 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                               <ChevronRight className="h-5 w-5 text-gray-700" />
                             )}
                             <div className="text-left">
-                              <h4 className="font-semibold text-gray-900 text-sm">
+                              <h4 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
+                                {summary.hasHappyHour && <span title="Happy Hour Coupon">⏰</span>}
                                 {sortedCoupons[0]?.seriesNote ? sortedCoupons[0].seriesNote : `${sortedCoupons[0]?.code} to ${sortedCoupons[sortedCoupons.length - 1]?.code}`}
                               </h4>
                               <p className="text-xs text-gray-600">
@@ -1071,6 +1275,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                                     onShare={shareCoupon}
                                     onEdit={openEditDialog}
                                     onDelete={handleDelete}
+                                    onMarkUsed={markCouponAsUsed}
                                   />
                                 ))}
                               </div>
@@ -1163,6 +1368,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                         onShare={shareCoupon}
                         onEdit={openEditDialog}
                         onDelete={handleDelete}
+                        onMarkUsed={markCouponAsUsed}
                       />
                     ))}
                   </div>
@@ -1382,9 +1588,75 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   <SelectItem value="loyalty">💎 Loyalty Reward</SelectItem>
                   <SelectItem value="launch">🚀 New Launch</SelectItem>
                   <SelectItem value="bonus">🎁 Bonus Offer</SelectItem>
+                  <SelectItem value="happy-hour">⏰ Happy Hour</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            <div>
+              <Label htmlFor="couponType">Coupon Type</Label>
+              <Select value={couponType} onValueChange={(value: 'regular' | 'happy-hour') => setCouponType(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="regular">Regular Coupon</SelectItem>
+                  <SelectItem value="happy-hour">Happy Hour Coupon</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500 mt-1">Happy Hour coupons work only during specific days and time frames</p>
+            </div>
+
+            {couponType === 'happy-hour' && (
+              <>
+                <div>
+                  <Label>Valid Days (Select days when coupon is active)</Label>
+                  <div className="space-y-2 mt-2">
+                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
+                      <div key={day} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={day}
+                          checked={happyHourDays.includes(day)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setHappyHourDays([...happyHourDays, day]);
+                            } else {
+                              setHappyHourDays(happyHourDays.filter(d => d !== day));
+                            }
+                          }}
+                          className="w-4 h-4 cursor-pointer"
+                        />
+                        <Label htmlFor={day} className="cursor-pointer">{day}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="happyHourStartTime">Start Time (HH:MM)</Label>
+                    <Input
+                      id="happyHourStartTime"
+                      type="time"
+                      value={happyHourStartTime}
+                      onChange={(e) => setHappyHourStartTime(e.target.value)}
+                      required={couponType === 'happy-hour'}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="happyHourEndTime">End Time (HH:MM)</Label>
+                    <Input
+                      id="happyHourEndTime"
+                      type="time"
+                      value={happyHourEndTime}
+                      onChange={(e) => setHappyHourEndTime(e.target.value)}
+                      required={couponType === 'happy-hour'}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             {generationType === 'bulk' && !editingCoupon && (
               <div>
@@ -1449,6 +1721,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                         usedCount: 0,
                         status: (status as 'active' | 'inactive'),
                         theme: (theme as any),
+                        couponType: couponType as 'regular' | 'happy-hour',
+                        happyHourDays: couponType === 'happy-hour' ? happyHourDays : undefined,
+                        happyHourStartTime: couponType === 'happy-hour' ? happyHourStartTime : undefined,
+                        happyHourEndTime: couponType === 'happy-hour' ? happyHourEndTime : undefined,
                         sequence: 1,
                       }}
                       sortedCoupons={[]}
@@ -1471,7 +1747,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
               <div>
                 <h3 className="text-xs font-semibold mb-2 text-gray-600">THEME SAMPLES</h3>
                 <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
-                  {['classic', 'friendship', 'love', 'gift', 'festival', 'sale', 'emoji', 'first-time', 'missed-you', 'birthday', 'holiday', 'seasonal', 'weekend', 'student', 'senior', 'bulk', 'flash', 'members', 'loyalty', 'launch', 'bonus'].map((t) => (
+                  {['classic', 'friendship', 'love', 'gift', 'festival', 'sale', 'emoji', 'first-time', 'missed-you', 'birthday', 'holiday', 'seasonal', 'weekend', 'student', 'senior', 'bulk', 'flash', 'members', 'loyalty', 'launch', 'bonus', 'happy-hour'].map((t) => (
                     <div key={t} className={`p-2 rounded border-2 bg-white hover:bg-gray-50 cursor-pointer transition-all ${theme === t ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-200'}`} onClick={() => setTheme(t as any)}>
                       <CouponCard
                         coupon={{
@@ -1527,6 +1803,169 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             >
               Download QR Code
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Check Coupon Status Dialog */}
+      <Dialog open={checkCouponDialogOpen} onOpenChange={setCheckCouponDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Check Coupon Availability</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter coupon code"
+                value={checkCouponCode}
+                onChange={(e) => setCheckCouponCode(e.target.value.toUpperCase())}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    checkCouponStatus();
+                  }
+                }}
+              />
+              <Button
+                onClick={checkCouponStatus}
+                disabled={checkCouponLoading || !checkCouponCode.trim()}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {checkCouponLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+
+            {checkCouponSearched && checkedCoupon && (
+              <div className="border rounded-lg p-4 bg-gradient-to-br from-blue-50 to-indigo-50 space-y-4">
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Coupon Details</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Code:</span>
+                      <span className="font-bold text-gray-900">{checkedCoupon.code}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Status:</span>
+                      <Badge className={checkedCoupon.status === 'active' ? 'bg-green-500' : 'bg-red-500'}>
+                        {checkedCoupon.status === 'active' ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Discount:</span>
+                      <span className="font-bold">
+                        {checkedCoupon.discountType === 'percentage'
+                          ? `${checkedCoupon.discountValue}%`
+                          : `₹${checkedCoupon.discountValue}`}
+                      </span>
+                    </div>
+                    {checkedCoupon.minPurchase && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Min. Purchase:</span>
+                        <span className="font-bold">₹{checkedCoupon.minPurchase}</span>
+                      </div>
+                    )}
+                    {checkedCoupon.maxDiscount && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Max. Discount:</span>
+                        <span className="font-bold">₹{checkedCoupon.maxDiscount}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Expiry Date:</span>
+                      <span className="font-bold">{formatDateToDDMMYYYY(checkedCoupon.expiryDate)}</span>
+                    </div>
+                    <div className="flex justify-between pt-2 border-t">
+                      <span className="text-gray-600">Usage Status:</span>
+                      <span className={`font-bold ${checkedCoupon.usedCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                        {checkedCoupon.usedCount > 0 ? '✓ Used' : '○ Not Used'}
+                      </span>
+                    </div>
+                    {checkedCoupon.couponType === 'happy-hour' && (
+                      <>
+                        <div className="flex justify-between pt-2 border-t">
+                          <span className="text-gray-600">Type:</span>
+                          <span className="font-bold text-orange-600 flex items-center gap-1">
+                            ⏰ Happy Hour
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Valid Days:</span>
+                          <span className="font-bold text-right">{checkedCoupon.happyHourDays?.join(', ')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Time Window:</span>
+                          <span className="font-bold">{checkedCoupon.happyHourStartTime} - {checkedCoupon.happyHourEndTime}</span>
+                        </div>
+                        <div className="flex justify-between pt-2 border-t">
+                          <span className="text-gray-600">Ready for Use:</span>
+                          <span className={`font-bold ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? '✓ Yes' : '✗ No'}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {checkedCoupon.usedCount === 0 && isHappyHourAvailable(checkedCoupon) && (
+                  <Button
+                    onClick={() => markCouponAsUsed(checkedCoupon._id!)}
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    Mark as Used
+                  </Button>
+                )}
+                {checkedCoupon.couponType === 'happy-hour' && !isHappyHourAvailable(checkedCoupon) && (
+                  <div className="w-full p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm text-center">
+                    This coupon is not available at this time. Please try during the Happy Hour window.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {checkCouponSearched && !checkedCoupon && !checkCouponLoading && (
+              <div className="border rounded-lg p-4 bg-red-50 border-red-200 text-center">
+                <p className="text-red-700 font-medium">Coupon not found</p>
+                <p className="text-sm text-red-600 mt-1">No coupon with code "{checkCouponCode}" found in your store</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmDialog.isOpen} onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        }
+      }}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Action</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-700">{confirmDialog.message}</p>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+              >
+                {confirmDialog.cancelText || 'Cancel'}
+              </Button>
+              <Button
+                onClick={() => {
+                  confirmDialog.action?.();
+                  setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+                }}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {confirmDialog.confirmText || 'Confirm'}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

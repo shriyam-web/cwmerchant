@@ -18,6 +18,10 @@ export const CouponSchema = new Schema<ICoupon>({
   sequence: { type: Number },
   seriesNote: { type: String },
   theme: { type: String, enum: ['classic', 'friendship', 'love', 'gift', 'festival', 'sale', 'emoji', 'first-time', 'missed-you', 'birthday', 'holiday', 'seasonal', 'weekend', 'student', 'senior', 'bulk', 'flash', 'members', 'loyalty', 'launch', 'bonus'], default: 'classic' },
+  couponType: { type: String, enum: ['regular', 'happy-hour'], default: 'regular' },
+  happyHourDays: { type: [String] },
+  happyHourStartTime: { type: String },
+  happyHourEndTime: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

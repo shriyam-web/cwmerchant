@@ -17,6 +17,10 @@ export interface ICoupon extends Document {
   sequence?: number;
   seriesNote?: string;
   theme?: 'classic' | 'friendship' | 'love' | 'gift' | 'festival' | 'sale' | 'emoji' | 'first-time' | 'missed-you' | 'birthday' | 'holiday' | 'seasonal' | 'weekend' | 'student' | 'senior' | 'bulk' | 'flash' | 'members' | 'loyalty' | 'launch' | 'bonus';
+  couponType?: 'regular' | 'happy-hour';
+  happyHourDays?: string[];
+  happyHourStartTime?: string;
+  happyHourEndTime?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

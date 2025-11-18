@@ -64,6 +64,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Coupon data required' }, { status: 400 });
     }
 
+    const codesToCheck = Array.isArray(couponData)
+      ? couponData.map((c: any) => c.code.toUpperCase())
+      : [couponData.code.toUpperCase()];
+
+    const existingPartner = await Partner.findOne({
+      'coupons.code': { $in: codesToCheck },
+    });
+
+    if (existingPartner) {
+      const existingCodes = existingPartner.coupons
+        .map((c: any) => c.code.toUpperCase())
+        .filter((code: string) => codesToCheck.includes(code));
+      console.error('[API] Duplicate coupon codes found:', existingCodes);
+      return NextResponse.json(
+        { error: `Coupon code(s) already exist: ${existingCodes.join(', ')}` },
+        { status: 409 }
+      );
+    }
+
     if (Array.isArray(couponData)) {
       const seriesId = isBulk ? `series-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` : undefined;
       console.log('[API] Array branch - isBulk:', isBulk, 'Will assign seriesId:', !!seriesId, 'seriesId:', seriesId);
@@ -78,6 +97,7 @@ export async function POST(request: NextRequest) {
           usedCount: 0,
           status: coupon.status || 'active',
           theme: coupon.theme || 'classic',
+          couponType: coupon.couponType || 'regular',
           seriesId,
           sequence: index + 1,
           seriesNote,
@@ -89,6 +109,11 @@ export async function POST(request: NextRequest) {
         if (coupon.userId) {
           couponObj.userId = coupon.userId;
           couponObj.isRestricted = coupon.isRestricted || false;
+        }
+        if (coupon.couponType === 'happy-hour') {
+          if (coupon.happyHourDays) couponObj.happyHourDays = coupon.happyHourDays;
+          if (coupon.happyHourStartTime) couponObj.happyHourStartTime = coupon.happyHourStartTime;
+          if (coupon.happyHourEndTime) couponObj.happyHourEndTime = coupon.happyHourEndTime;
         }
         return couponObj;
       });
@@ -123,6 +148,7 @@ export async function POST(request: NextRequest) {
         usedCount: 0,
         status: couponData.status || 'active',
         theme: couponData.theme || 'classic',
+        couponType: couponData.couponType || 'regular',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -131,6 +157,11 @@ export async function POST(request: NextRequest) {
       if (couponData.userId) {
         newCoupon.userId = couponData.userId;
         newCoupon.isRestricted = couponData.isRestricted || false;
+      }
+      if (couponData.couponType === 'happy-hour') {
+        if (couponData.happyHourDays) newCoupon.happyHourDays = couponData.happyHourDays;
+        if (couponData.happyHourStartTime) newCoupon.happyHourStartTime = couponData.happyHourStartTime;
+        if (couponData.happyHourEndTime) newCoupon.happyHourEndTime = couponData.happyHourEndTime;
       }
 
       const partner = await Partner.findByIdAndUpdate(
