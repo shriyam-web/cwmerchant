@@ -327,7 +327,7 @@ export function Navbar() {
                   </button>
 
                   {mobileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-md">
+                    <div className="fixed right-4 mt-2 w-40 bg-white border rounded-md shadow-lg z-50">
                       <Link
                         href="/dashboard"
                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"

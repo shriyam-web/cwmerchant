@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMerchantAuth } from "@/lib/auth-context";
 import ProfileRemovedNotice from "@/components/ui/ProfileRemovedNotice";
 import WelcomePendingModal from "@/components/ui/WelcomePendingModal";
+import { NotificationReminderModal } from "@/components/ui/NotificationReminderModal";
 import { EmailVerificationBanner } from "@/components/ui/EmailVerificationBanner";
 import { MerchantPlanBanner } from "@/components/ui/MerchantPlanBanner";
 import { AdminAccessBanner } from "@/components/ui/AdminAccessBanner";

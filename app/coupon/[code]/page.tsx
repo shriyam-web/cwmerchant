@@ -181,27 +181,27 @@ export default function CouponPage({ params }: { params: { code: string } }) {
     .join(', ');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-4 sm:py-6 md:py-8 px-3 sm:px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4 sm:mb-6 md:mb-8 lg:mb-10">
           {merchant.logo && (
             <img
               src={merchant.logo}
               alt={merchant.displayName}
-              className="h-16 mx-auto mb-4 rounded-lg shadow"
+              className="h-12 sm:h-14 md:h-16 lg:h-20 mx-auto mb-2 sm:mb-3 md:mb-4 lg:mb-6 rounded-lg shadow"
             />
           )}
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-1 sm:mb-2 lg:mb-3">
             {merchant.displayName}
           </h1>
-          <p className="text-gray-600">{merchant.category}</p>
-          {address && <p className="text-sm text-gray-500 mt-1">{address}</p>}
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600">{merchant.category}</p>
+          {address && <p className="text-xs sm:text-sm lg:text-base text-gray-500 mt-1 lg:mt-2">{address}</p>}
         </div>
 
         {/* Redemption Status Banner */}
-        <div className={`rounded-lg p-4 mb-6 border-2 ${canBeRedeemed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-          <p className={`font-semibold flex items-center gap-2 ${canBeRedeemed ? 'text-green-700' : 'text-red-700'}`}>
+        <div className={`rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 md:mb-6 border-2 ${canBeRedeemed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <p className={`text-sm sm:text-base font-semibold flex items-center gap-2 ${canBeRedeemed ? 'text-green-700' : 'text-red-700'}`}>
             {canBeRedeemed ? (
               <>✅ Ready for Use</>
             ) : (
@@ -209,7 +209,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
             )}
           </p>
           {isHappyHour && !happyHourAvailable && (
-            <p className="text-sm text-red-600 mt-2">
+            <p className="text-xs sm:text-sm text-red-600 mt-1 sm:mt-2">
               This is a Happy Hour coupon. Available on {coupon.happyHourDays?.join(', ')} from {coupon.happyHourStartTime} to {coupon.happyHourEndTime}
             </p>
           )}
@@ -217,43 +217,53 @@ export default function CouponPage({ params }: { params: { code: string } }) {
 
         {/* Status Banner */}
         {expired && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700 font-semibold">⚠️ This coupon has expired</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 md:mb-6">
+            <p className="text-sm sm:text-base text-red-700 font-semibold">⚠️ This coupon has expired</p>
           </div>
         )}
 
         {coupon.status === 'inactive' && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <p className="text-yellow-700 font-semibold">⚠️ This coupon is inactive</p>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 md:mb-6">
+            <p className="text-sm sm:text-base text-yellow-700 font-semibold">⚠️ This coupon is inactive</p>
           </div>
         )}
 
         {/* Coupon Card */}
-        <div className={`bg-gradient-to-br ${config.bgGradient} rounded-xl shadow-2xl p-8 mb-8 border-2 ${expired ? 'border-red-200 opacity-75' : 'border-gray-200'}`}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className={`bg-gradient-to-br ${config.bgGradient} rounded-xl shadow-2xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 border-2 ${expired ? 'border-red-200 opacity-75' : 'border-gray-200'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {/* Discount Section */}
-            <div className={`bg-gradient-to-br ${config.leftGradient} text-white rounded-lg p-8 flex flex-col justify-center items-center text-center`}>
-              <p className="text-sm font-semibold opacity-90 mb-2">SAVE</p>
-              <p className="text-5xl font-black mb-2">
+            <div className={`bg-gradient-to-br ${config.leftGradient} text-white rounded-lg p-4 sm:p-6 md:p-8 flex flex-col justify-center items-center text-center`}>
+              <p className="text-xs sm:text-sm font-semibold opacity-90 mb-1 sm:mb-2">SAVE</p>
+              <p className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2">
                 {coupon.discountType === 'percentage'
                   ? `${coupon.discountValue}%`
                   : `₹${coupon.discountValue}`}
               </p>
-              <p className="text-lg font-bold">OFF</p>
+              <p className="text-sm sm:text-base md:text-lg font-bold">OFF</p>
             </div>
 
             {/* Coupon Code Section */}
             <div className="flex flex-col justify-center items-center text-center">
-              <p className="text-xs text-gray-600 font-bold uppercase tracking-widest mb-3">
+              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 font-bold uppercase tracking-widest mb-2 sm:mb-3">
                 Coupon Code
               </p>
-              <p className="text-3xl font-mono font-black text-gray-900 tracking-wider mb-4 select-all">
-                {coupon.code}
-              </p>
+              <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
+                <span className="text-lg sm:text-2xl md:text-3xl font-mono font-black text-gray-900 tracking-wider select-all">
+                  {coupon.code}
+                </span>
+                <Button
+                  onClick={handleCopyCode}
+                  variant="outline"
+                  size="sm"
+                  className="gap-1 text-xs"
+                >
+                  {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                </Button>
+              </div>
               <Button
                 onClick={handleCopyCode}
                 variant="outline"
-                className="gap-2"
+                className="gap-2 text-sm"
               >
                 {copied ? (
                   <>
@@ -270,22 +280,22 @@ export default function CouponPage({ params }: { params: { code: string } }) {
             </div>
 
             {/* Details Section */}
-            <div className="flex flex-col justify-center space-y-3">
+            <div className="flex flex-col justify-center space-y-2 sm:space-y-3">
               {coupon.minPurchase && (
-                <div className="bg-white bg-opacity-60 rounded-lg p-3">
+                <div className="bg-white bg-opacity-60 rounded-lg p-2 sm:p-3">
                   <p className="text-xs text-gray-600 font-semibold">Min Purchase</p>
-                  <p className="text-lg font-bold text-gray-900">₹{coupon.minPurchase}</p>
+                  <p className="text-sm sm:text-lg font-bold text-gray-900">₹{coupon.minPurchase}</p>
                 </div>
               )}
               {coupon.maxDiscount && (
-                <div className="bg-white bg-opacity-60 rounded-lg p-3">
+                <div className="bg-white bg-opacity-60 rounded-lg p-2 sm:p-3">
                   <p className="text-xs text-gray-600 font-semibold">Max Discount</p>
-                  <p className="text-lg font-bold text-gray-900">₹{coupon.maxDiscount}</p>
+                  <p className="text-sm sm:text-lg font-bold text-gray-900">₹{coupon.maxDiscount}</p>
                 </div>
               )}
-              <div className="bg-white bg-opacity-60 rounded-lg p-3">
+              <div className="bg-white bg-opacity-60 rounded-lg p-2 sm:p-3">
                 <p className="text-xs text-gray-600 font-semibold">Valid Till</p>
-                <p className={`text-lg font-bold ${expired ? 'text-red-600' : 'text-green-600'}`}>
+                <p className={`text-sm sm:text-lg font-bold ${expired ? 'text-red-600' : 'text-green-600'}`}>
                   {formatDateToDDMMYYYY(coupon.expiryDate)}
                 </p>
               </div>
@@ -294,11 +304,11 @@ export default function CouponPage({ params }: { params: { code: string } }) {
         </div>
 
         {/* Terms and Contact Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
           {/* Terms */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Terms & Conditions</h2>
-            <ul className="space-y-2 text-sm text-gray-700">
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 md:p-6">
+            <h2 className="text-base sm:text-lg md:text-lg font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Terms & Conditions</h2>
+            <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-700">
               {isHappyHour && (
                 <>
                   <li className="flex items-start">
@@ -339,15 +349,15 @@ export default function CouponPage({ params }: { params: { code: string } }) {
           </div>
 
           {/* Contact */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Contact Info</h2>
-            <div className="space-y-3 text-sm">
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 md:p-6">
+            <h2 className="text-base sm:text-lg md:text-lg font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Contact Info</h2>
+            <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
               {merchant.phone && (
                 <div>
                   <p className="text-gray-600 font-semibold">Phone</p>
                   <a
                     href={`tel:${merchant.phone}`}
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 hover:underline break-all"
                   >
                     {merchant.phone}
                   </a>
@@ -358,7 +368,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
                   <p className="text-gray-600 font-semibold">Email</p>
                   <a
                     href={`mailto:${merchant.email}`}
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 hover:underline break-all"
                   >
                     {merchant.email}
                   </a>
@@ -371,7 +381,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
                     href={merchant.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 hover:underline break-all"
                   >
                     Visit Site
                   </a>
@@ -383,21 +393,21 @@ export default function CouponPage({ params }: { params: { code: string } }) {
 
         {/* CTA Button */}
         {canBeRedeemed && (
-          <div className="mt-8 text-center">
+          <div className="mt-6 sm:mt-8 text-center">
             <Button
               onClick={handleCopyCode}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-semibold rounded-lg"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 text-sm sm:text-base md:text-lg font-semibold rounded-lg"
             >
               {copied ? '✓ Code Copied!' : 'Copy & Use Coupon'}
             </Button>
-            <p className="text-gray-600 text-sm mt-3">
+            <p className="text-gray-600 text-xs sm:text-sm mt-2 sm:mt-3">
               Copy the coupon code and apply it during checkout
             </p>
           </div>
         )}
 
         {/* Footer */}
-        <div className="mt-12 text-center text-gray-500 text-sm">
+        <div className="mt-6 sm:mt-8 md:mt-12 text-center text-gray-500 text-xs sm:text-sm">
           <p>Powered by CityWitty</p>
         </div>
       </div>

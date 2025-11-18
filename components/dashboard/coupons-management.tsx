@@ -321,13 +321,14 @@ const CouponCard = ({
   }, [coupon.code]);
   
   return (
-    <div className="flex gap-3 items-center">
+    <div className="flex gap-2 sm:gap-3 items-start sm:items-center flex-col sm:flex-row w-full min-w-0">
       <div
         id={`coupon-visual-${coupon._id}`}
-        className={`relative overflow-hidden shadow-xl hover:shadow-2xl transition-shadow ${coupon.usedCount > 0 ? 'opacity-50' : ''}`}
+        className={`relative overflow-hidden shadow-xl hover:shadow-2xl transition-shadow w-full flex-shrink-0 sm:flex-shrink min-w-0 ${coupon.usedCount > 0 ? 'opacity-50' : ''}`}
         style={{
-          minHeight: '140px',
-          width: '680px',
+          minHeight: '100px',
+          width: '100%',
+          maxWidth: '680px',
           borderRadius: '3px',
           background: 'linear-gradient(135deg, #fefdfb 0%, #faf9f7 50%, #f5f4f2 100%)',
           boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.05)',
@@ -352,9 +353,9 @@ const CouponCard = ({
 
         <p className="absolute top-2.5 right-3 text-xs text-gray-400 font-semibold z-10">Powered by CityWitty</p>
         
-        <div className="flex h-full relative z-5">
+        <div className="flex h-full relative z-5 w-full">
           <div 
-            className={`w-44 flex-shrink-0 p-6 flex flex-col justify-center items-center bg-gradient-to-br ${config.leftGradient} text-white relative overflow-hidden`}
+            className={`w-24 sm:w-32 md:w-44 flex-shrink-0 p-2 sm:p-4 md:p-6 flex flex-col justify-center items-center bg-gradient-to-br ${config.leftGradient} text-white relative overflow-hidden`}
             style={{
               boxShadow: 'inset -3px 0 8px rgba(0,0,0,0.15), inset 3px 0 8px rgba(255,255,255,0.1)'
             }}
@@ -368,10 +369,10 @@ const CouponCard = ({
             }}></div>
             
             {config.emoji && (
-              <p className="text-6xl mb-2 relative z-10 drop-shadow-lg">{config.emoji}</p>
+              <p className="text-2xl sm:text-4xl md:text-6xl mb-1 md:mb-2 relative z-10 drop-shadow-lg">{config.emoji}</p>
             )}
-            <p className="text-xs font-bold tracking-widest mb-2 relative z-10 text-white opacity-95">{config.title || 'SAVE'}</p>
-            <div className="text-5xl font-black text-center leading-tight relative z-10" style={{ 
+            <p className="text-[10px] sm:text-xs md:text-sm font-bold tracking-widest mb-0.5 sm:mb-1 md:mb-2 relative z-10 text-white opacity-95">{config.title || 'SAVE'}</p>
+            <div className="text-xl sm:text-3xl md:text-5xl font-black text-center leading-tight relative z-10" style={{ 
               textShadow: '0 3px 6px rgba(0,0,0,0.3), 0 1px 2px rgba(255,255,255,0.2)'
             }}>
               {coupon.discountType === 'percentage'
@@ -379,10 +380,10 @@ const CouponCard = ({
                 : `₹${coupon.discountValue}`
               }
             </div>
-            <p className="text-sm mt-1.5 font-bold relative z-10" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>OFF</p>
+            <p className="text-[10px] sm:text-xs md:text-sm mt-0.5 md:mt-1.5 font-bold relative z-10" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>OFF</p>
           </div>
 
-          <svg className="absolute top-0 bottom-0" width="2" height="100%" style={{ left: '176px', zIndex: 5 }} preserveAspectRatio="none">
+          <svg className="absolute top-0 bottom-0" width="2" height="100%" style={{ left: 'calc(96px + 0.5rem)', zIndex: 5 }} preserveAspectRatio="none">
             <defs>
               <pattern id="dashed" x="0" y="0" width="8" height="100%" patternUnits="userSpaceOnUse">
                 <line x1="1" y1="0" x2="1" y2="4" stroke={config.accentColor} strokeWidth="1.5" strokeDasharray="2,4" opacity="0.6" />
@@ -391,16 +392,16 @@ const CouponCard = ({
             <line x1="1" y1="0" x2="1" y2="100%" stroke={config.accentColor} strokeWidth="1.5" strokeDasharray="6,4" opacity="0.5" />
           </svg>
 
-          <div className="flex-1 px-7 py-5 flex flex-col justify-between bg-white bg-opacity-60 relative">
-            <div className="space-y-1.5">
-              <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Coupon Code</p>
-              <p className="text-2xl font-mono font-black text-gray-900 tracking-wider" style={{ letterSpacing: '3px' }}>{coupon.code}</p>
-              <p className="text-xs text-gray-500 font-semibold">
+          <div className="flex-1 px-2 sm:px-4 md:px-7 py-2 sm:py-3 md:py-5 flex flex-col justify-between bg-white bg-opacity-60 relative">
+            <div className="space-y-0.5 sm:space-y-1">
+              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 font-bold uppercase tracking-widest">Coupon Code</p>
+              <p className="text-sm sm:text-lg md:text-2xl font-mono font-black text-gray-900 tracking-wider" style={{ letterSpacing: '2px' }}>{coupon.code}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 font-semibold">
                 Valid Till: {formatDateToDDMMYYYY(coupon.expiryDate)}
               </p>
             </div>
 
-            <div className="space-y-1 text-xs text-gray-700">
+            <div className="space-y-0.5 sm:space-y-1 text-[10px] sm:text-xs text-gray-700">
               {coupon.minPurchase && (
                 <p>Min Purchase: <span className="font-bold">₹{coupon.minPurchase}</span></p>
               )}
@@ -408,10 +409,10 @@ const CouponCard = ({
                 <p>Max Discount: <span className="font-bold">₹{coupon.maxDiscount}</span></p>
               )}
               {coupon.couponType === 'happy-hour' && coupon.happyHourDays && coupon.happyHourDays.length > 0 && (
-                <div className="mt-2 pt-1 border-t border-gray-300">
-                  <p className="text-orange-700 font-bold">⏰ Happy Hour</p>
-                  <p className="text-orange-600">Days: {coupon.happyHourDays.join(', ')}</p>
-                  <p className="text-orange-600">Time: {coupon.happyHourStartTime} - {coupon.happyHourEndTime}</p>
+                <div className="mt-1 sm:mt-2 pt-0.5 sm:pt-1 border-t border-gray-300">
+                  <p className="text-orange-700 font-bold text-[10px] sm:text-xs">⏰ Happy Hour</p>
+                  <p className="text-orange-600 text-[10px] sm:text-xs">Days: {coupon.happyHourDays.join(', ')}</p>
+                  <p className="text-orange-600 text-[10px] sm:text-xs">Time: {coupon.happyHourStartTime} - {coupon.happyHourEndTime}</p>
                 </div>
               )}
               <div className={`font-bold ${coupon.usedCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
@@ -421,9 +422,9 @@ const CouponCard = ({
           </div>
 
           {qrCodeUrl && (
-            <div className="flex-shrink-0 px-4 py-3 flex flex-col justify-center items-center bg-white bg-opacity-80">
-              <img src={qrCodeUrl} alt="Coupon QR Code" className="w-24 h-24" />
-              <p className="text-xs text-gray-600 mt-1 font-semibold">Scan</p>
+            <div className="flex-shrink-0 px-1 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 flex flex-col justify-center items-center bg-white bg-opacity-80">
+              <img src={qrCodeUrl} alt="Coupon QR Code" className="w-12 sm:w-16 md:w-24 h-12 sm:h-16 md:h-24" />
+              <p className="text-[10px] sm:text-xs text-gray-600 mt-0.5 sm:mt-1 font-semibold">Scan</p>
             </div>
           )}
         </div>
@@ -434,27 +435,27 @@ const CouponCard = ({
       </div>
 
       {!isPreview && (
-        <div className={`flex flex-col gap-2 ${coupon.usedCount > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div className={`flex flex-row sm:flex-col gap-1 sm:gap-2 flex-wrap sm:flex-nowrap justify-center sm:justify-start flex-shrink-0 ${coupon.usedCount > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onGenerateQR(coupon)}
-            className="h-8 w-8 p-0 hover:bg-gray-300"
+            className="h-7 sm:h-8 w-7 sm:w-8 p-0 hover:bg-gray-300"
             title="Generate QR Code"
             disabled={coupon.usedCount > 0}
           >
-            <QrCode className="h-4 w-4" />
+            <QrCode className="h-3 sm:h-4 w-3 sm:w-4" />
           </Button>
           {onDownload && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onDownload(coupon)}
-              className="h-8 w-8 p-0 hover:bg-blue-100"
+              className="h-7 sm:h-8 w-7 sm:w-8 p-0 hover:bg-blue-100"
               title="Download as Image"
               disabled={coupon.usedCount > 0}
             >
-              <Download className="h-4 w-4 text-blue-600" />
+              <Download className="h-3 sm:h-4 w-3 sm:w-4 text-blue-600" />
             </Button>
           )}
           {onShare && (
@@ -462,11 +463,11 @@ const CouponCard = ({
               variant="ghost"
               size="sm"
               onClick={() => onShare(coupon)}
-              className="h-8 w-8 p-0 hover:bg-green-100"
+              className="h-7 sm:h-8 w-7 sm:w-8 p-0 hover:bg-green-100"
               title="Share Coupon"
               disabled={coupon.usedCount > 0}
             >
-              <Share2 className="h-4 w-4 text-green-600" />
+              <Share2 className="h-3 sm:h-4 w-3 sm:w-4 text-green-600" />
             </Button>
           )}
           {onMarkUsed && coupon.usedCount === 0 && (
@@ -474,30 +475,30 @@ const CouponCard = ({
               variant="ghost"
               size="sm"
               onClick={() => onMarkUsed(coupon._id!)}
-              className="h-8 w-8 p-0 hover:bg-purple-100"
+              className="h-7 sm:h-8 w-7 sm:w-8 p-0 hover:bg-purple-100"
               title="Mark as Used"
             >
-              <CheckCircle2 className="h-4 w-4 text-purple-600" />
+              <CheckCircle2 className="h-3 sm:h-4 w-3 sm:w-4 text-purple-600" />
             </Button>
           )}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onEdit(coupon)}
-            className="h-8 w-8 p-0 hover:bg-gray-300"
+            className="h-7 sm:h-8 w-7 sm:w-8 p-0 hover:bg-gray-300"
             title="Edit"
             disabled={coupon.usedCount > 0}
           >
-            <Edit2 className="h-4 w-4" />
+            <Edit2 className="h-3 sm:h-4 w-3 sm:w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onDelete(coupon._id!)}
-            className="h-8 w-8 p-0 text-red-600 hover:bg-red-100"
+            className="h-7 sm:h-8 w-7 sm:w-8 p-0 text-red-600 hover:bg-red-100"
             title="Delete"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3 sm:h-4 w-3 sm:w-4" />
           </Button>
         </div>
       )}
@@ -1149,22 +1150,22 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Coupons Management</h1>
-          <p className="text-gray-600">Create and manage discount coupons for your store</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Coupons Management</h1>
+          <p className="text-sm sm:text-base text-gray-600">Create and manage discount coupons for your store</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <Button onClick={() => {
             setCheckCouponDialogOpen(true);
             setCheckCouponCode('');
             setCheckedCoupon(null);
             setCheckCouponSearched(false);
-          }} variant="outline" className="border-amber-300 hover:bg-amber-50">
+          }} variant="outline" className="border-amber-300 hover:bg-amber-50 w-full sm:w-auto">
             <Search className="h-4 w-4 mr-2" />
             Check Coupon
           </Button>
-          <Button onClick={openCreateDialog} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={openCreateDialog} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Create Coupon
           </Button>
@@ -1192,30 +1193,30 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             <div key="bulk-accordion" className="border-2 border-purple-300 rounded-lg overflow-hidden bg-white shadow">
               <button
                 onClick={() => setExpandedBulk(!expandedBulk)}
-                className="w-full px-6 py-5 flex items-center justify-between bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 transition-all text-white"
+                className="w-full px-3 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 transition-all text-white flex-wrap sm:flex-nowrap"
               >
-                <div className="flex items-center gap-4 flex-1">
+                <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                   {expandedBulk ? (
-                    <ChevronDown className="h-6 w-6 text-white" />
+                    <ChevronDown className="h-5 sm:h-6 w-5 sm:w-6 text-white flex-shrink-0" />
                   ) : (
-                    <ChevronRight className="h-6 w-6 text-white" />
+                    <ChevronRight className="h-5 sm:h-6 w-5 sm:w-6 text-white flex-shrink-0" />
                   )}
-                  <div className="text-left">
-                    <h3 className="font-bold text-lg text-white">
+                  <div className="text-left min-w-0">
+                    <h3 className="font-bold text-base sm:text-lg text-white truncate">
                       Bulk Generated Series
                     </h3>
-                    <p className="text-sm text-purple-100">
+                    <p className="text-xs sm:text-sm text-purple-100">
                       {seriesArray.length} series
                     </p>
                   </div>
                 </div>
-                <Badge className="bg-purple-300 text-purple-900">
+                <Badge className="bg-purple-300 text-purple-900 text-xs flex-shrink-0">
                   {seriesArray.reduce((sum, [, coupons]) => sum + coupons.length, 0)}
                 </Badge>
               </button>
 
               {expandedBulk && (
-                <div className="p-6 bg-gradient-to-b from-gray-50 to-white space-y-4 border-t-2 border-purple-100">
+                <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-gray-50 to-white space-y-3 sm:space-y-4 border-t-2 border-purple-100">
                   {seriesArray.map(([seriesId, couponsSeries]) => {
                     const isExpanded = expandedSeries[seriesId] || false;
                     const sortedCoupons = [...couponsSeries].sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0));
@@ -1223,22 +1224,22 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
                     return (
                       <div key={seriesId} className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-                        <div className="px-5 py-3 flex items-center justify-between bg-gray-100 hover:bg-gray-150 transition-colors">
+                        <div className="px-3 sm:px-5 py-3 flex items-center justify-between gap-2 bg-gray-100 hover:bg-gray-150 transition-colors flex-wrap sm:flex-nowrap">
                           <button
                             onClick={() => toggleSeriesExpand(seriesId)}
-                            className="flex items-center gap-3 flex-1 text-left hover:opacity-75 transition-opacity"
+                            className="flex items-center gap-2 sm:gap-3 flex-1 text-left hover:opacity-75 transition-opacity min-w-0"
                           >
                             {isExpanded ? (
                               <ChevronDown className="h-5 w-5 text-gray-700" />
                             ) : (
                               <ChevronRight className="h-5 w-5 text-gray-700" />
                             )}
-                            <div className="text-left">
-                              <h4 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
-                                {summary.hasHappyHour && <span title="Happy Hour Coupon">⏰</span>}
-                                {sortedCoupons[0]?.seriesNote ? sortedCoupons[0].seriesNote : `${sortedCoupons[0]?.code} to ${sortedCoupons[sortedCoupons.length - 1]?.code}`}
+                            <div className="text-left min-w-0">
+                              <h4 className="font-semibold text-gray-900 text-xs sm:text-sm flex items-center gap-2 truncate">
+                                {summary.hasHappyHour && <span title="Happy Hour Coupon" className="flex-shrink-0">⏰</span>}
+                                <span className="truncate">{sortedCoupons[0]?.seriesNote ? sortedCoupons[0].seriesNote : `${sortedCoupons[0]?.code} to ${sortedCoupons[sortedCoupons.length - 1]?.code}`}</span>
                               </h4>
-                              <p className="text-xs text-gray-600">
+                              <p className="text-xs text-gray-600 truncate">
                                 {couponsSeries.length} coupons · {summary.totalUsed} used · {summary.totalRemaining} remaining
                               </p>
                             </div>
@@ -1247,10 +1248,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteSeries(seriesId, couponsSeries.length)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs sm:text-sm flex-shrink-0 whitespace-nowrap"
                           >
-                            <Trash2 className="h-4 w-4" />
-                            Delete Series
+                            <Trash2 className="h-3 sm:h-4 w-3 sm:w-4" />
+                            <span className="hidden sm:inline">Delete Series</span>
+                            <span className="sm:hidden">Delete</span>
                           </Button>
                         </div>
 
@@ -1262,8 +1264,8 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                           const totalPages = Math.ceil(sortedCoupons.length / itemsPerPage);
 
                           return (
-                            <div className="p-6 bg-gray-50 border-t space-y-4">
-                              <div className="grid gap-6">
+                            <div className="p-3 sm:p-4 md:p-6 bg-gray-50 border-t space-y-3 sm:space-y-4">
+                              <div className="grid gap-3 sm:gap-4 md:gap-6">
                                 {paginatedSeries.map((coupon) => (
                                   <CouponCard
                                     key={coupon._id}
@@ -1332,31 +1334,31 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             <div key="individual-accordion" className="border-2 border-green-300 rounded-lg overflow-hidden bg-white shadow">
               <button
                 onClick={() => setExpandedIndividual(!expandedIndividual)}
-                className="w-full px-6 py-5 flex items-center justify-between bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transition-all text-white"
+                className="w-full px-3 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transition-all text-white flex-wrap sm:flex-nowrap"
               >
-                <div className="flex items-center gap-4 flex-1">
+                <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                   {expandedIndividual ? (
-                    <ChevronDown className="h-6 w-6 text-white" />
+                    <ChevronDown className="h-5 sm:h-6 w-5 sm:w-6 text-white flex-shrink-0" />
                   ) : (
-                    <ChevronRight className="h-6 w-6 text-white" />
+                    <ChevronRight className="h-5 sm:h-6 w-5 sm:w-6 text-white flex-shrink-0" />
                   )}
-                  <div className="text-left">
-                    <h3 className="font-bold text-lg text-white">
+                  <div className="text-left min-w-0">
+                    <h3 className="font-bold text-base sm:text-lg text-white truncate">
                       Individual Coupons
                     </h3>
-                    <p className="text-sm text-green-100">
+                    <p className="text-xs sm:text-sm text-green-100">
                       {individualCoupons.length} coupons
                     </p>
                   </div>
                 </div>
-                <Badge className="bg-green-300 text-green-900">
+                <Badge className="bg-green-300 text-green-900 text-xs flex-shrink-0">
                   {individualCoupons.length}
                 </Badge>
               </button>
 
               {expandedIndividual && (
-                <div className="p-6 bg-gradient-to-b from-gray-50 to-white space-y-4 border-t-2 border-green-100">
-                  <div className="grid gap-6">
+                <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-gray-50 to-white space-y-3 sm:space-y-4 border-t-2 border-green-100">
+                  <div className="grid gap-3 sm:gap-4 md:gap-6">
                     {paginatedCoupons.map((coupon) => (
                       <CouponCard
                         key={coupon._id}
@@ -1416,19 +1418,19 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-[1200px] max-h-[90vh] overflow-auto">
+        <DialogContent className="w-[95vw] max-w-[1200px] max-h-[90vh] overflow-auto p-3 sm:p-6">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">
               {editingCoupon ? 'Edit Coupon' : 'Create New Coupon'}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
-            <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+            <div className="space-y-3 sm:space-y-4">
             {!editingCoupon && (
               <div>
                 <Label htmlFor="generationType">Generation Type</Label>
                 <Select value={generationType} onValueChange={(value: 'single' | 'bulk' | 'user') => setGenerationType(value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1440,7 +1442,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               {generationType === 'single' && (
                 <div>
                   <Label htmlFor="code">Coupon Code *</Label>
@@ -1509,7 +1511,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               <div>
                 <Label htmlFor="minPurchase">Min. Purchase (₹)</Label>
                 <Input
@@ -1520,6 +1522,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   placeholder="50"
                   min="0"
                   step="0.01"
+                  className="text-sm"
                 />
               </div>
               <div>
@@ -1532,6 +1535,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   placeholder="100"
                   min="0"
                   step="0.01"
+                  className="text-sm"
                 />
               </div>
             </div>
@@ -1611,7 +1615,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
               <>
                 <div>
                   <Label>Valid Days (Select days when coupon is active)</Label>
-                  <div className="space-y-2 mt-2">
+                  <div className="space-y-1.5 sm:space-y-2 mt-2">
                     {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
                       <div key={day} className="flex items-center space-x-2">
                         <input
@@ -1627,13 +1631,13 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                           }}
                           className="w-4 h-4 cursor-pointer"
                         />
-                        <Label htmlFor={day} className="cursor-pointer">{day}</Label>
+                        <Label htmlFor={day} className="cursor-pointer text-sm">{day}</Label>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   <div>
                     <Label htmlFor="happyHourStartTime">Start Time (HH:MM)</Label>
                     <Input
@@ -1642,6 +1646,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                       value={happyHourStartTime}
                       onChange={(e) => setHappyHourStartTime(e.target.value)}
                       required={couponType === 'happy-hour'}
+                      className="text-sm"
                     />
                   </div>
                   <div>
@@ -1652,6 +1657,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                       value={happyHourEndTime}
                       onChange={(e) => setHappyHourEndTime(e.target.value)}
                       required={couponType === 'happy-hour'}
+                      className="text-sm"
                     />
                   </div>
                 </div>
@@ -1687,11 +1693,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
               </div>
             )}
 
-            <div className="flex justify-end space-x-2 pt-4 col-span-2 border-t">
-              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 col-span-1 lg:col-span-2 border-t">
+              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} className="w-full sm:w-auto text-sm">
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" className="w-full sm:w-auto text-sm">
                 {editingCoupon 
                   ? 'Update Coupon' 
                   : generationType === 'bulk' 
@@ -1704,7 +1710,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             </div>
             </div>
 
-            <div className="flex flex-col justify-start gap-4">
+            <div className="flex flex-col justify-start gap-3 sm:gap-4">
               <div>
                 <h3 className="text-sm font-semibold mb-4">Live Preview</h3>
                 <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 sticky top-0">
@@ -1781,15 +1787,15 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
       {/* QR Code Dialog */}
       <Dialog open={qrDialogOpen} onOpenChange={setQrDialogOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="w-[90vw] sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>QR Code for {selectedCoupon?.code}</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">QR Code for {selectedCoupon?.code}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4">
             {qrCodeUrl && (
-              <img src={qrCodeUrl} alt="QR Code" className="w-48 h-48" />
+              <img src={qrCodeUrl} alt="QR Code" className="w-32 sm:w-48 h-32 sm:h-48" />
             )}
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-xs sm:text-sm text-gray-600 text-center">
               Scan this QR code to apply the coupon {selectedCoupon?.code}
             </p>
             <Button
@@ -1809,12 +1815,12 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
       {/* Check Coupon Status Dialog */}
       <Dialog open={checkCouponDialogOpen} onOpenChange={setCheckCouponDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="w-[95vw] max-w-[900px] h-auto max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Check Coupon Availability</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Check Coupon Availability</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex gap-2">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Input
                 placeholder="Enter coupon code"
                 value={checkCouponCode}
@@ -1824,11 +1830,14 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     checkCouponStatus();
                   }
                 }}
+                className="flex-1 text-sm"
               />
               <Button
                 onClick={checkCouponStatus}
                 disabled={checkCouponLoading || !checkCouponCode.trim()}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 text-sm"
+                size="sm"
+                title="Search"
               >
                 {checkCouponLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -1836,77 +1845,121 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   <Search className="h-4 w-4" />
                 )}
               </Button>
+              {checkedCoupon && (
+                <Button
+                  onClick={checkCouponStatus}
+                  disabled={checkCouponLoading || !checkCouponCode.trim()}
+                  variant="outline"
+                  className="text-sm"
+                  size="sm"
+                  title="Refresh status"
+                >
+                  {checkCouponLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span className="hidden sm:inline ml-2">Refresh</span>
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
 
             {checkCouponSearched && checkedCoupon && (
-              <div className="border rounded-lg p-4 bg-gradient-to-br from-blue-50 to-indigo-50 space-y-4">
-                <div>
-                  <h3 className="font-semibold text-lg mb-3">Coupon Details</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Code:</span>
-                      <span className="font-bold text-gray-900">{checkedCoupon.code}</span>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 min-h-max">
+                  <div className={`rounded-lg p-4 border-2 ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                    <p className={`font-bold flex items-center gap-2 text-base sm:text-lg ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-700' : 'text-red-700'}`}>
+                      {isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? (
+                        <>✅ Ready for Use</>
+                      ) : (
+                        <>❌ Cannot Be Used</>
+                      )}
+                    </p>
+                    <div className="mt-2 sm:mt-3 text-xs sm:text-sm space-y-1 sm:space-y-2">
+                      {checkedCoupon.status !== 'active' && (
+                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}>• Coupon is {checkedCoupon.status}</p>
+                      )}
+                      {checkedCoupon.usedCount > 0 && (
+                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}>• Coupon has already been used</p>
+                      )}
+                      {checkedCoupon.couponType === 'happy-hour' && !isHappyHourAvailable(checkedCoupon) && (
+                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}>• Not within Happy Hour window ({checkedCoupon.happyHourDays?.join(', ')} {checkedCoupon.happyHourStartTime}-{checkedCoupon.happyHourEndTime})</p>
+                      )}
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Status:</span>
-                      <Badge className={checkedCoupon.status === 'active' ? 'bg-green-500' : 'bg-red-500'}>
-                        {checkedCoupon.status === 'active' ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Discount:</span>
-                      <span className="font-bold">
-                        {checkedCoupon.discountType === 'percentage'
-                          ? `${checkedCoupon.discountValue}%`
-                          : `₹${checkedCoupon.discountValue}`}
-                      </span>
-                    </div>
-                    {checkedCoupon.minPurchase && (
+                  </div>
+
+                  <div className="border rounded-lg p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-x-auto">
+                    <h3 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">Coupon Details</h3>
+                    <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Min. Purchase:</span>
-                        <span className="font-bold">₹{checkedCoupon.minPurchase}</span>
+                        <span className="text-gray-600">Code:</span>
+                        <span className="font-bold text-gray-900">{checkedCoupon.code}</span>
                       </div>
-                    )}
-                    {checkedCoupon.maxDiscount && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Max. Discount:</span>
-                        <span className="font-bold">₹{checkedCoupon.maxDiscount}</span>
+                        <span className="text-gray-600">Status:</span>
+                        <Badge className={checkedCoupon.status === 'active' ? 'bg-green-500' : 'bg-red-500'}>
+                          {checkedCoupon.status === 'active' ? 'Active' : 'Inactive'}
+                        </Badge>
                       </div>
-                    )}
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Expiry Date:</span>
-                      <span className="font-bold">{formatDateToDDMMYYYY(checkedCoupon.expiryDate)}</span>
-                    </div>
-                    <div className="flex justify-between pt-2 border-t">
-                      <span className="text-gray-600">Usage Status:</span>
-                      <span className={`font-bold ${checkedCoupon.usedCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                        {checkedCoupon.usedCount > 0 ? '✓ Used' : '○ Not Used'}
-                      </span>
-                    </div>
-                    {checkedCoupon.couponType === 'happy-hour' && (
-                      <>
-                        <div className="flex justify-between pt-2 border-t">
-                          <span className="text-gray-600">Type:</span>
-                          <span className="font-bold text-orange-600 flex items-center gap-1">
-                            ⏰ Happy Hour
-                          </span>
-                        </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Discount:</span>
+                        <span className="font-bold">
+                          {checkedCoupon.discountType === 'percentage'
+                            ? `${checkedCoupon.discountValue}%`
+                            : `₹${checkedCoupon.discountValue}`}
+                        </span>
+                      </div>
+                      {checkedCoupon.minPurchase && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Valid Days:</span>
-                          <span className="font-bold text-right">{checkedCoupon.happyHourDays?.join(', ')}</span>
+                          <span className="text-gray-600">Min. Purchase:</span>
+                          <span className="font-bold">₹{checkedCoupon.minPurchase}</span>
                         </div>
+                      )}
+                      {checkedCoupon.maxDiscount && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Time Window:</span>
-                          <span className="font-bold">{checkedCoupon.happyHourStartTime} - {checkedCoupon.happyHourEndTime}</span>
+                          <span className="text-gray-600">Max. Discount:</span>
+                          <span className="font-bold">₹{checkedCoupon.maxDiscount}</span>
                         </div>
-                        <div className="flex justify-between pt-2 border-t">
-                          <span className="text-gray-600">Ready for Use:</span>
-                          <span className={`font-bold ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? '✓ Yes' : '✗ No'}
-                          </span>
-                        </div>
-                      </>
-                    )}
+                      )}
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Expiry Date:</span>
+                        <span className="font-bold">{formatDateToDDMMYYYY(checkedCoupon.expiryDate)}</span>
+                      </div>
+                      <div className="flex justify-between pt-2 border-t">
+                        <span className="text-gray-600">Usage Status:</span>
+                        <span className={`font-bold ${checkedCoupon.usedCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                          {checkedCoupon.usedCount > 0 ? '✓ Used' : '○ Not Used'}
+                        </span>
+                      </div>
+                      {checkedCoupon.couponType === 'happy-hour' && (
+                        <>
+                          <div className="flex justify-between pt-2 border-t">
+                            <span className="text-gray-600">Type:</span>
+                            <span className="font-bold text-orange-600 flex items-center gap-1">
+                              ⏰ Happy Hour
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Valid Days:</span>
+                            <span className="font-bold text-right">{checkedCoupon.happyHourDays?.join(', ')}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Time Window:</span>
+                            <span className="font-bold">{checkedCoupon.happyHourStartTime} - {checkedCoupon.happyHourEndTime}</span>
+                          </div>
+                          <div className="flex justify-between pt-2 border-t">
+                            <span className="text-gray-600">Ready for Use:</span>
+                            <span className={`font-bold ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? '✓ Yes' : '✗ No'}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -1924,7 +1977,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     This coupon is not available at this time. Please try during the Happy Hour window.
                   </div>
                 )}
-              </div>
+              </>
             )}
 
             {checkCouponSearched && !checkedCoupon && !checkCouponLoading && (
@@ -1943,16 +1996,17 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
           setConfirmDialog(prev => ({ ...prev, isOpen: false }));
         }
       }}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="w-[90vw] sm:max-w-[400px] p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle>Confirm Action</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Confirm Action</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-gray-700">{confirmDialog.message}</p>
-            <div className="flex gap-3 justify-end">
+          <div className="space-y-3 sm:space-y-4">
+            <p className="text-xs sm:text-sm text-gray-700">{confirmDialog.message}</p>
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 justify-end">
               <Button
                 variant="outline"
                 onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                className="w-full sm:w-auto text-sm"
               >
                 {confirmDialog.cancelText || 'Cancel'}
               </Button>
@@ -1961,7 +2015,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   confirmDialog.action?.();
                   setConfirmDialog(prev => ({ ...prev, isOpen: false }));
                 }}
-                className="bg-red-600 hover:bg-red-700"
+                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-sm"
               >
                 {confirmDialog.confirmText || 'Confirm'}
               </Button>
