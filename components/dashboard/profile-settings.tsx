@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -202,6 +202,69 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const storeImagesInputRef = useRef<HTMLInputElement>(null);
   const [storeImagesLoading, setStoreImagesLoading] = useState(false);
+
+  // Username availability states
+  const [usernameChecking, setUsernameChecking] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [usernameMessage, setUsernameMessage] = useState<string>('');
+
+  // Debounced username check function
+  const checkUsernameAvailability = useCallback(async (username: string) => {
+    if (!username || username.trim() === '') {
+      setUsernameAvailable(null);
+      setUsernameMessage('');
+      return;
+    }
+
+    setUsernameChecking(true);
+    try {
+      const response = await fetch('/api/merchant/profile/check-username', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username.trim(),
+          merchantId: merchant?.id
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUsernameAvailable(data.available);
+        setUsernameMessage(data.message);
+      } else {
+        setUsernameAvailable(false);
+        setUsernameMessage(data.message || 'Failed to check username');
+      }
+    } catch (error) {
+      console.error('Username check error:', error);
+      setUsernameAvailable(false);
+      setUsernameMessage('Failed to check username availability');
+    } finally {
+      setUsernameChecking(false);
+    }
+  }, [merchant?.id]);
+
+  // Debounced username check with timeout
+  const debouncedUsernameCheck = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (username: string) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => checkUsernameAvailability(username), 500);
+      };
+    })(),
+    [checkUsernameAvailability]
+  );
+
+  // Check initial username availability when merchant data loads
+  useEffect(() => {
+    if (merchant?.username && profile.username === merchant.username) {
+      checkUsernameAvailability(merchant.username);
+    }
+  }, [merchant?.username, checkUsernameAvailability, profile.username]);
 
   useEffect(() => {
     console.log('Profile useEffect triggered, merchant:', merchant?.username);
@@ -572,9 +635,47 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                   <Input
                     id="username"
                     value={profile.username}
-                    onChange={(e) => setProfile({ ...profile, username: e.target.value })}
-                    className="mt-1"
+                    onChange={(e) => {
+                      const newUsername = e.target.value;
+                      setProfile({ ...profile, username: newUsername });
+                      debouncedUsernameCheck(newUsername);
+                    }}
+                    className={`mt-1 ${
+                      usernameAvailable === false ? 'border-red-500 focus:ring-red-500' :
+                      usernameAvailable === true ? 'border-green-500 focus:ring-green-500' : ''
+                    }`}
                   />
+                  {profile.username && (
+                    <div className="mt-2 space-y-2">
+                      {usernameChecking ? (
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Checking availability...
+                        </div>
+                      ) : usernameMessage && (
+                        <div className={`text-sm ${
+                          usernameAvailable === true ? 'text-green-600' :
+                          usernameAvailable === false ? 'text-red-600' : 'text-gray-600'
+                        }`}>
+                          {usernameMessage}
+                        </div>
+                      )}
+                      {usernameAvailable === true && profile.username && (
+                        <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">🎉</span>
+                            <span className="font-medium">Exciting!</span>
+                          </div>
+                          <p className="mt-1">
+                            You'll be able to access your profile at{' '}
+                            <span className="font-mono bg-white px-2 py-1 rounded border text-blue-700">
+                              citywitty.com/{profile.username.toLowerCase()}
+                            </span>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="email">Email</Label>

@@ -249,11 +249,13 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
         ];
     }, [merchant]);
 
+    const isMarketLeader = merchant?.purchasedPackage?.variantName === 'Market Leader';
+
     return (
         <div id="tour-support-main" className="min-h-screen">
             <div className="max-w-7xl mx-auto px-6 pt-0 pb-6 space-y-8">
                 {/* Upgrade Banner */}
-                <Card className="border border-blue-200 bg-blue-50/50">
+                {!isMarketLeader && <Card className="border border-blue-200 bg-blue-50/50">
                     <CardContent className="p-4 sm:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                             <div className="flex-1 mb-4 sm:mb-0">
@@ -292,7 +294,7 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
                             </div>
                         </div>
                     </CardContent>
-                </Card>
+                </Card>}
 
                 {/* Your Plan Heading */}
                 <div id="tour-support-plan" className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
@@ -403,7 +405,7 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
                     <CardHeader className="border-b border-gray-100">
                         <div className="flex items-center">
                             <History className="h-6 w-6 text-gray-700 mr-3" />
-                            <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">Request History</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">Digital Support Log</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="p-4 sm:p-6">
