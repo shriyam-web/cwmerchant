@@ -505,17 +505,13 @@ export default function Dashboard() {
     { target: "#tour-profile-hours", content: "Configure your business hours so customers know when you're open.", placement: "auto" },
     { target: "#tour-profile-images", content: "Upload photos of your store to showcase your business to customers.", placement: "auto" },
     { target: "#tour-profile-additional", content: "Complete additional details like payment methods and minimum order values.", placement: "auto" },
-    { target: "#tour-offers-main", content: "Create and manage special offers and promotions to attract more customers.", placement: "auto" },
-    { target: "#tour-offers-add", content: "Click here to create new promotional offers and discounts for your products.", placement: "auto" },
-    { target: "#tour-products-main", content: "Add and manage your product catalog. Keep your inventory up to date.", placement: "auto" },
-    { target: "#tour-products-add", content: "Click here to add new products to your catalog with details, pricing, and images.", placement: "auto" },
-    { target: "#tour-requests-main", content: "Review and approve customer purchase requests. Manage your sales pipeline.", placement: "auto" },
-    { target: "#tour-requests-filters", content: "Use filters to quickly find pending, approved, or rejected requests.", placement: "auto" },
-    { target: "#tour-support-plan", content: "Check your current plan and available digital support services.", placement: "auto" },
-    { target: "#tour-support-services", content: "Explore available digital services like graphics design, video reels, and website development.", placement: "auto" },
-    { target: "#tour-support-history", content: "Track all your digital support requests and their completion status.", placement: "auto" },
-    // Temporarily skip support-wide tour step because that section loads on a different tab
-    // { target: "#tour-support-main", content: "Access your dedicated support tools and resources whenever you need assistance.", placement: "auto" },
+    { target: "#tour-offers", content: "Create and manage special offers and promotions to attract more customers.", placement: "auto" },
+    { target: "#tour-products", content: "Add and manage your product catalog. Keep your inventory up to date.", placement: "auto" },
+    { target: "#tour-offline-products", content: "Manage your in-store and offline products here.", placement: "auto" },
+    { target: "#tour-requests", content: "Review and approve customer purchase requests. Manage your sales pipeline.", placement: "auto" },
+    { target: "#tour-coupons", content: "Create and manage coupons to boost sales and customer retention.", placement: "auto" },
+    { target: "#tour-support", content: "Access digital marketing support services and tools for your business.", placement: "auto" },
+    { target: "#tour-notifications", content: "Stay updated with all your business notifications and alerts.", placement: "auto" },
   ];
 
   const getTourSteps = (tab: string): Step[] => {
@@ -861,6 +857,8 @@ export default function Dashboard() {
             return <div id="tour-offline-products"><OfflineProductsManagement /></div>;
           case "requests":
             return <div id="tour-requests"><PurchaseRequests /></div>;
+          case "profile":
+            return <div id="tour-profile-settings"><ProfileSettings tourIndex={currentTourIndex} /></div>;
           case "support":
             return <div id="tour-support"><DigitalSupport merchant={merchant} /></div>;
           default:
@@ -881,21 +879,21 @@ export default function Dashboard() {
 
     switch (activeTab) {
       case "notifications":
-        return <Notifications onUnreadCountChange={handleUnreadCountChange} />;
+        return <div id="tour-notifications"><Notifications onUnreadCountChange={handleUnreadCountChange} /></div>;
       case "offers":
-        return <OffersManagement onOffersChange={fetchActiveOffersCount} />;
+        return <div id="tour-offers"><OffersManagement onOffersChange={fetchActiveOffersCount} /></div>;
       case "coupons":
-        return <CouponsManagement />;
+        return <div id="tour-coupons"><CouponsManagement /></div>;
       case "products":
-        return <ProductsManagement />;
+        return <div id="tour-products"><ProductsManagement /></div>;
       case "offline-shopping":
-        return <OfflineProductsManagement />;
+        return <div id="tour-offline-products"><OfflineProductsManagement /></div>;
       case "requests":
-        return <PurchaseRequests />;
+        return <div id="tour-requests"><PurchaseRequests /></div>;
       case "profile":
-        return <ProfileSettings tourIndex={currentTourIndex} />;
+        return <div id="tour-profile-settings"><ProfileSettings tourIndex={currentTourIndex} /></div>;
       case "support":
-        return <DigitalSupport merchant={merchant} />;
+        return <div id="tour-support"><DigitalSupport merchant={merchant} /></div>;
       default:
         return (
           <div className="space-y-6">
@@ -1574,14 +1572,20 @@ export default function Dashboard() {
             let requiredTab = "overview";
             if (targetIndex >= 3 && targetIndex <= 8) {
               requiredTab = "profile";
-            } else if (targetIndex === 9 || targetIndex === 10) {
+            } else if (targetIndex === 9) {
               requiredTab = "offers";
-            } else if (targetIndex === 11 || targetIndex === 12) {
+            } else if (targetIndex === 10) {
               requiredTab = "products";
-            } else if (targetIndex === 13 || targetIndex === 14) {
+            } else if (targetIndex === 11) {
+              requiredTab = "offline-shopping";
+            } else if (targetIndex === 12) {
               requiredTab = "requests";
-            } else if (targetIndex >= 15 && targetIndex <= 17) {
+            } else if (targetIndex === 13) {
+              requiredTab = "coupons";
+            } else if (targetIndex === 14) {
               requiredTab = "support";
+            } else if (targetIndex === 15) {
+              requiredTab = "notifications";
             }
 
             console.log(`Moving to step ${targetIndex} (tab: ${requiredTab}, current: ${activeTab})`);
