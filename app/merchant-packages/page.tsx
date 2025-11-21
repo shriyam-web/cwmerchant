@@ -94,7 +94,7 @@ export default function MerchantPackagesPage() {
             name: "Launch Pad",
             badge: "Starter Plan",
             badgeType: "starter", // for custom color
-            price: "60,000",
+            price: "1,20,000",
             description: "Perfect for new businesses starting their digital journey",
             features: [
                 "Upto 2x Sales Growth Expected",
@@ -125,10 +125,10 @@ export default function MerchantPackagesPage() {
             name: "Scale Up",
             badge: "Most Popular",
             badgeType: "choice",
-            price: "96,000",
+            price: "1,92,000",
             description: "Grow your presence and engagement on social media",
             features: [
-                "Upto 4x Sales Growth Expected",
+                "Upto 3x Sales Growth Expected",
                 "8 Creatives Graphics + 2 Reels Per Month (Better Social Media Reach On LinkedIn, Facebook, Instagram & Youtube As Well As Engagement Tracking)",
                 "Responsive Website Upto 15 Pages With Admin Panel",
                 "AI Friendly SEO",
@@ -153,10 +153,10 @@ export default function MerchantPackagesPage() {
             name: "Market Leader",
             badge: "Premium Plan",
             badgeType: "premium",
-            price: "1,20,000",
+            price: "2,40,000",
             description: "Complete digital marketing management for maximum impact",
             features: [
-                "Upto 8x Sales Growth Expected",
+                "Upto 4x Sales Growth Expected",
                 "Complete Digital Marketing Management (12 Creative Graphics + 4 Reels For Facebook, Instagram, LinkedIn, Youtube) Which Gives Advanced Reach",
                 "Advance Website With E-Commerce Support",
                 "AI Friendly SEO",

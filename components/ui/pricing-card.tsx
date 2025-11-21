@@ -48,9 +48,6 @@ export default function PricingCard({ plan }: PricingCardProps) {
 
             {/* Price Section */}
             <div className="mb-2">
-                <div className="text-2xl text-gray-400 line-through">
-                    ₹{(numericPrice * 2).toLocaleString("en-IN")} /yr
-                </div>
                 <div className="text-4xl font-extrabold text-indigo-600">
                     ₹{plan.price}
                     <span className="text-lg font-medium text-gray-400">/yr</span>
@@ -62,10 +59,7 @@ export default function PricingCard({ plan }: PricingCardProps) {
                 ₹{Math.round(numericPrice / 12).toLocaleString("en-IN")} /month
             </div>
 
-            {/* Offer */}
-            <div className="mt-1 mb-6 inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                🎉 Festive50 Applied (50% OFF)
-            </div>
+
 
             {/* Features */}
             <ul className="text-gray-700 space-y-4 text-left flex-1 mb-8">
