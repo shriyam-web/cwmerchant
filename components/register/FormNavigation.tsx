@@ -35,7 +35,7 @@ export default function FormNavigation({
                         key={step}
                         onClick={() => handleStepClick(step)}
                         className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${step === currentStep
-                                ? 'bg-blue-600'
+                                ? 'bg-gray-600'
                                 : completedSteps[step]
                                     ? 'bg-green-500'
                                     : incompleteSteps[step]

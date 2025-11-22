@@ -337,32 +337,42 @@ export const OfflineProductsManagement = () => {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-xl p-8 text-white">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-white/20 rounded-full">
-                            <Store className="h-8 w-8" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-bold tracking-tight">Offline Store Products</h1>
-                            <p className="text-orange-100 text-lg mt-1">Manage products available at your physical locations</p>
+        <div id="tour-offline-products" className="space-y-8 overflow-x-hidden">
+            {/* Your Offline Store Section */}
+            <Card className="border-0 bg-gradient-to-br from-orange-50 dark:from-orange-950/30 via-white dark:via-gray-950 to-red-50 dark:to-red-950/30 shadow-lg dark:shadow-gray-900/50 overflow-hidden w-full relative">
+                <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+                    <div className="absolute -top-32 -right-32 w-64 h-64 bg-orange-300/20 dark:bg-orange-400/10 rounded-full blur-3xl" />
+                    <div className="absolute -bottom-32 -left-32 w-72 h-72 bg-red-300/20 dark:bg-red-400/10 rounded-full blur-3xl" />
+                </div>
+                <CardHeader className="relative pb-6 overflow-hidden">
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                        <div className="flex items-start gap-4 flex-1 min-w-0">
+                            <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg flex-shrink-0">
+                                <Store className="h-6 w-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Offline Store</h2>
+                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 break-words">
+                                    Products you add here appear on your merchant profile page and are available for customers to view and order directly from your store.
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <Dialog open={isAddDialogOpen} onOpenChange={handleDialogChange}>
-                        <DialogTrigger asChild>
-                            <Button className="bg-white text-orange-600 hover:bg-orange-50 gap-2 px-6 py-3 text-lg font-semibold shadow-lg">
-                                <Plus className="h-5 w-5" />
-                                {editingProductId ? "Update Offline Product" : "Add Offline Product"}
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle className="flex items-center gap-2">
-                                    <Package className="h-5 w-5" />
-                                    {editingProductId ? "Edit Offline Product" : "Add Offline Product"}
-                                </DialogTitle>
-                            </DialogHeader>
+                            <DialogTrigger asChild>
+                                <Button className="gap-2 rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex-shrink-0 whitespace-nowrap">
+                                    <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+                                    <span className="hidden sm:inline">Add Product</span>
+                                    <span className="sm:hidden">Add</span>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800 dark:text-white dark:border-gray-700">
+                                <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2 dark:text-white">
+                                        <Package className="h-5 w-5" />
+                                        {editingProductId ? "Edit Offline Product" : "Add Offline Product"}
+                                    </DialogTitle>
+                                </DialogHeader>
                             <Form {...form}>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid gap-4 md:grid-cols-2">
@@ -371,9 +381,9 @@ export const OfflineProductsManagement = () => {
                                             name="productName"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Product Name</FormLabel>
+                                                    <FormLabel className="dark:text-white">Product Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter product name" {...field} />
+                                                        <Input placeholder="Enter product name" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -384,9 +394,9 @@ export const OfflineProductsManagement = () => {
                                             name="category"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Category</FormLabel>
+                                                    <FormLabel className="dark:text-white">Category</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Product category" {...field} />
+                                                        <Input placeholder="Product category" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -397,9 +407,9 @@ export const OfflineProductsManagement = () => {
                                             name="brand"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Brand</FormLabel>
+                                                    <FormLabel className="dark:text-white">Brand</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Brand name" {...field} />
+                                                        <Input placeholder="Brand name" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -410,9 +420,9 @@ export const OfflineProductsManagement = () => {
                                             name="unit"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Unit</FormLabel>
+                                                    <FormLabel className="dark:text-white">Unit</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Pieces, Kg, etc." {...field} />
+                                                        <Input placeholder="Pieces, Kg, etc." className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -424,9 +434,9 @@ export const OfflineProductsManagement = () => {
                                         name="description"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Description</FormLabel>
+                                                <FormLabel className="dark:text-white">Description</FormLabel>
                                                 <FormControl>
-                                                    <Textarea rows={4} placeholder="Describe the product" {...field} />
+                                                    <Textarea rows={4} placeholder="Describe the product" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -438,9 +448,9 @@ export const OfflineProductsManagement = () => {
                                             name="price"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Price</FormLabel>
+                                                    <FormLabel className="dark:text-white">Price</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="0" {...field} />
+                                                        <Input placeholder="0" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -451,9 +461,9 @@ export const OfflineProductsManagement = () => {
                                             name="offerPrice"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Offer Price</FormLabel>
+                                                    <FormLabel className="dark:text-white">Offer Price</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Optional" {...field} />
+                                                        <Input placeholder="Optional" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -464,9 +474,9 @@ export const OfflineProductsManagement = () => {
                                             name="availableStock"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Available Stock</FormLabel>
+                                                    <FormLabel className="dark:text-white">Available Stock</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="0" {...field} />
+                                                        <Input placeholder="0" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -479,9 +489,9 @@ export const OfflineProductsManagement = () => {
                                             name="tags"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Tags</FormLabel>
+                                                    <FormLabel className="dark:text-white">Tags</FormLabel>
                                                     <FormControl>
-                                                        <Textarea rows={3} placeholder="Comma separated tags" {...field} />
+                                                        <Textarea rows={3} placeholder="Comma separated tags" className="dark:bg-gray-700 dark:text-white dark:border-gray-600" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -492,14 +502,14 @@ export const OfflineProductsManagement = () => {
                                             name="status"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Status</FormLabel>
+                                                    <FormLabel className="dark:text-white">Status</FormLabel>
                                                     <Select value={field.value} onValueChange={field.onChange}>
                                                         <FormControl>
-                                                            <SelectTrigger>
+                                                            <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
                                                                 <SelectValue placeholder="Select status" />
                                                             </SelectTrigger>
                                                         </FormControl>
-                                                        <SelectContent>
+                                                        <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                                                             <SelectItem value="active">Active</SelectItem>
                                                             <SelectItem value="inactive">Inactive</SelectItem>
                                                         </SelectContent>
@@ -510,11 +520,11 @@ export const OfflineProductsManagement = () => {
                                         />
                                     </div>
                                     <div className="space-y-4">
-                                        <div className="rounded-lg border border-dashed border-orange-300 bg-orange-50/40 p-4">
+                                        <div className="rounded-lg border border-dashed border-orange-300 dark:border-orange-700 bg-orange-50 dark:bg-orange-950/30 p-4">
                                             <div className="flex items-center justify-between mb-3">
                                                 <div>
-                                                    <h4 className="text-sm font-semibold text-orange-800">Product Images</h4>
-                                                    <p className="text-xs text-orange-600">Upload up to 5 images (max 5MB each)</p>
+                                                    <h4 className="text-sm font-semibold text-orange-800 dark:text-orange-300">Product Images</h4>
+                                                    <p className="text-xs text-orange-600 dark:text-orange-400">Upload up to 5 images (max 5MB each)</p>
                                                 </div>
                                                 <Button
                                                     type="button"
@@ -522,7 +532,7 @@ export const OfflineProductsManagement = () => {
                                                     size="sm"
                                                     onClick={() => fileInputRef.current?.click()}
                                                     disabled={uploadingImages || imageUrls.length >= 5}
-                                                    className="gap-2"
+                                                    className="gap-2 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                                                 >
                                                     {uploadingImages ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
                                                     {uploadingImages ? "Uploading..." : "Upload Images"}
@@ -537,17 +547,17 @@ export const OfflineProductsManagement = () => {
                                                 />
                                             </div>
                                             {imageUrls.length === 0 ? (
-                                                <p className="text-xs text-orange-700">No images uploaded yet.</p>
+                                                <p className="text-xs text-orange-700 dark:text-orange-400">No images uploaded yet.</p>
                                             ) : (
                                                 <div className="grid gap-3 md:grid-cols-2">
                                                     {imageUrls.map((url, index) => (
-                                                        <div key={url} className="flex items-center gap-3 rounded-md border border-orange-200 bg-white p-2 shadow-sm">
+                                                        <div key={url} className="flex items-center gap-3 rounded-md border border-orange-200 dark:border-orange-700 bg-white dark:bg-gray-700 p-2 shadow-sm">
                                                             <img src={url} alt={`Product ${index + 1}`} className="h-16 w-16 rounded-md object-cover" />
                                                             <div className="flex-1">
-                                                                <p className="text-sm font-medium text-gray-800">Image {index + 1}</p>
-                                                                {index === 0 && <p className="text-xs text-orange-500">Cover Image</p>}
+                                                                <p className="text-sm font-medium text-gray-800 dark:text-white">Image {index + 1}</p>
+                                                                {index === 0 && <p className="text-xs text-orange-500 dark:text-orange-400">Cover Image</p>}
                                                             </div>
-                                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeImage(index)} className="text-red-500 hover:text-red-600">
+                                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeImage(index)} className="text-red-500 dark:text-red-400 hover:text-red-600">
                                                                 <Trash2 className="h-4 w-4" />
                                                             </Button>
                                                         </div>
@@ -556,7 +566,7 @@ export const OfflineProductsManagement = () => {
                                             )}
                                         </div>
                                         <div className="flex justify-end gap-2">
-                                            <Button type="button" variant="outline" onClick={() => handleDialogChange(false)} disabled={submitting}>
+                                            <Button type="button" variant="outline" onClick={() => handleDialogChange(false)} disabled={submitting} className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
                                                 Cancel
                                             </Button>
                                             <Button type="submit" disabled={submitting}>
@@ -568,89 +578,123 @@ export const OfflineProductsManagement = () => {
                             </Form>
                         </DialogContent>
                     </Dialog>
-                </div>
-            </div>
+                </CardHeader>
+                <CardContent className="relative space-y-6 overflow-x-hidden">
+                    {/* How It Works - Process Flow */}
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5 text-amber-500" />
+                            How Your Products Go Live
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            {[
+                                { step: "1", title: "Add Product", desc: "Create detailed product listing with images, prices & stock" },
+                                { step: "2", title: "Profile Display", desc: "Product appears on your merchant profile page instantly" },
+                                { step: "3", title: "Customer Access", desc: "Customers can discover and view your products" },
+                                { step: "4", title: "Order & Manage", desc: "Receive and manage orders directly from your dashboard" }
+                            ].map((item, idx) => (
+                                <div key={idx} className="relative">
+                                    <div className="p-4 rounded-xl border border-orange-200 dark:border-orange-800 bg-white/80 dark:bg-gray-800/50 backdrop-blur">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-xs font-bold">
+                                                {item.step}
+                                            </div>
+                                            <p className="font-semibold text-gray-900 dark:text-white text-sm">{item.title}</p>
+                                        </div>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">{item.desc}</p>
+                                    </div>
+                                    {idx < 3 && (
+                                        <div className="hidden lg:flex absolute -right-1.5 top-6 translate-x-full items-center">
+                                            <div className="w-3 h-0.5 bg-gradient-to-r from-orange-400 to-red-400" />
+                                            <div className="w-2 h-2 bg-red-500 rounded-full" />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-orange-800">Total Offline Products</CardTitle>
-                        <Package className="h-4 w-4 text-orange-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-orange-900">{totalProducts}</div>
-                        <p className="text-xs text-orange-600">Products in your offline catalog</p>
-                    </CardContent>
-                </Card>
-                <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-blue-800">Active Listings</CardTitle>
-                        <Store className="h-4 w-4 text-blue-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-blue-900">{activeProducts}</div>
-                        <p className="text-xs text-blue-600">Currently available offline</p>
-                    </CardContent>
-                </Card>
-                <Card className="border-green-200 bg-gradient-to-br from-green-50 to-green-100">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-green-800">Inventory Value</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-green-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-green-900">{currencyFormatter.format(totalInventoryValue)}</div>
-                        <p className="text-xs text-green-600">{totalInventoryUnits} total units</p>
-                    </CardContent>
-                </Card>
-            </div>
+                    {/* Storage Stats */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="group relative p-4 rounded-xl border border-orange-200 dark:border-orange-900/50 bg-white/80 dark:bg-gray-800/50 backdrop-blur hover:shadow-lg transition-all duration-200">
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-orange-100/50 dark:from-orange-900/20 to-transparent rounded-xl transition-opacity" />
+                            <div className="relative flex items-center gap-3 mb-1">
+                                <Package className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                                <p className="text-xs uppercase font-semibold text-orange-600 dark:text-orange-400">Total Products</p>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white ml-8">{totalProducts}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 ml-8">In your catalog</p>
+                        </div>
+                        <div className="group relative p-4 rounded-xl border border-green-200 dark:border-green-900/50 bg-white/80 dark:bg-gray-800/50 backdrop-blur hover:shadow-lg transition-all duration-200">
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-green-100/50 dark:from-green-900/20 to-transparent rounded-xl transition-opacity" />
+                            <div className="relative flex items-center gap-3 mb-1">
+                                <Store className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                                <p className="text-xs uppercase font-semibold text-green-600 dark:text-green-400">Active Listings</p>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white ml-8">{activeProducts}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 ml-8">Live & selling</p>
+                        </div>
+                        <div className="group relative p-4 rounded-xl border border-purple-200 dark:border-purple-900/50 bg-white/80 dark:bg-gray-800/50 backdrop-blur hover:shadow-lg transition-all duration-200">
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-purple-100/50 dark:from-purple-900/20 to-transparent rounded-xl transition-opacity" />
+                            <div className="relative flex items-center gap-3 mb-1">
+                                <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                                <p className="text-xs uppercase font-semibold text-purple-600 dark:text-purple-400">Inventory Value</p>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white ml-8">{currencyFormatter.format(totalInventoryValue)}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 ml-8">{totalInventoryUnits} units</p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
 
-            <Card className="border-2 border-dashed border-orange-200 bg-orange-50/30">
-                <CardHeader>
-                    <div className="flex items-center justify-between">
+            {/* Products List Section */}
+            <Card className="border-0 bg-white dark:bg-gray-950 shadow-lg dark:shadow-gray-900/50">
+                <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-orange-100 rounded-lg">
-                                <Layers className="h-5 w-5 text-orange-600" />
+                            <div className="p-2.5 bg-gradient-to-br from-orange-100 dark:from-orange-900/40 to-orange-50 dark:to-orange-900/20 rounded-lg">
+                                <Package className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                             </div>
                             <div>
-                                <CardTitle className="text-xl text-gray-900">Offline Store Inventory</CardTitle>
-                                <p className="text-sm text-gray-600">Manage products available at your physical locations</p>
+                                <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white">Product Inventory</CardTitle>
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Manage all your offline store products</p>
                             </div>
                         </div>
-                        <Badge variant="outline" className="border-orange-300 text-orange-700 bg-orange-50">
-                            {totalProducts} products
+                        <Badge variant="outline" className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950 text-xs sm:text-sm">
+                            {totalProducts} {totalProducts === 1 ? 'product' : 'products'}
                         </Badge>
                     </div>
                 </CardHeader>
                 <CardContent>
                     {loadingProducts ? (
-                        <div className="py-12 text-center text-sm text-gray-600">Loading offline products...</div>
+                        <div className="py-12 text-center text-sm text-gray-600 dark:text-gray-400">Loading offline products...</div>
                     ) : products.length === 0 ? (
-                        <div className="text-center py-12 border-2 border-dashed rounded-2xl">
-                            <p className="text-lg font-semibold text-muted-foreground">No offline products added yet.</p>
-                            <p className="text-sm text-muted-foreground">Use the button above to create your first offline product.</p>
+                        <div className="text-center py-12 border-2 border-dashed rounded-2xl dark:border-gray-700">
+                            <p className="text-lg font-semibold text-muted-foreground dark:text-gray-300">No offline products added yet.</p>
+                            <p className="text-sm text-muted-foreground dark:text-gray-400">Use the button above to create your first offline product.</p>
                         </div>
                     ) : (
                         <div className="space-y-4">
                             {products.map((product) => {
                                 const statusStyles = product.status === "active"
-                                    ? "bg-green-100 text-green-700 border-green-200"
-                                    : "bg-gray-200 text-gray-700 border-gray-300";
+                                    ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700"
+                                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600";
                                 return (
                                     <div
                                         key={product.offlineProductId}
-                                        className="rounded-xl border border-orange-200 bg-white p-5 shadow-sm"
+                                        className="rounded-xl border border-orange-200 dark:border-orange-700 bg-white dark:bg-gray-800 p-5 shadow-sm"
                                     >
                                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                                             <div className="space-y-2">
                                                 <div className="flex flex-wrap items-center gap-2">
-                                                    <h3 className="text-lg font-semibold text-gray-900">
+                                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                                         {product.productName}
                                                     </h3>
                                                     <Badge className={statusStyles}>{product.status}</Badge>
                                                 </div>
-                                                <div className="text-sm text-gray-600">{product.category}</div>
-                                                <div className="text-sm text-gray-500 line-clamp-2">{product.description}</div>
-                                                <div className="flex flex-wrap gap-4 text-sm text-gray-700">
+                                                <div className="text-sm text-gray-600 dark:text-gray-400">{product.category}</div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-500 line-clamp-2">{product.description}</div>
+                                                <div className="flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
                                                     <span>
                                                         Price: {currencyFormatter.format(product.price)}
                                                     </span>
@@ -666,7 +710,7 @@ export const OfflineProductsManagement = () => {
                                                 {product.tags && product.tags.length > 0 && (
                                                     <div className="flex flex-wrap gap-2">
                                                         {product.tags.map((tag) => (
-                                                            <Badge key={tag} variant="secondary" className="text-xs">
+                                                            <Badge key={tag} variant="secondary" className="text-xs dark:bg-gray-700 dark:text-gray-200">
                                                                 {tag}
                                                             </Badge>
                                                         ))}

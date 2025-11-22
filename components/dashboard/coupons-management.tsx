@@ -78,9 +78,9 @@ const generateMultipleCodes = (count: number, merchantId?: string): string[] => 
 
 const themeConfig: Record<string, any> = {
   classic: {
-    leftGradient: 'from-blue-600 to-blue-700',
-    borderColor: 'border-blue-200',
-    bgGradient: 'from-blue-50 to-indigo-50',
+    leftGradient: 'from-gray-600 to-gray-700',
+    borderColor: 'border-gray-200',
+    bgGradient: 'from-gray-50 to-gray-50',
     accentColor: '#1e40af',
     leftAccent: '#1e40af',
     emoji: '🎫',
@@ -132,18 +132,18 @@ const themeConfig: Record<string, any> = {
     title: 'MEGA SALE',
   },
   emoji: {
-    leftGradient: 'from-cyan-600 to-blue-600',
+    leftGradient: 'from-cyan-600 to-gray-600',
     borderColor: 'border-cyan-200',
-    bgGradient: 'from-cyan-50 to-blue-50',
+    bgGradient: 'from-cyan-50 to-gray-50',
     accentColor: '#0891b2',
     leftAccent: '#0891b2',
     emoji: '😊',
     title: 'SPECIAL DEAL',
   },
   'first-time': {
-    leftGradient: 'from-indigo-600 to-purple-600',
-    borderColor: 'border-indigo-200',
-    bgGradient: 'from-indigo-50 to-purple-50',
+    leftGradient: 'from-gray-600 to-purple-600',
+    borderColor: 'border-gray-200',
+    bgGradient: 'from-gray-50 to-purple-50',
     accentColor: '#4f46e5',
     leftAccent: '#4f46e5',
     emoji: '🌟',
@@ -168,9 +168,9 @@ const themeConfig: Record<string, any> = {
     title: 'BIRTHDAY BASH',
   },
   holiday: {
-    leftGradient: 'from-emerald-600 to-blue-600',
+    leftGradient: 'from-emerald-600 to-gray-600',
     borderColor: 'border-emerald-200',
-    bgGradient: 'from-emerald-50 to-blue-50',
+    bgGradient: 'from-emerald-50 to-gray-50',
     accentColor: '#059669',
     leftAccent: '#059669',
     emoji: '🏖️',
@@ -231,9 +231,9 @@ const themeConfig: Record<string, any> = {
     title: 'FLASH SALE',
   },
   members: {
-    leftGradient: 'from-purple-600 to-indigo-600',
+    leftGradient: 'from-purple-600 to-gray-600',
     borderColor: 'border-purple-200',
-    bgGradient: 'from-purple-50 to-indigo-50',
+    bgGradient: 'from-purple-50 to-gray-50',
     accentColor: '#7c3aed',
     leftAccent: '#7c3aed',
     emoji: '👑',
@@ -451,11 +451,11 @@ const CouponCard = ({
               variant="ghost"
               size="sm"
               onClick={() => onDownload(coupon)}
-              className="h-7 sm:h-8 w-7 sm:w-8 p-0 hover:bg-blue-100"
+              className="h-7 sm:h-8 w-7 sm:w-8 p-0 hover:bg-gray-100"
               title="Download as Image"
               disabled={coupon.usedCount > 0}
             >
-              <Download className="h-3 sm:h-4 w-3 sm:w-4 text-blue-600" />
+              <Download className="h-3 sm:h-4 w-3 sm:w-4 text-gray-600" />
             </Button>
           )}
           {onShare && (
@@ -1149,11 +1149,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
   const groupedCoupons = groupCouponsBySeries(filteredCoupons);
 
   return (
-    <div className="space-y-6">
+    <div id="tour-coupons" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Coupons Management</h1>
-          <p className="text-sm sm:text-base text-gray-600">Create and manage discount coupons for your store</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Coupons Management</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Create and manage discount coupons for your store</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <Button onClick={() => {
@@ -1161,11 +1161,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             setCheckCouponCode('');
             setCheckedCoupon(null);
             setCheckCouponSearched(false);
-          }} variant="outline" className="border-amber-300 hover:bg-amber-50 w-full sm:w-auto">
+          }} variant="outline" className="border-amber-300 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-900/30 hover:bg-amber-50 w-full sm:w-auto">
             <Search className="h-4 w-4 mr-2" />
             Check Coupon
           </Button>
-          <Button onClick={openCreateDialog} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+          <Button id="tour-coupons-actions" onClick={openCreateDialog} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Create Coupon
           </Button>
@@ -1173,12 +1173,12 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
       </div>
 
       <div className="flex gap-2 items-center">
-        <span className="text-sm font-medium text-gray-700">Filter:</span>
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter:</span>
         <Select value={usageFilter} onValueChange={(value: 'all' | 'used' | 'unused') => setUsageFilter(value)}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-40 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="dark:bg-gray-900 dark:border-gray-700">
             <SelectItem value="all">All Coupons</SelectItem>
             <SelectItem value="used">Used Coupons</SelectItem>
             <SelectItem value="unused">Unused Coupons</SelectItem>
@@ -1190,10 +1190,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
         {(() => {
           const seriesArray = Object.entries(groupedCoupons).filter(([id]) => id !== 'individual');
           return seriesArray.length > 0 ? (
-            <div key="bulk-accordion" className="border-2 border-purple-300 rounded-lg overflow-hidden bg-white shadow">
+            <div key="bulk-accordion" className="border-2 border-purple-300 dark:border-purple-800 rounded-lg overflow-hidden bg-white dark:bg-gray-950 shadow dark:shadow-gray-900/50">
               <button
                 onClick={() => setExpandedBulk(!expandedBulk)}
-                className="w-full px-3 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 transition-all text-white flex-wrap sm:flex-nowrap"
+                className="w-full px-3 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-2 bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-900 dark:to-purple-800 hover:from-purple-700 hover:to-purple-800 dark:hover:from-purple-800 dark:hover:to-purple-700 transition-all text-white flex-wrap sm:flex-nowrap"
               >
                 <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                   {expandedBulk ? (
@@ -1205,41 +1205,41 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     <h3 className="font-bold text-base sm:text-lg text-white truncate">
                       Bulk Generated Series
                     </h3>
-                    <p className="text-xs sm:text-sm text-purple-100">
+                    <p className="text-xs sm:text-sm text-purple-100 dark:text-purple-200">
                       {seriesArray.length} series
                     </p>
                   </div>
                 </div>
-                <Badge className="bg-purple-300 text-purple-900 text-xs flex-shrink-0">
+                <Badge className="bg-purple-300 dark:bg-purple-600 text-purple-900 dark:text-purple-100 text-xs flex-shrink-0">
                   {seriesArray.reduce((sum, [, coupons]) => sum + coupons.length, 0)}
                 </Badge>
               </button>
 
               {expandedBulk && (
-                <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-gray-50 to-white space-y-3 sm:space-y-4 border-t-2 border-purple-100">
+                <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-gray-50 dark:from-gray-900 to-white dark:to-gray-950 space-y-3 sm:space-y-4 border-t-2 border-purple-100 dark:border-purple-800">
                   {seriesArray.map(([seriesId, couponsSeries]) => {
                     const isExpanded = expandedSeries[seriesId] || false;
                     const sortedCoupons = [...couponsSeries].sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0));
                     const summary = getSeriesSummary(couponsSeries);
 
                     return (
-                      <div key={seriesId} className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-                        <div className="px-3 sm:px-5 py-3 flex items-center justify-between gap-2 bg-gray-100 hover:bg-gray-150 transition-colors flex-wrap sm:flex-nowrap">
+                      <div key={seriesId} className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-900">
+                        <div className="px-3 sm:px-5 py-3 flex items-center justify-between gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-150 dark:hover:bg-gray-700 transition-colors flex-wrap sm:flex-nowrap">
                           <button
                             onClick={() => toggleSeriesExpand(seriesId)}
                             className="flex items-center gap-2 sm:gap-3 flex-1 text-left hover:opacity-75 transition-opacity min-w-0"
                           >
                             {isExpanded ? (
-                              <ChevronDown className="h-5 w-5 text-gray-700" />
+                              <ChevronDown className="h-5 w-5 text-gray-700 dark:text-gray-400" />
                             ) : (
-                              <ChevronRight className="h-5 w-5 text-gray-700" />
+                              <ChevronRight className="h-5 w-5 text-gray-700 dark:text-gray-400" />
                             )}
                             <div className="text-left min-w-0">
-                              <h4 className="font-semibold text-gray-900 text-xs sm:text-sm flex items-center gap-2 truncate">
+                              <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm flex items-center gap-2 truncate">
                                 {summary.hasHappyHour && <span title="Happy Hour Coupon" className="flex-shrink-0">⏰</span>}
                                 <span className="truncate">{sortedCoupons[0]?.seriesNote ? sortedCoupons[0].seriesNote : `${sortedCoupons[0]?.code} to ${sortedCoupons[sortedCoupons.length - 1]?.code}`}</span>
                               </h4>
-                              <p className="text-xs text-gray-600 truncate">
+                              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                                 {couponsSeries.length} coupons · {summary.totalUsed} used · {summary.totalRemaining} remaining
                               </p>
                             </div>
@@ -1248,7 +1248,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteSeries(seriesId, couponsSeries.length)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs sm:text-sm flex-shrink-0 whitespace-nowrap"
+                            className="text-red-600 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30 hover:text-red-700 hover:bg-red-50 text-xs sm:text-sm flex-shrink-0 whitespace-nowrap"
                           >
                             <Trash2 className="h-3 sm:h-4 w-3 sm:w-4" />
                             <span className="hidden sm:inline">Delete Series</span>
@@ -1264,7 +1264,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                           const totalPages = Math.ceil(sortedCoupons.length / itemsPerPage);
 
                           return (
-                            <div className="p-3 sm:p-4 md:p-6 bg-gray-50 border-t space-y-3 sm:space-y-4">
+                            <div className="p-3 sm:p-4 md:p-6 bg-gray-50 dark:bg-gray-800 border-t dark:border-gray-700 space-y-3 sm:space-y-4">
                               <div className="grid gap-3 sm:gap-4 md:gap-6">
                                 {paginatedSeries.map((coupon) => (
                                   <CouponCard
@@ -1282,7 +1282,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                                 ))}
                               </div>
                               {totalPages > 1 && (
-                                <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t">
+                                <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t dark:border-gray-700">
                                   <Button
                                     variant="outline"
                                     size="sm"
@@ -1291,10 +1291,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                                       [seriesId]: Math.max(0, (prev[seriesId] || 0) - 1)
                                     }))}
                                     disabled={currentPage === 0}
+                                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
                                   >
                                     Previous
                                   </Button>
-                                  <span className="text-sm text-gray-600">
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">
                                     Page {currentPage + 1} of {totalPages}
                                   </span>
                                   <Button
@@ -1305,6 +1306,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                                       [seriesId]: Math.min(totalPages - 1, (prev[seriesId] || 0) + 1)
                                     }))}
                                     disabled={currentPage === totalPages - 1}
+                                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
                                   >
                                     Next
                                   </Button>
@@ -1331,10 +1333,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
           const totalPages = Math.ceil(individualCoupons.length / itemsPerPage);
 
           return individualCoupons.length > 0 ? (
-            <div key="individual-accordion" className="border-2 border-green-300 rounded-lg overflow-hidden bg-white shadow">
+            <div key="individual-accordion" className="border-2 border-green-300 dark:border-green-800 rounded-lg overflow-hidden bg-white dark:bg-gray-950 shadow dark:shadow-gray-900/50">
               <button
                 onClick={() => setExpandedIndividual(!expandedIndividual)}
-                className="w-full px-3 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transition-all text-white flex-wrap sm:flex-nowrap"
+                className="w-full px-3 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-2 bg-gradient-to-r from-green-600 to-green-700 dark:from-green-900 dark:to-green-800 hover:from-green-700 hover:to-green-800 dark:hover:from-green-800 dark:hover:to-green-700 transition-all text-white flex-wrap sm:flex-nowrap"
               >
                 <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                   {expandedIndividual ? (
@@ -1346,18 +1348,18 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     <h3 className="font-bold text-base sm:text-lg text-white truncate">
                       Individual Coupons
                     </h3>
-                    <p className="text-xs sm:text-sm text-green-100">
+                    <p className="text-xs sm:text-sm text-green-100 dark:text-green-200">
                       {individualCoupons.length} coupons
                     </p>
                   </div>
                 </div>
-                <Badge className="bg-green-300 text-green-900 text-xs flex-shrink-0">
+                <Badge className="bg-green-300 dark:bg-green-600 text-green-900 dark:text-green-100 text-xs flex-shrink-0">
                   {individualCoupons.length}
                 </Badge>
               </button>
 
               {expandedIndividual && (
-                <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-gray-50 to-white space-y-3 sm:space-y-4 border-t-2 border-green-100">
+                <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-gray-50 dark:from-gray-900 to-white dark:to-gray-950 space-y-3 sm:space-y-4 border-t-2 border-green-100 dark:border-green-800">
                   <div className="grid gap-3 sm:gap-4 md:gap-6">
                     {paginatedCoupons.map((coupon) => (
                       <CouponCard
@@ -1375,16 +1377,17 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     ))}
                   </div>
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t">
+                    <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t dark:border-gray-700">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setIndividualPagination(Math.max(0, currentPage - 1))}
                         disabled={currentPage === 0}
+                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
                       >
                         Previous
                       </Button>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         Page {currentPage + 1} of {totalPages}
                       </span>
                       <Button
@@ -1392,6 +1395,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                         size="sm"
                         onClick={() => setIndividualPagination(Math.min(totalPages - 1, currentPage + 1))}
                         disabled={currentPage === totalPages - 1}
+                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
                       >
                         Next
                       </Button>
@@ -1406,9 +1410,9 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
       {coupons.length === 0 && (
         <div className="text-center py-12">
-          <Tag className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No coupons yet</h3>
-          <p className="text-gray-600 mb-4">Create your first coupon to start offering discounts</p>
+          <Tag className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No coupons yet</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">Create your first coupon to start offering discounts</p>
           <Button onClick={openCreateDialog}>
             <Plus className="h-4 w-4 mr-2" />
             Create Your First Coupon
@@ -1418,9 +1422,9 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="w-[95vw] max-w-[1200px] max-h-[90vh] overflow-auto p-3 sm:p-6">
+        <DialogContent className="w-[95vw] max-w-[1200px] max-h-[90vh] overflow-auto p-3 sm:p-6 dark:bg-gray-900 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl">
+            <DialogTitle className="text-lg sm:text-xl dark:text-gray-100">
               {editingCoupon ? 'Edit Coupon' : 'Create New Coupon'}
             </DialogTitle>
           </DialogHeader>
@@ -1428,12 +1432,12 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             <div className="space-y-3 sm:space-y-4">
             {!editingCoupon && (
               <div>
-                <Label htmlFor="generationType">Generation Type</Label>
+                <Label htmlFor="generationType" className="dark:text-gray-200">Generation Type</Label>
                 <Select value={generationType} onValueChange={(value: 'single' | 'bulk' | 'user') => setGenerationType(value)}>
-                  <SelectTrigger className="text-sm">
+                  <SelectTrigger className="text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                     <SelectItem value="single">Single Coupon</SelectItem>
                     <SelectItem value="bulk">Bulk Generation (Series)</SelectItem>
                     <SelectItem value="user">User-Specific Coupon</SelectItem>
@@ -1445,19 +1449,20 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               {generationType === 'single' && (
                 <div>
-                  <Label htmlFor="code">Coupon Code *</Label>
+                  <Label htmlFor="code" className="dark:text-gray-200">Coupon Code *</Label>
                   <Input
                     id="code"
                     value={code}
                     onChange={(e) => setCode(e.target.value.toUpperCase())}
                     placeholder="SUMMER2024"
                     required
+                    className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                   />
                 </div>
               )}
               {generationType === 'bulk' && (
                 <div>
-                  <Label htmlFor="bulkGenerationCount">Number of Coupons *</Label>
+                  <Label htmlFor="bulkGenerationCount" className="dark:text-gray-200">Number of Coupons *</Label>
                   <Input
                     id="bulkGenerationCount"
                     type="number"
@@ -1466,28 +1471,30 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     placeholder="10"
                     required
                     min="1"
+                    className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                   />
                 </div>
               )}
               {generationType === 'user' && (
                 <div>
-                  <Label htmlFor="userId">User ID *</Label>
+                  <Label htmlFor="userId" className="dark:text-gray-200">User ID *</Label>
                   <Input
                     id="userId"
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                     placeholder="user-123"
                     required
+                    className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                   />
                 </div>
               )}
               <div>
-                <Label htmlFor="discountType">Discount Type</Label>
+                <Label htmlFor="discountType" className="dark:text-gray-200">Discount Type</Label>
                 <Select value={discountType} onValueChange={(value: 'percentage' | 'fixed') => setDiscountType(value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                     <SelectItem value="percentage">Percentage</SelectItem>
                     <SelectItem value="fixed">Fixed Amount</SelectItem>
                   </SelectContent>
@@ -1496,7 +1503,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             </div>
 
             <div>
-              <Label htmlFor="discountValue">
+              <Label htmlFor="discountValue" className="dark:text-gray-200">
                 Discount Value * ({discountType === 'percentage' ? '%' : '₹'})
               </Label>
               <Input
@@ -1508,12 +1515,13 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                 required
                 min="0"
                 step={discountType === 'percentage' ? '0.1' : '0.01'}
+                className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               <div>
-                <Label htmlFor="minPurchase">Min. Purchase (₹)</Label>
+                <Label htmlFor="minPurchase" className="dark:text-gray-200">Min. Purchase (₹)</Label>
                 <Input
                   id="minPurchase"
                   type="number"
@@ -1522,11 +1530,11 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   placeholder="50"
                   min="0"
                   step="0.01"
-                  className="text-sm"
+                  className="text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                 />
               </div>
               <div>
-                <Label htmlFor="maxDiscount">Max. Discount (₹)</Label>
+                <Label htmlFor="maxDiscount" className="dark:text-gray-200">Max. Discount (₹)</Label>
                 <Input
                   id="maxDiscount"
                   type="number"
@@ -1535,29 +1543,30 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   placeholder="100"
                   min="0"
                   step="0.01"
-                  className="text-sm"
+                  className="text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="expiryDate">Expiry Date *</Label>
+              <Label htmlFor="expiryDate" className="dark:text-gray-200">Expiry Date *</Label>
               <Input
                 id="expiryDate"
                 type="date"
                 value={expiryDate}
                 onChange={(e) => setExpiryDate(e.target.value)}
                 required
+                className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
 
             <div>
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="dark:text-gray-200">Status</Label>
               <Select value={status} onValueChange={(value: 'active' | 'inactive') => setStatus(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
@@ -1565,12 +1574,12 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             </div>
 
             <div>
-              <Label htmlFor="theme">Coupon Theme</Label>
+              <Label htmlFor="theme" className="dark:text-gray-200">Coupon Theme</Label>
               <Select value={theme} onValueChange={(value: any) => setTheme(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                   <SelectItem value="classic">🎫 Classic</SelectItem>
                   <SelectItem value="friendship">👯 Friendship Special</SelectItem>
                   <SelectItem value="love">💕 Love Offer</SelectItem>
@@ -1598,23 +1607,23 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             </div>
 
             <div>
-              <Label htmlFor="couponType">Coupon Type</Label>
+              <Label htmlFor="couponType" className="dark:text-gray-200">Coupon Type</Label>
               <Select value={couponType} onValueChange={(value: 'regular' | 'happy-hour') => setCouponType(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                   <SelectItem value="regular">Regular Coupon</SelectItem>
                   <SelectItem value="happy-hour">Happy Hour Coupon</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-gray-500 mt-1">Happy Hour coupons work only during specific days and time frames</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Happy Hour coupons work only during specific days and time frames</p>
             </div>
 
             {couponType === 'happy-hour' && (
               <>
                 <div>
-                  <Label>Valid Days (Select days when coupon is active)</Label>
+                  <Label className="dark:text-gray-200">Valid Days (Select days when coupon is active)</Label>
                   <div className="space-y-1.5 sm:space-y-2 mt-2">
                     {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
                       <div key={day} className="flex items-center space-x-2">
@@ -1629,9 +1638,9 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                               setHappyHourDays(happyHourDays.filter(d => d !== day));
                             }
                           }}
-                          className="w-4 h-4 cursor-pointer"
+                          className="w-4 h-4 cursor-pointer dark:bg-gray-800 dark:border-gray-600"
                         />
-                        <Label htmlFor={day} className="cursor-pointer text-sm">{day}</Label>
+                        <Label htmlFor={day} className="cursor-pointer text-sm dark:text-gray-200">{day}</Label>
                       </div>
                     ))}
                   </div>
@@ -1639,25 +1648,25 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   <div>
-                    <Label htmlFor="happyHourStartTime">Start Time (HH:MM)</Label>
+                    <Label htmlFor="happyHourStartTime" className="dark:text-gray-200">Start Time (HH:MM)</Label>
                     <Input
                       id="happyHourStartTime"
                       type="time"
                       value={happyHourStartTime}
                       onChange={(e) => setHappyHourStartTime(e.target.value)}
                       required={couponType === 'happy-hour'}
-                      className="text-sm"
+                      className="text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="happyHourEndTime">End Time (HH:MM)</Label>
+                    <Label htmlFor="happyHourEndTime" className="dark:text-gray-200">End Time (HH:MM)</Label>
                     <Input
                       id="happyHourEndTime"
                       type="time"
                       value={happyHourEndTime}
                       onChange={(e) => setHappyHourEndTime(e.target.value)}
                       required={couponType === 'happy-hour'}
-                      className="text-sm"
+                      className="text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                     />
                   </div>
                 </div>
@@ -1666,38 +1675,39 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
             {generationType === 'bulk' && !editingCoupon && (
               <div>
-                <Label htmlFor="seriesNote">Series Note (Optional)</Label>
+                <Label htmlFor="seriesNote" className="dark:text-gray-200">Series Note (Optional)</Label>
                 <Input
                   id="seriesNote"
                   value={seriesNote}
                   onChange={(e) => setSeriesNote(e.target.value)}
                   placeholder="e.g., Summer Sale 2024, Employee Discount, etc."
                   maxLength={100}
+                  className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                 />
-                <p className="text-xs text-gray-500 mt-1">Add a note to remember what occasion this series was created for</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Add a note to remember what occasion this series was created for</p>
               </div>
             )}
 
             {generationType === 'user' && !editingCoupon && (
-              <div className="flex items-center space-x-2 border rounded-lg p-3 bg-blue-50">
+              <div className="flex items-center space-x-2 border rounded-lg p-3 bg-gray-50 dark:bg-gray-900/20 dark:border-gray-800">
                 <input
                   type="checkbox"
                   id="isRestricted"
                   checked={isRestricted}
                   onChange={(e) => setIsRestricted(e.target.checked)}
-                  className="w-4 h-4 cursor-pointer"
+                  className="w-4 h-4 cursor-pointer dark:bg-gray-800 dark:border-gray-600"
                 />
-                <Label htmlFor="isRestricted" className="cursor-pointer flex-1">
+                <Label htmlFor="isRestricted" className="cursor-pointer flex-1 dark:text-gray-200">
                   Restrict to this user only (Can only be used by specified user)
                 </Label>
               </div>
             )}
 
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 col-span-1 lg:col-span-2 border-t">
-              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} className="w-full sm:w-auto text-sm">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 col-span-1 lg:col-span-2 border-t dark:border-gray-700">
+              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} className="w-full sm:w-auto text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700">
                 Cancel
               </Button>
-              <Button type="submit" className="w-full sm:w-auto text-sm">
+              <Button type="submit" className="w-full sm:w-auto text-sm" variant={editingCoupon ? 'default' : 'success'}>
                 {editingCoupon 
                   ? 'Update Coupon' 
                   : generationType === 'bulk' 
@@ -1712,8 +1722,8 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
             <div className="flex flex-col justify-start gap-3 sm:gap-4">
               <div>
-                <h3 className="text-sm font-semibold mb-4">Live Preview</h3>
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 sticky top-0">
+                <h3 className="text-sm font-semibold mb-4 dark:text-gray-200">Live Preview</h3>
+                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 sticky top-0">
                   {discountValue ? (
                     <CouponCard
                       coupon={{
@@ -1743,7 +1753,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                       onShare={undefined}
                     />
                   ) : (
-                    <div className="text-center py-12 text-gray-400">
+                    <div className="text-center py-12 text-gray-400 dark:text-gray-500">
                       <p className="text-sm">Enter discount value to see preview</p>
                     </div>
                   )}
@@ -1751,10 +1761,10 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold mb-2 text-gray-600">THEME SAMPLES</h3>
+                <h3 className="text-xs font-semibold mb-2 text-gray-600 dark:text-gray-400">THEME SAMPLES</h3>
                 <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
                   {['classic', 'friendship', 'love', 'gift', 'festival', 'sale', 'emoji', 'first-time', 'missed-you', 'birthday', 'holiday', 'seasonal', 'weekend', 'student', 'senior', 'bulk', 'flash', 'members', 'loyalty', 'launch', 'bonus', 'happy-hour'].map((t) => (
-                    <div key={t} className={`p-2 rounded border-2 bg-white hover:bg-gray-50 cursor-pointer transition-all ${theme === t ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-200'}`} onClick={() => setTheme(t as any)}>
+                    <div key={t} className={`p-2 rounded border-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-all ${theme === t ? 'border-gray-500 dark:border-gray-600 ring-2 ring-gray-300 dark:ring-gray-400' : 'border-gray-200 dark:border-gray-700'}`} onClick={() => setTheme(t as any)}>
                       <CouponCard
                         coupon={{
                           _id: `sample-${t}`,
@@ -1787,15 +1797,15 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
       {/* QR Code Dialog */}
       <Dialog open={qrDialogOpen} onOpenChange={setQrDialogOpen}>
-        <DialogContent className="w-[90vw] sm:max-w-[400px]">
+        <DialogContent className="w-[90vw] sm:max-w-[400px] dark:bg-gray-900 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">QR Code for {selectedCoupon?.code}</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg dark:text-gray-100">QR Code for {selectedCoupon?.code}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4">
             {qrCodeUrl && (
               <img src={qrCodeUrl} alt="QR Code" className="w-32 sm:w-48 h-32 sm:h-48" />
             )}
-            <p className="text-xs sm:text-sm text-gray-600 text-center">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 text-center">
               Scan this QR code to apply the coupon {selectedCoupon?.code}
             </p>
             <Button
@@ -1806,6 +1816,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                 link.click();
               }}
               variant="outline"
+              className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               Download QR Code
             </Button>
@@ -1815,9 +1826,9 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
 
       {/* Check Coupon Status Dialog */}
       <Dialog open={checkCouponDialogOpen} onOpenChange={setCheckCouponDialogOpen}>
-        <DialogContent className="w-[95vw] max-w-[900px] h-auto max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-[900px] h-auto max-h-[90vh] overflow-y-auto dark:bg-gray-900 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl">Check Coupon Availability</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl dark:text-gray-100">Check Coupon Availability</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
@@ -1830,12 +1841,12 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     checkCouponStatus();
                   }
                 }}
-                className="flex-1 text-sm"
+                className="flex-1 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               />
               <Button
                 onClick={checkCouponStatus}
                 disabled={checkCouponLoading || !checkCouponCode.trim()}
-                className="bg-blue-600 hover:bg-blue-700 text-sm"
+                className="bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
                 size="sm"
                 title="Search"
               >
@@ -1850,7 +1861,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   onClick={checkCouponStatus}
                   disabled={checkCouponLoading || !checkCouponCode.trim()}
                   variant="outline"
-                  className="text-sm"
+                  className="text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
                   size="sm"
                   title="Refresh status"
                 >
@@ -1871,8 +1882,8 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             {checkCouponSearched && checkedCoupon && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 min-h-max">
-                  <div className={`rounded-lg p-4 border-2 ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                    <p className={`font-bold flex items-center gap-2 text-base sm:text-lg ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-700' : 'text-red-700'}`}>
+                  <div className={`rounded-lg p-4 border-2 ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'}`}>
+                    <p className={`font-bold flex items-center gap-2 text-base sm:text-lg ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
                       {isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? (
                         <>✅ Ready for Use</>
                       ) : (
@@ -1881,33 +1892,33 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                     </p>
                     <div className="mt-2 sm:mt-3 text-xs sm:text-sm space-y-1 sm:space-y-2">
                       {checkedCoupon.status !== 'active' && (
-                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}>• Coupon is {checkedCoupon.status}</p>
+                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>• Coupon is {checkedCoupon.status}</p>
                       )}
                       {checkedCoupon.usedCount > 0 && (
-                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}>• Coupon has already been used</p>
+                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>• Coupon has already been used</p>
                       )}
                       {checkedCoupon.couponType === 'happy-hour' && !isHappyHourAvailable(checkedCoupon) && (
-                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}>• Not within Happy Hour window ({checkedCoupon.happyHourDays?.join(', ')} {checkedCoupon.happyHourStartTime}-{checkedCoupon.happyHourEndTime})</p>
+                        <p className={isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>• Not within Happy Hour window ({checkedCoupon.happyHourDays?.join(', ')} {checkedCoupon.happyHourStartTime}-{checkedCoupon.happyHourEndTime})</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="border rounded-lg p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-x-auto">
-                    <h3 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">Coupon Details</h3>
+                  <div className="border rounded-lg p-3 sm:p-4 bg-gradient-to-br from-gray-50 dark:from-gray-900/20 to-gray-50 dark:to-gray-900/20 dark:border-gray-700 overflow-x-auto">
+                    <h3 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3 dark:text-gray-100">Coupon Details</h3>
                     <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Code:</span>
-                        <span className="font-bold text-gray-900">{checkedCoupon.code}</span>
+                        <span className="text-gray-600 dark:text-gray-400">Code:</span>
+                        <span className="font-bold text-gray-900 dark:text-gray-100">{checkedCoupon.code}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Status:</span>
-                        <Badge className={checkedCoupon.status === 'active' ? 'bg-green-500' : 'bg-red-500'}>
+                        <span className="text-gray-600 dark:text-gray-400">Status:</span>
+                        <Badge className={checkedCoupon.status === 'active' ? 'bg-green-500 dark:bg-green-600' : 'bg-red-500 dark:bg-red-600'}>
                           {checkedCoupon.status === 'active' ? 'Active' : 'Inactive'}
                         </Badge>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Discount:</span>
-                        <span className="font-bold">
+                        <span className="text-gray-600 dark:text-gray-400">Discount:</span>
+                        <span className="font-bold dark:text-gray-100">
                           {checkedCoupon.discountType === 'percentage'
                             ? `${checkedCoupon.discountValue}%`
                             : `₹${checkedCoupon.discountValue}`}
@@ -1915,45 +1926,45 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                       </div>
                       {checkedCoupon.minPurchase && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Min. Purchase:</span>
-                          <span className="font-bold">₹{checkedCoupon.minPurchase}</span>
+                          <span className="text-gray-600 dark:text-gray-400">Min. Purchase:</span>
+                          <span className="font-bold dark:text-gray-100">₹{checkedCoupon.minPurchase}</span>
                         </div>
                       )}
                       {checkedCoupon.maxDiscount && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Max. Discount:</span>
-                          <span className="font-bold">₹{checkedCoupon.maxDiscount}</span>
+                          <span className="text-gray-600 dark:text-gray-400">Max. Discount:</span>
+                          <span className="font-bold dark:text-gray-100">₹{checkedCoupon.maxDiscount}</span>
                         </div>
                       )}
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Expiry Date:</span>
-                        <span className="font-bold">{formatDateToDDMMYYYY(checkedCoupon.expiryDate)}</span>
+                        <span className="text-gray-600 dark:text-gray-400">Expiry Date:</span>
+                        <span className="font-bold dark:text-gray-100">{formatDateToDDMMYYYY(checkedCoupon.expiryDate)}</span>
                       </div>
-                      <div className="flex justify-between pt-2 border-t">
-                        <span className="text-gray-600">Usage Status:</span>
-                        <span className={`font-bold ${checkedCoupon.usedCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      <div className="flex justify-between pt-2 border-t dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Usage Status:</span>
+                        <span className={`font-bold ${checkedCoupon.usedCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
                           {checkedCoupon.usedCount > 0 ? '✓ Used' : '○ Not Used'}
                         </span>
                       </div>
                       {checkedCoupon.couponType === 'happy-hour' && (
                         <>
-                          <div className="flex justify-between pt-2 border-t">
-                            <span className="text-gray-600">Type:</span>
-                            <span className="font-bold text-orange-600 flex items-center gap-1">
+                          <div className="flex justify-between pt-2 border-t dark:border-gray-700">
+                            <span className="text-gray-600 dark:text-gray-400">Type:</span>
+                            <span className="font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1">
                               ⏰ Happy Hour
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Valid Days:</span>
-                            <span className="font-bold text-right">{checkedCoupon.happyHourDays?.join(', ')}</span>
+                            <span className="text-gray-600 dark:text-gray-400">Valid Days:</span>
+                            <span className="font-bold text-right dark:text-gray-100">{checkedCoupon.happyHourDays?.join(', ')}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Time Window:</span>
-                            <span className="font-bold">{checkedCoupon.happyHourStartTime} - {checkedCoupon.happyHourEndTime}</span>
+                            <span className="text-gray-600 dark:text-gray-400">Time Window:</span>
+                            <span className="font-bold dark:text-gray-100">{checkedCoupon.happyHourStartTime} - {checkedCoupon.happyHourEndTime}</span>
                           </div>
-                          <div className="flex justify-between pt-2 border-t">
-                            <span className="text-gray-600">Ready for Use:</span>
-                            <span className={`font-bold ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <div className="flex justify-between pt-2 border-t dark:border-gray-700">
+                            <span className="text-gray-600 dark:text-gray-400">Ready for Use:</span>
+                            <span className={`font-bold ${isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                               {isHappyHourAvailable(checkedCoupon) && checkedCoupon.usedCount === 0 ? '✓ Yes' : '✗ No'}
                             </span>
                           </div>
@@ -1966,14 +1977,14 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                 {checkedCoupon.usedCount === 0 && isHappyHourAvailable(checkedCoupon) && (
                   <Button
                     onClick={() => markCouponAsUsed(checkedCoupon._id!)}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
+                    className="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600"
                   >
                     <CheckCircle2 className="h-4 w-4 mr-2" />
                     Mark as Used
                   </Button>
                 )}
                 {checkedCoupon.couponType === 'happy-hour' && !isHappyHourAvailable(checkedCoupon) && (
-                  <div className="w-full p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm text-center">
+                  <div className="w-full p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-400 text-sm text-center">
                     This coupon is not available at this time. Please try during the Happy Hour window.
                   </div>
                 )}
@@ -1981,9 +1992,9 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
             )}
 
             {checkCouponSearched && !checkedCoupon && !checkCouponLoading && (
-              <div className="border rounded-lg p-4 bg-red-50 border-red-200 text-center">
-                <p className="text-red-700 font-medium">Coupon not found</p>
-                <p className="text-sm text-red-600 mt-1">No coupon with code "{checkCouponCode}" found in your store</p>
+              <div className="border rounded-lg p-4 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-center">
+                <p className="text-red-700 dark:text-red-400 font-medium">Coupon not found</p>
+                <p className="text-sm text-red-600 dark:text-red-400 mt-1">No coupon with code "{checkCouponCode}" found in your store</p>
               </div>
             )}
           </div>
@@ -1996,17 +2007,17 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
           setConfirmDialog(prev => ({ ...prev, isOpen: false }));
         }
       }}>
-        <DialogContent className="w-[90vw] sm:max-w-[400px] p-4 sm:p-6">
+        <DialogContent className="w-[90vw] sm:max-w-[400px] p-4 sm:p-6 dark:bg-gray-900 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl">Confirm Action</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl dark:text-gray-100">Confirm Action</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 sm:space-y-4">
-            <p className="text-xs sm:text-sm text-gray-700">{confirmDialog.message}</p>
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">{confirmDialog.message}</p>
             <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 justify-end">
               <Button
                 variant="outline"
                 onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-                className="w-full sm:w-auto text-sm"
+                className="w-full sm:w-auto text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 {confirmDialog.cancelText || 'Cancel'}
               </Button>
@@ -2015,7 +2026,7 @@ export function CouponsManagement({ onCouponsChange }: CouponsManagementProps) {
                   confirmDialog.action?.();
                   setConfirmDialog(prev => ({ ...prev, isOpen: false }));
                 }}
-                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-sm"
+                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-sm"
               >
                 {confirmDialog.confirmText || 'Confirm'}
               </Button>

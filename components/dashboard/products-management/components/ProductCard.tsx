@@ -38,7 +38,7 @@ const badgeConfigs = [
   {
     condition: (product: ProductRecord) => product.cityWittyAssured,
     content: (
-      <Badge className="bg-gradient-to-r from-blue-600 to-blue-500 text-white border-0 shadow-lg backdrop-blur-sm">
+      <Badge className="bg-gradient-to-r from-gray-600 to-gray-500 text-white border-0 shadow-lg backdrop-blur-sm">
         <Shield className="h-3 w-3 mr-1" />
         Assured
       </Badge>
@@ -84,7 +84,7 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
   const hasPrimaryImage = Boolean(primaryImage);
 
   return (
-    <Card className="group overflow-hidden border-2 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 rounded-3xl bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-indigo-950/20 hover:scale-[1.02] hover:-translate-y-1">
+    <Card className="group overflow-hidden border-2 hover:border-gray-400 hover:shadow-2xl transition-all duration-500 rounded-3xl bg-gradient-to-br from-white via-gray-50/30 to-gray-50/30 dark:from-gray-900 dark:via-gray-950/20 dark:to-gray-950/20 hover:scale-[1.02] hover:-trangray-y-1">
       {/* Image Section with Enhanced Overlay */}
       <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-t-3xl">
         {hasPrimaryImage ? (
@@ -109,7 +109,7 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
+        <div id="tour-products-manage" className="absolute top-3 left-3 z-20 flex flex-col gap-2">
           <Button
             size="icon"
             variant="secondary"
@@ -152,12 +152,12 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
       <CardHeader className="pb-3 px-4">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <CardTitle className="line-clamp-2 group-hover:text-blue-600 transition-colors text-lg font-semibold leading-tight">
+            <CardTitle className="line-clamp-2 group-hover:text-gray-600 transition-colors text-lg font-semibold leading-tight">
               {product.productName}
             </CardTitle>
             <div className="flex items-center gap-2 mt-2">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
-                <Box className="h-3.5 w-3.5 text-blue-600" />
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-gray-100 to-gray-100 dark:from-gray-900/30 dark:to-gray-900/30">
+                <Box className="h-3.5 w-3.5 text-gray-600" />
               </div>
               <p className="text-sm text-muted-foreground font-medium">{product.productCategory}</p>
             </div>
@@ -217,7 +217,7 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
           className={cn(
             'flex items-center gap-3 p-3 rounded-xl border-2 shadow-md transition-all duration-300',
             isAvailable
-              ? 'bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 border-blue-200 dark:border-blue-800 hover:shadow-blue-200/50'
+              ? 'bg-gradient-to-r from-gray-50 to-cyan-50 dark:from-gray-950/20 dark:to-cyan-950/20 border-gray-200 dark:border-gray-800 hover:shadow-gray-200/50'
               : 'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 border-gray-200 dark:border-gray-700'
           )}
         >
@@ -225,7 +225,7 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
             className={cn(
               'p-2.5 rounded-lg shadow-md',
               isAvailable
-                ? 'bg-gradient-to-br from-blue-500 to-cyan-500'
+                ? 'bg-gradient-to-br from-gray-500 to-cyan-500'
                 : 'bg-gradient-to-br from-gray-400 to-gray-500'
             )}
           >
@@ -247,7 +247,7 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
         {/* Enhanced Feature Badges */}
         <div className="flex flex-wrap gap-2 pt-1">
           {product.instore && (
-            <Badge variant="outline" className="border-blue-300 text-blue-600 dark:border-blue-700 dark:text-blue-400 shadow-sm px-2 py-0.5 rounded-full hover:bg-blue-50 transition-colors text-xs">
+            <Badge variant="outline" className="border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400 shadow-sm px-2 py-0.5 rounded-full hover:bg-gray-50 transition-colors text-xs">
               <MapPin className="h-3 w-3 mr-1" />
               In-Store
             </Badge>

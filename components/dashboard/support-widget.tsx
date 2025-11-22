@@ -132,7 +132,7 @@ const quickLinks = [
         description: "Request graphics, videos, podcasts & websites",
         icon: Zap,
         href: "/dashboard?tab=support",
-        color: "text-blue-600"
+        color: "text-gray-600"
     },
     {
         title: "Add Product",
@@ -173,11 +173,11 @@ export function SupportWidget() {
     return (
         <div className="fixed bottom-6 right-6 z-50">
             {isExpanded ? (
-                <Card className="w-96 max-h-[80vh] overflow-hidden shadow-xl border-2 border-blue-200">
+                <Card className="w-96 max-h-[80vh] overflow-hidden shadow-xl border-2 border-gray-200">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                             <CardTitle className="text-lg flex items-center gap-2">
-                                <HelpCircle className="h-5 w-5 text-blue-600" />
+                                <HelpCircle className="h-5 w-5 text-gray-600" />
                                 Support Center
                             </CardTitle>
                             <Button
@@ -210,11 +210,11 @@ export function SupportWidget() {
                                 </a>
                                 <a
                                     href="mailto:support@citywitty.com"
-                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-colors group"
+                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
                                 >
-                                    <Mail className="h-4 w-4 text-blue-600" />
+                                    <Mail className="h-4 w-4 text-gray-600" />
                                     <div>
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">Email Support</span>
+                                        <span className="text-sm font-medium text-gray-700 group-hover:text-gray-600">Email Support</span>
                                         <p className="text-xs text-gray-600">support@citywitty.com</p>
                                     </div>
                                 </a>
@@ -352,7 +352,7 @@ export function SupportWidget() {
             ) : (
                 <Button
                     onClick={() => setIsExpanded(true)}
-                    className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg border-2 border-white"
+                    className="h-12 w-12 rounded-full bg-gray-600 hover:bg-gray-700 shadow-lg border-2 border-white"
                 >
                     <HelpCircle className="h-6 w-6 text-white" />
                 </Button>

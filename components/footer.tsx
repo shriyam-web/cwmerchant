@@ -30,7 +30,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-white text-gray-800">
+    <footer className="bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-300">
       <div className="container mx-auto px-6 md:px-12 py-16">
         {/* Top Grid: Logo + Links */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
@@ -42,7 +42,7 @@ export function Footer() {
               </div>
 
             </Link>
-            <p className="text-gray-600 mb-2 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 mb-2 leading-relaxed">
               Empowering merchants across India to grow their business with premium customers
               and innovative loyalty solutions.
             </p>
@@ -137,7 +137,7 @@ export function Footer() {
             {/* Go to CityWitty Button */}
             {/* <Link
               href="https://citywitty.com"
-              className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-full shadow-md transition-all"
+              className="inline-flex items-center space-x-2 bg-gray-600 hover:bg-gray-500 text-white font-medium px-4 py-2 rounded-full shadow-md transition-all"
             >
               <img src="/white.png" alt="Citywitty Logo" className="w-5 h-5 object-contain" />
               <span>Go to Citywitty</span>
@@ -147,11 +147,11 @@ export function Footer() {
           {/* Links Sections */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h3 className="font-semibold text-lg mb-4">{category}</h3>
+              <h3 className="font-semibold text-lg mb-4 dark:text-gray-100">{category}</h3>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-gray-600 hover:text-gray-800 transition-colors">
+                    <Link href={link.href} className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
                       {link.name}
                     </Link>
                   </li>
@@ -163,7 +163,7 @@ export function Footer() {
 
         {/* Ecosystem Links Section */}
         <div className="mt-7">
-          <h3 className="font-semibold text-lg mb-4">CityWitty Ecosystem</h3>
+          <h3 className="font-semibold text-lg mb-4 dark:text-gray-100">CityWitty Ecosystem</h3>
           <div className="flex flex-wrap gap-3">
             {ecosystemLinks.map((link) => (
               <a
@@ -171,7 +171,7 @@ export function Footer() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 text-sm font-medium hover:bg-gray-200 transition"
+                className="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition"
               >
                 {link.name}
               </a>
@@ -180,26 +180,26 @@ export function Footer() {
         </div>
 
         {/* Contact Info */}
-        <div className="border-t border-gray-200 mt-12 pt-8">
+        <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="flex items-center space-x-3">
-              <Mail className="h-5 w-5 text-blue-600" />
-              <span className="text-gray-700">contact@citywitty.com</span>
+              <Mail className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <span className="text-gray-700 dark:text-gray-300">contact@citywitty.com</span>
             </div>
             <div className="flex items-center space-x-3">
-              <Phone className="h-5 w-5 text-blue-600" />
-              <span className="text-gray-700">+91 6389202030</span>
+              <Phone className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <span className="text-gray-700 dark:text-gray-300">+91 6389202030</span>
             </div>
             <div className="flex items-center space-x-3">
-              <MapPin className="h-5 w-5 text-blue-600" />
-              <span className="text-gray-700">New Delhi, India</span>
+              <MapPin className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <span className="text-gray-700 dark:text-gray-300">New Delhi, India</span>
             </div>
           </div>
 
           {/* Bottom Section: Copyright & Disclaimer */}
-          <div className="text-center text-gray-500 text-sm">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
             <p>
-              &copy; 2025 <Link href="https://partner.citywitty.com" className="underline hover:text-gray-800">CityWitty Merchant Hub</Link> — Part of the <Link href="https://citywitty.com" className="underline hover:text-gray-800">CityWitty</Link> Ecosystem. All rights reserved.
+              &copy; 2025 <Link href="https://partner.citywitty.com" className="underline hover:text-gray-800 dark:hover:text-gray-300">CityWitty Merchant Hub</Link> — Part of the <Link href="https://citywitty.com" className="underline hover:text-gray-800 dark:hover:text-gray-300">CityWitty</Link> Ecosystem. All rights reserved.
             </p>
             <p className="mt-2">
               Unauthorized use, reproduction, or distribution of this platform or its intellectual property is strictly prohibited.

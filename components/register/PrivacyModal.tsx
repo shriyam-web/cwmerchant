@@ -18,7 +18,7 @@ export default function PrivacyModal({ open, onClose }: PrivacyModalProps) {
                 <h2 className="text-xl font-bold mb-4">Privacy Policy</h2>
                 <PrivacyPolicyPage />
                 <div className="mt-4 flex justify-end">
-                    <button onClick={onClose} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Close</button>
+                    <button onClick={onClose} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Close</button>
                 </div>
             </div>
         </div>

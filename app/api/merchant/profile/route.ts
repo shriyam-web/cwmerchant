@@ -27,6 +27,7 @@ export async function PUT(req: Request) {
         console.log('PUT /api/merchant/profile - merchantId:', merchantId);
         console.log('Original body username:', body.username);
         console.log('Processed username:', updateData.username);
+        console.log('FAQ from body:', body.faq);
         console.log('updateData:', JSON.stringify(updateData, null, 2));
 
         if (!merchantId) {
@@ -119,8 +120,16 @@ export async function PUT(req: Request) {
             mapLocation: updatedPartner.mapLocation || "",
             logo: updatedPartner.logo || "",
             bankDetails: updatedPartner.bankDetails || {},
+            faq: updatedPartner.faq && Array.isArray(updatedPartner.faq) ? updatedPartner.faq.map((item: any) => ({
+                question: item.question || '',
+                answer: item.answer || '',
+                certifiedBuyer: item.certifiedBuyer || false,
+                isLike: item.isLike || false
+            })) : [],
             status: updatedPartner.status || "pending",
         };
+        
+        console.log('FAQ data in response:', response.faq);
 
         console.log('API Response username:', response.username);
 

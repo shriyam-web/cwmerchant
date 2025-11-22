@@ -68,9 +68,9 @@ export const StepNavigation = ({ context }: { context: ProductsFormContextType }
               className={cn(
                 'relative flex h-14 w-14 items-center justify-center rounded-xl text-sm font-medium border-2 transition-colors',
                 isActive
-                  ? 'bg-gradient-to-br from-blue-500 to-blue-400 text-white shadow-xl border-transparent'
+                  ? 'bg-gradient-to-br from-gray-500 to-gray-400 text-white shadow-xl border-transparent'
                   : isCompleted
-                    ? 'bg-blue-100 text-blue-600 dark:from-blue-900/30 dark:text-blue-400 border-blue-300 dark:border-blue-700 shadow-md'
+                    ? 'bg-gray-100 text-gray-600 dark:from-gray-900/30 dark:text-gray-400 border-gray-300 dark:border-gray-700 shadow-md'
                     : 'bg-muted text-muted-foreground border-gray-200 dark:border-gray-700'
               )}
               title={`${step.title} — ${step.description}`}
@@ -83,7 +83,7 @@ export const StepNavigation = ({ context }: { context: ProductsFormContextType }
                   isActive
                     ? 'bg-white text-primary'
                     : isCompleted
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-gray-500 text-white'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
                 )}
               >
@@ -94,7 +94,7 @@ export const StepNavigation = ({ context }: { context: ProductsFormContextType }
               <div
                 className={cn(
                   'mx-2 h-1.5 flex-1 rounded-full relative overflow-hidden',
-                  index < currentStep ? 'bg-blue-400 shadow-sm' : 'bg-gray-200 dark:bg-gray-700'
+                  index < currentStep ? 'bg-gray-400 shadow-sm' : 'bg-gray-200 dark:bg-gray-700'
                 )}
               />
             )}
@@ -141,7 +141,7 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
   };
 
   return (
-    <div className="flex justify-between pt-6 border-t">
+    <div className="flex justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
       <Button
         type="button"
         variant="outline"
@@ -179,10 +179,10 @@ export const ProductsList = ({
 }) => {
   if (products.length === 0) {
     return (
-      <div className="text-center py-12 border-2 border-dashed rounded-2xl">
-        <Sparkles className="h-10 w-10 mx-auto text-blue-400 mb-4" />
-        <p className="text-lg font-semibold text-muted-foreground">No products added yet.</p>
-        <p className="text-sm text-muted-foreground">Start by adding your first product.</p>
+      <div className="text-center py-12 border-2 border-dashed rounded-2xl border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-900/30">
+        <Sparkles className="h-10 w-10 mx-auto text-gray-400 mb-4" />
+        <p className="text-lg font-semibold text-muted-foreground dark:text-gray-400">No products added yet.</p>
+        <p className="text-sm text-muted-foreground dark:text-gray-500">Start by adding your first product.</p>
       </div>
     );
   }

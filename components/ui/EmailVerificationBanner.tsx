@@ -87,17 +87,17 @@ export function EmailVerificationBanner({ merchantId, email, onVerified }: Email
     return (
         <>
             {/* Banner */}
-            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-500 rounded-lg p-3 mb-4 shadow-sm">
+            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 border-l-4 border-orange-500 dark:border-orange-400 rounded-lg p-3 mb-4 shadow-sm dark:shadow-gray-900/30">
                 <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5 flex-1">
                         <div className="flex-shrink-0">
-                            <AlertCircle className="h-4 w-4 text-orange-600" />
+                            <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <h3 className="text-xs font-semibold text-orange-900">
+                            <h3 className="text-xs font-semibold text-orange-900 dark:text-orange-300">
                                 Email Verification Required
                             </h3>
-                            <p className="text-xs text-orange-800 mt-0.5">
+                            <p className="text-xs text-orange-800 dark:text-orange-200 mt-0.5">
                                 Please verify <strong>{email}</strong> to unlock all features.
                             </p>
                         </div>
@@ -106,7 +106,7 @@ export function EmailVerificationBanner({ merchantId, email, onVerified }: Email
                         onClick={handleSendOtp}
                         disabled={sending}
                         size="sm"
-                        className="bg-orange-600 hover:bg-orange-700 text-white h-8 text-xs flex-shrink-0"
+                        className="bg-orange-600 dark:bg-orange-700 hover:bg-orange-700 dark:hover:bg-orange-600 text-white h-8 text-xs flex-shrink-0"
                     >
                         {sending ? (
                             <>
@@ -125,20 +125,20 @@ export function EmailVerificationBanner({ merchantId, email, onVerified }: Email
 
             {/* OTP Verification Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-md bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                            <Mail className="h-5 w-5 text-blue-600" />
+                        <DialogTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                            <Mail className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                             Verify Your Email
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-gray-600 dark:text-gray-400">
                             We've sent a 6-digit OTP to <strong>{email}</strong>. Please enter it below to verify your email address.
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
-                            <label htmlFor="otp" className="text-sm font-medium">
+                            <label htmlFor="otp" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 Enter OTP
                             </label>
                             <Input
@@ -151,10 +151,10 @@ export function EmailVerificationBanner({ merchantId, email, onVerified }: Email
                                     setOtp(value);
                                 }}
                                 maxLength={6}
-                                className="text-center text-2xl tracking-widest font-mono"
+                                className="text-center text-2xl tracking-widest font-mono bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                                 autoComplete="off"
                             />
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                                 OTP is valid for 10 minutes
                             </p>
                         </div>

@@ -58,31 +58,31 @@ const getTypeIcon = (type: NotificationType) => {
     case 'announcement':
       return <Megaphone className="h-5 w-5 text-purple-500" />;
     default:
-      return <Info className="h-5 w-5 text-blue-500" />;
+      return <Info className="h-5 w-5 text-gray-500" />;
   }
 };
 
 const getTypeStyles = (type: NotificationType) => {
   switch (type) {
     case 'success':
-      return 'bg-green-50 border-green-200 hover:bg-green-100';
+      return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30';
     case 'warning':
-      return 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100';
+      return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 hover:bg-yellow-100 dark:hover:bg-yellow-900/30';
     case 'error':
-      return 'bg-red-50 border-red-200 hover:bg-red-100';
+      return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30';
     case 'announcement':
-      return 'bg-purple-50 border-purple-200 hover:bg-purple-100';
+      return 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30';
     default:
-      return 'bg-blue-50 border-blue-200 hover:bg-blue-100';
+      return 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900/30';
   }
 };
 
 const getPriorityBadge = (priority: NotificationPriority) => {
   const styles = {
-    low: 'bg-gray-100 text-gray-700',
-    medium: 'bg-blue-100 text-blue-700',
-    high: 'bg-orange-100 text-orange-700',
-    urgent: 'bg-red-100 text-red-700 animate-pulse',
+    low: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
+    medium: 'bg-gray-100 dark:bg-gray-900/40 text-gray-700 dark:text-gray-400',
+    high: 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400',
+    urgent: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 animate-pulse',
   };
 
   return (
@@ -95,7 +95,7 @@ const getPriorityBadge = (priority: NotificationPriority) => {
 const getStatusBadge = (status: NotificationStatus) => {
   if (status === 'draft') {
     return (
-      <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-200">
+      <Badge variant="outline" className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800">
         Draft
       </Badge>
     );
@@ -103,7 +103,7 @@ const getStatusBadge = (status: NotificationStatus) => {
 
   if (status === 'archived') {
     return (
-      <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-200">
+      <Badge variant="outline" className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600">
         Archived
       </Badge>
     );
@@ -284,9 +284,9 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
   if (loading) {
     return (
       <div className="space-y-4">
-        <Card>
+        <Card className="bg-white dark:bg-gray-950 border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
               <Bell className="h-5 w-5" />
               Notifications
             </CardTitle>
@@ -302,12 +302,12 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div id="tour-notifications" className="space-y-4">
       {/* Header Card */}
-      <Card>
+      <Card className="bg-white dark:bg-gray-950 border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
               <Bell className="h-5 w-5" />
               Notifications
               {unreadCount > 0 && (
@@ -317,7 +317,7 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
               )}
             </CardTitle>
             {unreadCount > 0 && (
-              <Button variant="outline" size="sm" onClick={markAllAsRead}>
+              <Button variant="outline" size="sm" onClick={markAllAsRead} className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                 Mark All as Read
               </Button>
             )}
@@ -325,22 +325,22 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Filters and Search */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div id="tour-notifications-manage" className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <Input
                 placeholder="Search notifications..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
+                className="pl-9 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
             <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px] bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white dark:bg-gray-950 border dark:border-gray-800">
                 <SelectItem value="all">All</SelectItem>
                 <SelectItem value="unread">Unread</SelectItem>
                 <SelectItem value="info">Info</SelectItem>
@@ -356,15 +356,15 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
 
       {/* Notifications List */}
       {filteredNotifications.length === 0 ? (
-        <Card>
+        <Card className="bg-white dark:bg-gray-950 border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50">
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="rounded-full bg-gray-100 p-4 mb-4">
-              <Bell className="h-8 w-8 text-gray-400" />
+            <div className="rounded-full bg-gray-100 dark:bg-gray-700 p-4 mb-4">
+              <Bell className="h-8 w-8 text-gray-400 dark:text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {searchTerm || filter !== 'all' ? 'No Matching Notifications' : 'No Notifications'}
             </h3>
-            <p className="text-sm text-gray-500 text-center max-w-sm">
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-sm">
               {searchTerm || filter !== 'all'
                 ? 'Try adjusting your search or filter settings'
                 : 'You\'re all caught up! New notifications will appear here when available.'}
@@ -377,7 +377,7 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
             {filteredNotifications.map((notification) => (
               <Card
                 key={notification.id}
-                className={`transition-all cursor-pointer ${
+                className={`transition-all cursor-pointer bg-white dark:bg-gray-950 border dark:border-gray-800 shadow-sm dark:shadow-gray-900/30 ${
                   notification.isRead ? 'opacity-75' : 'border-l-4 border-l-primary'
                 } ${getTypeStyles(notification.type)}`}
                 onClick={() => !notification.isRead && markAsRead(notification.id)}
@@ -392,7 +392,7 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h4 className={`text-sm font-semibold ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
+                        <h4 className={`text-sm font-semibold ${!notification.isRead ? 'text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}>
                           {notification.title}
                         </h4>
                         <div className="flex items-center gap-2">
@@ -401,12 +401,12 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
                         </div>
                       </div>
 
-                      <p className="text-sm text-gray-600 mb-3 whitespace-pre-wrap">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 whitespace-pre-wrap">
                         {notification.message}
                       </p>
 
                       <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500">
                           <Clock className="h-3 w-3" />
                           {formatDate(notification.createdAt)}
                         </div>
@@ -416,7 +416,7 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 text-xs"
+                              className="h-7 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 window.open(notification.link, '_blank');
@@ -430,7 +430,7 @@ export function Notifications({ onUnreadCountChange }: NotificationsProps) {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-7 text-xs"
+                              className="h-7 text-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                               disabled={markingRead[notification.id]}
                               onClick={(e) => {
                                 e.stopPropagation();

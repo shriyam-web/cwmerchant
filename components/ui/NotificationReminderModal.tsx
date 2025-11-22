@@ -25,7 +25,7 @@ export function NotificationReminderModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Bell className="h-6 w-6 text-blue-600" />
+            <Bell className="h-6 w-6 text-gray-600" />
             Unread Notifications
           </DialogTitle>
           <DialogDescription className="text-left">

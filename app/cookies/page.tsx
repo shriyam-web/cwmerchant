@@ -79,7 +79,7 @@ export default function CookiesPolicyPage() {
                     Policy, please contact us at{" "}
                     <a
                         href="mailto:contact@citywitty.com"
-                        className="text-blue-600 hover:underline"
+                        className="text-gray-600 hover:underline"
                     >
                         contact@citywitty.com
                     </a>

@@ -71,7 +71,7 @@ export default function Step5AccountSetup({
                                 {(() => {
                                     const passedCount = Object.values(pwdChecks).filter(Boolean).length;
                                     const strengthLevel = passedCount === 0 ? 'No password' : passedCount === 1 ? 'Weak' : passedCount <= 3 ? 'Medium' : passedCount === 4 ? 'Strong' : 'Very Strong';
-                                    const strengthColor = passedCount === 0 ? 'text-gray-500' : passedCount === 1 ? 'text-red-600' : passedCount <= 3 ? 'text-yellow-600' : passedCount === 4 ? 'text-blue-600' : 'text-green-600';
+                                    const strengthColor = passedCount === 0 ? 'text-gray-500' : passedCount === 1 ? 'text-red-600' : passedCount <= 3 ? 'text-yellow-600' : passedCount === 4 ? 'text-gray-600' : 'text-green-600';
                                     return (
                                         <span className="text-gray-500 text-xs">
                                             <span className={`${strengthColor} font-medium`}>{strengthLevel} password</span> Strength
@@ -157,10 +157,10 @@ export default function Step5AccountSetup({
                 </div>
             </div>
 
-            <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-sm">
+            <div className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl border-2 border-gray-200 shadow-sm">
                 <div className="flex items-center mb-6">
-                    <div className="p-2 bg-blue-100 rounded-full mr-3">
-                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="p-2 bg-gray-100 rounded-full mr-3">
+                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
@@ -346,14 +346,14 @@ export default function Step5AccountSetup({
                         I have read and agree to the {' '}
                         <a
                             href="#"
-                            className="text-blue-600 hover:underline"
+                            className="text-gray-600 hover:underline"
                             onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}
                         >
                             Terms & Conditions
                         </a>{' '}and{' '}
                         <a
                             href="#"
-                            className="text-blue-600 hover:underline"
+                            className="text-gray-600 hover:underline"
                             onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}
                         >
                             Privacy Policy

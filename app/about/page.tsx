@@ -54,13 +54,13 @@ export default function Page() {
                 />
 
                 {/* Hero */}
-                <section className="bg-gradient-to-r from-white via-blue-50 to-white pt-12 pb-8">
+                <section className="bg-gradient-to-r from-white via-gray-50 to-white pt-12 pb-8">
                     <div className="max-w-6xl mx-auto px-6 lg:px-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                             <div>
                                 <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
                                     CityWitty Merchant Hub
-                                    <span className="block text-indigo-600 mt-2 text-lg font-medium">
+                                    <span className="block text-gray-600 mt-2 text-lg font-medium">
                                         Empowering merchants across India with visibility, growth, and digital solutions.
                                     </span>
                                 </h1>
@@ -75,13 +75,13 @@ export default function Page() {
                                 <div className="mt-8 flex gap-4">
                                     <a
                                         href="/register"
-                                        className="inline-flex items-center rounded-full px-6 py-3 bg-indigo-600 text-white font-semibold shadow hover:shadow-lg transition"
+                                        className="inline-flex items-center rounded-full px-6 py-3 bg-gray-600 text-white font-semibold shadow hover:shadow-lg transition"
                                     >
                                         Register Your Store — It's Free
                                     </a>
                                     <a
                                         href="/merchant-packages"
-                                        className="inline-flex items-center rounded-full px-6 py-3 border border-indigo-600 text-indigo-600 font-semibold hover:bg-indigo-50 transition"
+                                        className="inline-flex items-center rounded-full px-6 py-3 border border-gray-600 text-gray-600 font-semibold hover:bg-gray-50 transition"
                                     >
                                         Explore Premium Plans
                                     </a>
@@ -131,7 +131,7 @@ export default function Page() {
                 </section>
 
                 {/* CTA */}
-                <section className="py-16 bg-indigo-600 text-white text-center">
+                <section className="py-16 bg-gray-600 text-white text-center">
                     <h2 className="text-3xl font-extrabold">
                         Start Free — Upgrade Anytime
                     </h2>
@@ -143,13 +143,13 @@ export default function Page() {
                     <div className="mt-8 flex justify-center gap-4">
                         <a
                             href="/register"
-                            className="px-8 py-3 rounded-full bg-white text-indigo-600 font-semibold shadow hover:shadow-lg transition"
+                            className="px-8 py-3 rounded-full bg-white text-gray-600 font-semibold shadow hover:shadow-lg transition"
                         >
                             Register Free
                         </a>
                         <a
                             href="/merchant-packages"
-                            className="px-8 py-3 rounded-full border border-white font-semibold hover:bg-indigo-500 transition"
+                            className="px-8 py-3 rounded-full border border-white font-semibold hover:bg-gray-500 transition"
                         >
                             View Premium Plans
                         </a>

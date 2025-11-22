@@ -128,19 +128,19 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
   };
 
   return (
-    <div className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 z-40 lg:z-auto transform lg:transform-none transition-all duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:block overflow-y-auto`}>
+    <div className={`fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 z-40 lg:z-auto transform lg:transform-none transition-all duration-300 ease-in-out lg:trangray-x-0 ${sidebarOpen ? 'trangray-x-0' : '-trangray-x-full'} lg:block overflow-y-auto`}>
       <div className="h-full flex flex-col">
         <div className="p-4 flex-shrink-0">
           {/* Logo */}
           <Link href="/" className="flex items-center justify-center mb-4 group">
-            <div className="w-full max-w-28 h-14 py-2 bg-white rounded-lg flex items-center justify-center border border-slate-200 transition-all duration-200 overflow-hidden">
-              <img src="/merchant-hub.png" alt="Citywitty Logo" className="w-full h-full object-contain" />
+            <div className="w-full max-w-28 h-14 py-2 bg-white dark:bg-gray-900 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-800 transition-all duration-200 overflow-hidden">
+              <img src="/merchant-hub.png" alt="Citywitty Logo" className="w-full h-full object-contain dark:invert" />
             </div>
           </Link>
 
           {/* ✅ Merchant Info Dynamic */}
           {merchantInfo && (
-            <div className="p-3 mb-4">
+            <div className="p-3 mb-4 dark:bg-gray-900/50 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   {/* avatar: never shrink */}
@@ -148,10 +148,10 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                     <img
                       src={merchantInfo.logo}
                       alt="Merchant Logo"
-                      className="flex-shrink-0 w-14 h-14 rounded-full border-4 border-white object-contain hover:scale-105 transform transition-transform duration-300"
+                      className="flex-shrink-0 w-14 h-14 rounded-full border-4 border-white dark:border-gray-800 object-contain hover:scale-105 transform transition-transform duration-300"
                     />
                   ) : (
-                    <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center border-4 border-white hover:scale-105 transform transition-transform duration-300">
+                    <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center border-4 border-white dark:border-gray-800 hover:scale-105 transform transition-transform duration-300">
                       <span className="text-white font-extrabold text-xl select-none">
                         {(merchantInfo.displayName || merchantInfo.businessName)?.charAt(0) || "M"}
                       </span>
@@ -160,10 +160,10 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
 
                   {/* text area: allow truncation (min-w-0 required inside flex) */}
                   <div className="min-w-0 flex-1">
-                    <div className="font-bold text-gray-900 text-lg truncate tracking-wide">
+                    <div className="font-bold text-gray-900 dark:text-gray-100 text-lg truncate tracking-wide">
                       {merchantInfo.displayName || merchantInfo.businessName}
                     </div>
-                    <div className="text-xs text-gray-600 truncate italic tracking-wide">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 truncate italic tracking-wide">
                       {merchantInfo.email}
                     </div>
                   </div>
@@ -192,11 +192,11 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
                   }}
                   className={`w-full flex items-center space-x-3 px-3 py-2.5 mb-2 rounded-lg transition-all duration-200 group relative ${isActive
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md border-l-4 border-l-blue-500'
-                    : 'text-slate-700 bg-white/60 border border-slate-200/40 border-l-2 border-l-slate-300 shadow-sm hover:shadow-md hover:bg-white/70 hover:text-slate-900 hover:scale-105'
+                    : 'text-gray-700 dark:text-gray-300 bg-white/60 dark:bg-gray-900/40 border border-gray-200/40 dark:border-gray-700/40 border-l-2 border-l-gray-300 dark:border-l-gray-600 shadow-sm hover:shadow-md hover:bg-white/70 dark:hover:bg-gray-800/60 hover:text-gray-900 dark:hover:text-gray-100 hover:scale-105'
                     } ${isDisabled && !allowOpenForTour ? 'opacity-50 cursor-not-allowed' : ''} ${item.id === 'profile' ? 'allow-during-tour' : ''}`}
                 >
 
-                  <Icon className={`h-5 w-5 transition-all duration-200 transform ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-600 group-hover:scale-110 group-hover:bg-blue-100 group-hover:rounded-full'
+                  <Icon className={`h-5 w-5 transition-all duration-200 transform ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-blue-600 group-hover:scale-110 group-hover:bg-blue-100 group-hover:rounded-full'
                     }`} />
                   <span className="flex-1 text-left font-medium text-sm">{item.label}</span>
                   {item.badge && (
@@ -211,7 +211,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
           </nav>
 
           {/* Quick Actions */}
-          <div className="mt-4 pt-4 border-t border-slate-200 flex-shrink-0">
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
             <div className="space-y-2">
               <Button
                 id="tour-logout"
@@ -229,20 +229,20 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
       </div>
 
       <Dialog open={logoutModalOpen} onOpenChange={setLogoutModalOpen}>
-        <DialogContent className="sm:max-w-[425px] animate-in fade-in-0 zoom-in-95 bg-red-100 text-red-900 rounded-lg shadow-lg">
+        <DialogContent className="sm:max-w-[425px] animate-in fade-in-0 zoom-in-95 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center space-x-3">
+            <DialogTitle className="flex items-center space-x-3 text-gray-900 dark:text-gray-100">
               <span className="text-5xl select-none">{emoji}</span>
               <span>Confirm Logout</span>
             </DialogTitle>
-            <DialogDescription className="text-black">
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
               Are you sure you want to logout? Hoping to see you again soon!
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="outline"
-              className="text-red-600 border-red-600 hover:bg-red-600 hover:text-white"
+              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={() => setLogoutModalOpen(false)}
               onMouseEnter={() => setEmoji('😀')}
               onMouseLeave={() => setEmoji('😟')}
@@ -251,7 +251,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
             </Button>
             <Button
               variant="destructive"
-              className="bg-red-800 text-white hover:bg-red-900"
+              className="bg-red-600 dark:bg-red-700 text-white hover:bg-red-700 dark:hover:bg-red-600"
               onClick={confirmLogout}
               onMouseEnter={() => setEmoji('😢')}
               onMouseLeave={() => setEmoji('😟')}

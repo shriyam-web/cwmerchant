@@ -166,12 +166,12 @@ export default function ForgotPasswordForm() {
                             placeholder="Enter your registered business email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-gray-500"
                         />
                         <button
                             onClick={sendOtp}
                             disabled={loading}
-                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
+                            className="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 disabled:opacity-50 transition"
                         >
                             {loading ? "Sending..." : "Send OTP"}
                         </button>
@@ -190,7 +190,7 @@ export default function ForgotPasswordForm() {
                                     value={digit}
                                     onChange={(e) => handleOtpChange(e.target.value, i)}
                                     ref={(el) => (otpRefs.current[i] = el)}
-                                    className="w-14 h-14 text-center text-xl border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-14 h-14 text-center text-xl border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                                 />
                             ))}
                         </div>
@@ -198,7 +198,7 @@ export default function ForgotPasswordForm() {
                         <button
                             onClick={verifyOtp}
                             disabled={loading}
-                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 transition mb-2"
+                            className="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 disabled:opacity-50 transition mb-2"
                         >
                             {loading ? "Verifying..." : "Verify OTP"}
                         </button>
@@ -286,7 +286,7 @@ export default function ForgotPasswordForm() {
                         </p>
                         <a
                             href="/login"
-                            className="inline-block bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+                            className="inline-block bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition"
                         >
                             Go Back to Login
                         </a>

@@ -334,41 +334,41 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
     return (
       <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
         <div>
-          <Label htmlFor="category">Category *</Label>
+          <Label htmlFor="category" className="text-gray-700 dark:text-gray-300">Category *</Label>
           <Input
             id="category"
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             placeholder="e.g., Electronics, Fashion, Food"
-            className="mt-1"
+            className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
 
         <div>
-          <Label htmlFor="offerTitle">Offer Title *</Label>
+          <Label htmlFor="offerTitle" className="text-gray-700 dark:text-gray-300">Offer Title *</Label>
           <Input
             id="offerTitle"
             value={formData.offerTitle}
             onChange={(e) => setFormData({ ...formData, offerTitle: e.target.value })}
             placeholder="e.g., 20% Off on Electronics"
-            className="mt-1"
+            className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
 
         <div>
-          <Label htmlFor="offerDescription">Description *</Label>
+          <Label htmlFor="offerDescription" className="text-gray-700 dark:text-gray-300">Description *</Label>
           <Textarea
             id="offerDescription"
             value={formData.offerDescription}
             onChange={(e) => setFormData({ ...formData, offerDescription: e.target.value })}
             placeholder="Describe your offer in detail"
-            className="mt-1"
+            className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             rows={3}
           />
         </div>
 
         <div>
-          <Label htmlFor="originalPrice">Original Price (₹) *</Label>
+          <Label htmlFor="originalPrice" className="text-gray-700 dark:text-gray-300">Original Price (₹) *</Label>
           <Input
             id="originalPrice"
             type="number"
@@ -376,13 +376,13 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
             value={formData.originalPrice || ''}
             onChange={(e) => setFormData({ ...formData, originalPrice: Number(e.target.value) })}
             placeholder="e.g., 2500"
-            className="mt-1"
+            className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="discountValue">Discount Value (₹)</Label>
+            <Label htmlFor="discountValue" className="text-gray-700 dark:text-gray-300">Discount Value (₹)</Label>
             <Input
               id="discountValue"
               type="number"
@@ -390,12 +390,12 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
               value={formData.discountValue || ''}
               onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
               placeholder="e.g., 500"
-              className="mt-1"
+              className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>
 
           <div>
-            <Label htmlFor="discountPercent">Discount Percent (%)</Label>
+            <Label htmlFor="discountPercent" className="text-gray-700 dark:text-gray-300">Discount Percent (%)</Label>
             <Input
               id="discountPercent"
               type="number"
@@ -404,26 +404,26 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
               value={formData.discountPercent || ''}
               onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })}
               placeholder="e.g., 20"
-              className="mt-1"
+              className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>
         </div>
 
         {formData.originalPrice ? (
-          <div className="rounded-md border bg-gray-50 px-3 py-2 space-y-1">
-            <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="rounded-md border bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 px-3 py-2 space-y-1">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
               <span>Original</span>
               <span className={discountApplied ? "line-through" : undefined}>{formatCurrency(formData.originalPrice)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Final Price</span>
-              <span className="font-semibold text-blue-600">{formatCurrency(finalPrice)}</span>
+              <span className="text-gray-600 dark:text-gray-300">Final Price</span>
+              <span className="font-semibold text-gray-600 dark:text-gray-400">{formatCurrency(finalPrice)}</span>
             </div>
           </div>
         ) : null}
 
         <div>
-          <Label htmlFor="status">Status *</Label>
+          <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status *</Label>
           <Select
             value={formData.status}
             onValueChange={(value: 'Active' | 'Inactive') => {
@@ -434,10 +434,10 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
               }
             }}
           >
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-gray-950 border dark:border-gray-800">
               <SelectItem value="Active">Active</SelectItem>
               <SelectItem value="Inactive">Inactive</SelectItem>
             </SelectContent>
@@ -445,7 +445,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
         </div>
 
         <div>
-          <Label htmlFor="validUpto">
+          <Label htmlFor="validUpto" className="text-gray-700 dark:text-gray-300">
             Valid Until {formData.status === 'Active' ? '*' : '(Optional)'}
           </Label>
           <Input
@@ -453,12 +453,12 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
             type="date"
             value={formData.validUpto}
             onChange={(e) => setFormData({ ...formData, validUpto: e.target.value })}
-            className="mt-1"
+            className="mt-1 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             min={new Date().toISOString().split('T')[0]}
             disabled={formData.status === 'Inactive'}
           />
           {formData.validUpto && (
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Selected: {convertYYYYMMDDToDDMMYYYY(formData.validUpto)}
             </p>
           )}
@@ -468,6 +468,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
           onClick={isEdit ? handleEditOffer : handleAddOffer}
           className="w-full"
           disabled={submitting}
+          variant={isEdit ? 'default' : 'success'}
         >
           {submitting ? (
             <>
@@ -485,7 +486,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
       </div>
     );
   }
@@ -495,11 +496,11 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
   const hasOffersWithoutIds = offersWithoutIds.length > 0;
 
   return (
-    <div id="tour-offers-main" className="space-y-6">
+    <div id="tour-offers" className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Offers Management</h2>
-          <p className="text-gray-600">Create and manage your promotional offers</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Offers Management</h2>
+          <p className="text-gray-600 dark:text-gray-400">Create and manage your promotional offers</p>
         </div>
 
         <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
@@ -507,14 +508,14 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
           if (!open) resetForm();
         }}>
           <DialogTrigger asChild>
-            <Button id="tour-offers-add" className="bg-gradient-to-r from-blue-600 to-indigo-600">
+            <Button id="tour-offers-actions">
               <Plus className="h-4 w-4 mr-2" />
               Add New Offer
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
+          <DialogContent className="sm:max-w-lg bg-white dark:bg-gray-950 border dark:border-gray-800">
             <DialogHeader>
-              <DialogTitle>Create New Offer</DialogTitle>
+              <DialogTitle className="text-gray-900 dark:text-gray-100">Create New Offer</DialogTitle>
             </DialogHeader>
             {renderOfferForm(false)}
           </DialogContent>
@@ -523,18 +524,18 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
 
       {/* Migration Banner */}
       {hasOffersWithoutIds && (
-        <Card className="border-yellow-500 bg-yellow-50">
+        <Card className="border-yellow-500 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 shadow-lg dark:shadow-gray-900/50">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-yellow-900 mb-2">
+                <h3 className="text-lg font-semibold text-yellow-900 dark:text-yellow-400 mb-2">
                   Action Required: Migrate Your Offers
                 </h3>
-                <p className="text-yellow-800 mb-3">
+                <p className="text-yellow-800 dark:text-yellow-300 mb-3">
                   {offersWithoutIds.length} of your offers need to be migrated to enable editing and deletion.
                   This is a one-time process that will update your offers to the new format.
                 </p>
-                <p className="text-sm text-yellow-700">
+                <p className="text-sm text-yellow-700 dark:text-yellow-400">
                   Note: Your offer data will be preserved. This only adds necessary identifiers.
                 </p>
               </div>
@@ -558,12 +559,12 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
       )}
 
       {offers.length === 0 ? (
-        <Card className="p-12">
+        <Card className="p-12 bg-white dark:bg-gray-950 border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50">
           <div className="text-center">
-            <Tag className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No offers yet</h3>
-            <p className="text-gray-600 mb-4">Create your first promotional offer to attract customers</p>
-            <Button onClick={() => setIsAddDialogOpen(true)} className="bg-gradient-to-r from-blue-600 to-indigo-600">
+            <Tag className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No offers yet</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">Create your first promotional offer to attract customers</p>
+            <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Create Your First Offer
             </Button>
@@ -583,11 +584,11 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
             const discountApplied = finalOfferPrice < (offer.originalPrice ?? 0);
 
             return (
-              <Card key={offer._id} className="hover:shadow-lg transition-shadow">
+              <Card key={offer._id} className="hover:shadow-lg transition-shadow bg-white dark:bg-gray-950 border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 hover:dark:shadow-gray-900/70">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <CardTitle className="text-lg mb-2">{offer.offerTitle}</CardTitle>
+                      <CardTitle className="text-lg mb-2 text-gray-900 dark:text-gray-100">{offer.offerTitle}</CardTitle>
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge
                           variant={offer.status === 'Active' && !expired ? 'default' : 'secondary'}
@@ -607,7 +608,7 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex space-x-1">
+                    <div id="tour-offers-manage" className="flex space-x-1">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -630,41 +631,41 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{offer.offerDescription}</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{offer.offerDescription}</p>
                   {showPriceSummary && (
-                    <div className="mb-3 rounded-md border bg-gray-50 px-3 py-2 space-y-1">
-                      <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="mb-3 rounded-md border bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 px-3 py-2 space-y-1">
+                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                         <span>Original</span>
                         <span className={discountApplied ? "line-through" : undefined}>{formatCurrency(offer.originalPrice || 0)}</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Final Price</span>
-                        <span className="font-semibold text-blue-600">{formatCurrency(finalOfferPrice)}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Final Price</span>
+                        <span className="font-semibold text-gray-600 dark:text-gray-400">{formatCurrency(finalOfferPrice)}</span>
                       </div>
                     </div>
                   )}
                   <div className="space-y-2 text-sm">
                     {offer.discountPercent > 0 && (
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-500 flex items-center gap-1">
+                        <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
                           <Percent className="h-3 w-3" />
                           Discount Percent:
                         </span>
-                        <span className="font-medium text-green-600">{offer.discountPercent}%</span>
+                        <span className="font-medium text-green-600 dark:text-green-400">{offer.discountPercent}%</span>
                       </div>
                     )}
                     {offer.discountValue > 0 && (
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-500">Discount Value:</span>
-                        <span className="font-medium text-green-600">₹{offer.discountValue}</span>
+                        <span className="text-gray-500 dark:text-gray-400">Discount Value:</span>
+                        <span className="font-medium text-green-600 dark:text-green-400">₹{offer.discountValue}</span>
                       </div>
                     )}
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 flex items-center gap-1">
+                      <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         Valid until:
                       </span>
-                      <span className={`font-medium ${expired ? 'text-red-500' : ''}`}>
+                      <span className={`font-medium ${expired ? 'text-red-500 dark:text-red-400' : 'dark:text-gray-300'}`}>
                         {formatDateToDDMMYYYY(offer.validUpto)}
                       </span>
                     </div>
@@ -684,9 +685,9 @@ export function OffersManagement({ onOffersChange }: OffersManagementProps = {})
           setEditingOffer(null);
         }
       }}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg bg-white dark:bg-gray-950 border dark:border-gray-800">
           <DialogHeader>
-            <DialogTitle>Edit Offer</DialogTitle>
+            <DialogTitle className="text-gray-900 dark:text-gray-100">Edit Offer</DialogTitle>
           </DialogHeader>
           {renderOfferForm(true)}
         </DialogContent>

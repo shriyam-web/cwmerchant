@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Camera, Save, Eye, ExternalLink, Loader2, AlertTriangle, X } from 'lucide-react';
+import { Camera, Save, Eye, ExternalLink, Loader2, AlertTriangle, X, Plus, Trash2, HelpCircle, Building2, Banknote, Clock, Images, Package } from 'lucide-react';
 import { useMerchantAuth } from '@/lib/auth-context';
 import { toast } from 'sonner';
 
@@ -79,9 +79,10 @@ interface ExtendedMerchant {
 
 interface ProfileSettingsProps {
   tourIndex?: number;
+  tourTarget?: string;
 }
 
-export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
+export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps) {
   const { merchant, setMerchant } = useMerchantAuth() as {
     merchant: ExtendedMerchant | null;
     setMerchant: ((merchant: ExtendedMerchant) => void) | null;
@@ -89,23 +90,23 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
 
   const [activeTab, setActiveTab] = useState<string>("basic");
 
-  // Update active tab based on tour index
+  // Update active tab based on tour target ID
   useEffect(() => {
-    if (tourIndex !== undefined) {
-      const tabMapping: Record<number, string> = {
-        3: "basic",        // tour-profile-basic
-        4: "business",     // tour-profile-business
-        5: "banking",      // tour-profile-banking
-        6: "hours",        // tour-profile-hours
-        7: "store-images", // tour-profile-images
-        8: "additional",   // tour-profile-additional
+    if (tourTarget) {
+      const targetTabMapping: Record<string, string> = {
+        "#tour-profile-basic": "basic",
+        "#tour-profile-business": "business",
+        "#tour-profile-banking": "banking",
+        "#tour-profile-hours": "hours",
+        "#tour-profile-images": "store-images",
+        "#tour-profile-additional": "additional",
       };
-      const newTab = tabMapping[tourIndex];
+      const newTab = targetTabMapping[tourTarget];
       if (newTab) {
         setActiveTab(newTab);
       }
     }
-  }, [tourIndex]);
+  }, [tourTarget]);
 
   const [profile, setProfile] = useState({
     businessName: '',
@@ -149,7 +150,9 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
     paymentMethods: [] as string[],
     minOrderValue: 149,
     agentId: '',
-    agentName: ''
+    agentName: '',
+    // FAQ
+    faq: [] as Array<{ question: string; answer: string; certifiedBuyer?: boolean; isLike?: boolean }>
   });
 
   const [initialProfile, setInitialProfile] = useState({
@@ -194,7 +197,9 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
     paymentMethods: [] as string[],
     minOrderValue: 149,
     agentId: '',
-    agentName: ''
+    agentName: '',
+    // FAQ
+    faq: [] as Array<{ question: string; answer: string; certifiedBuyer?: boolean; isLike?: boolean }>
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -307,7 +312,8 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
         paymentMethods: merchant.paymentMethodAccepted || [],
         minOrderValue: merchant.minimumOrderValue || 149,
         agentId: merchant.agentId || '',
-        agentName: merchant.agentName || ''
+        agentName: merchant.agentName || '',
+        faq: (merchant as any).faq || []
       };
       setProfile(profileData);
       setInitialProfile(profileData);
@@ -496,6 +502,7 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
         tags: profile.tags.split(',').map(t => t.trim()).filter(t => t),
         paymentMethodAccepted: profile.paymentMethods,
         minimumOrderValue: profile.minOrderValue,
+        faq: profile.faq,
       };
 
       const response = await fetch('/api/merchant/profile', {
@@ -517,9 +524,18 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
         // Update the merchant state with the new data
         if (setMerchant && data.merchant) {
           console.log('Updating merchant with:', data.merchant.username);
+          console.log('Merchant FAQ:', data.merchant.faq);
           setMerchant(data.merchant);
         }
-        setInitialProfile(profile);
+        
+        // Update profile state with returned merchant data to ensure FAQ and all data persists
+        const updatedProfileData = {
+          ...profile,
+          faq: data.merchant?.faq || profile.faq,
+        };
+        
+        setProfile(updatedProfileData);
+        setInitialProfile(updatedProfileData);
         toast.success('Profile updated successfully!');
       } else {
         console.error('Profile update failed:', data.error);
@@ -535,49 +551,77 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Profile Settings</h2>
-          <p className="text-gray-600 mt-1">Manage your business profile and settings</p>
+    <div className="min-h-screen">
+      {/* Premium Header */}
+      <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <div className="p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Profile Settings</h1>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">Manage your complete business profile and information</p>
+            </div>
+            <Button
+              onClick={() => merchant?.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchant.merchantSlug}`, '_blank')}
+              disabled={!merchant?.merchantSlug}
+              className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 dark:from-gray-700 dark:to-gray-800 dark:hover:from-gray-800 dark:hover:to-gray-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Preview Store
+              <ExternalLink className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
         </div>
-        <Button
-          variant="outline"
-          className="hover:shadow-md transition-all duration-200 border-blue-200 hover:border-blue-300"
-          onClick={() => merchant?.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchant.merchantSlug}`, '_blank')}
-          disabled={!merchant?.merchantSlug}
-        >
-          <Eye className="h-4 w-4 mr-2" />
-          Preview Store
-          <ExternalLink className="h-4 w-4 ml-2" />
-        </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 h-auto">
-          <TabsTrigger value="basic" className="text-xs sm:text-sm">Basic Info</TabsTrigger>
-          <TabsTrigger value="business" className="text-xs sm:text-sm">Business</TabsTrigger>
-          <TabsTrigger value="banking" className="text-xs sm:text-sm">Banking</TabsTrigger>
-          <TabsTrigger value="hours" className="text-xs sm:text-sm">Hours</TabsTrigger>
-          <TabsTrigger value="store-images" className="text-xs sm:text-sm">Images</TabsTrigger>
-          <TabsTrigger value="additional" className="text-xs sm:text-sm">Additional</TabsTrigger>
-        </TabsList>
+      {/* Main Content */}
+      <div className="p-4 md:p-8 max-w-7xl mx-auto">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 h-auto mb-8">
+            <TabsTrigger value="basic" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+              <span className="hidden sm:inline">Basic</span>
+              <span className="sm:hidden">Info</span>
+            </TabsTrigger>
+            <TabsTrigger value="business" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">Business</TabsTrigger>
+            <TabsTrigger value="banking" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+              <span className="hidden sm:inline">Banking</span>
+              <span className="sm:hidden">Bank</span>
+            </TabsTrigger>
+            <TabsTrigger value="hours" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+              <span className="hidden sm:inline">Hours</span>
+              <span className="sm:hidden">Hrs</span>
+            </TabsTrigger>
+            <TabsTrigger value="store-images" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+              <span className="hidden sm:inline">Images</span>
+              <span className="sm:hidden">Imgs</span>
+            </TabsTrigger>
+            <TabsTrigger value="additional" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+              <span className="hidden sm:inline">More</span>
+              <span className="sm:hidden">+</span>
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="basic" className="mt-6">
-          <Card id="tour-profile-basic" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                Basic Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <TabsContent value="basic" className="space-y-6">
+          <Card id="tour-profile-basic" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+            <div className="bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-700 dark:to-red-700 border-b border-orange-800 dark:border-red-900">
+              <CardHeader className="py-6 px-6 pb-5">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 p-2.5 rounded-lg">
+                    <Package className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-white">Basic Information</CardTitle>
+                    <CardDescription className="text-orange-50 dark:text-orange-100 mt-1">Update your business name, contact details, and description</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </div>
+            <CardContent className="space-y-6 p-8">
               {/* Profile Picture */}
               <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                 <div className="relative group">
-                  <Avatar className="w-24 h-24 ring-4 ring-blue-100 transition-all duration-300 group-hover:ring-blue-200">
+                  <Avatar className="w-24 h-24 ring-4 ring-gray-100 dark:ring-gray-900 transition-all duration-300 group-hover:ring-gray-200 dark:group-hover:ring-gray-800">
                     <AvatarImage src={profile.logo} alt="Business Logo" />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-600 text-3xl font-bold">
+                    <AvatarFallback className="bg-gradient-to-br from-gray-100 dark:from-gray-900 to-gray-100 dark:to-gray-900 text-gray-600 dark:text-gray-400 text-3xl font-bold">
                       {profile.businessName.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
@@ -591,7 +635,7 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={loading}
-                    className="hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
                   >
                     {loading ? (
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -607,31 +651,31 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                     onChange={handleLogoUpload}
                     className="hidden"
                   />
-                  <p className="text-xs text-gray-500 mt-2">JPG, PNG up to 5MB</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">JPG, PNG up to 5MB</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="businessName">Display Name</Label>
+                  <Label htmlFor="businessName" className="text-sm font-semibold text-gray-900 dark:text-white">Display Name</Label>
                   <Input
                     id="businessName"
                     value={profile.businessName}
                     onChange={(e) => setProfile({ ...profile, businessName: e.target.value })}
-                    className="mt-1"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-gray-500 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="ownerName">Owner Name</Label>
+                  <Label htmlFor="ownerName" className="text-sm font-semibold text-gray-900 dark:text-white">Owner Name</Label>
                   <Input
                     id="ownerName"
                     value={profile.ownerName}
                     onChange={(e) => setProfile({ ...profile, ownerName: e.target.value })}
-                    className="mt-1"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-gray-500 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="username" className="text-sm font-semibold text-gray-900 dark:text-white">Username</Label>
                   <Input
                     id="username"
                     value={profile.username}
@@ -640,35 +684,35 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                       setProfile({ ...profile, username: newUsername });
                       debouncedUsernameCheck(newUsername);
                     }}
-                    className={`mt-1 ${
-                      usernameAvailable === false ? 'border-red-500 focus:ring-red-500' :
-                      usernameAvailable === true ? 'border-green-500 focus:ring-green-500' : ''
+                    className={`mt-2 transition-all duration-200 dark:bg-gray-700 dark:text-white ${
+                      usernameAvailable === false ? 'border-red-500 focus:ring-red-200 focus:border-red-500 dark:border-red-600 dark:focus:ring-red-500' :
+                      usernameAvailable === true ? 'border-green-500 focus:ring-green-200 focus:border-green-500 dark:border-green-600 dark:focus:ring-green-500' : 'border-gray-300 dark:border-gray-600 focus:ring-gray-200 dark:focus:ring-gray-500 focus:border-gray-500'
                     }`}
                   />
                   {profile.username && (
                     <div className="mt-2 space-y-2">
                       {usernameChecking ? (
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                           <Loader2 className="h-3 w-3 animate-spin" />
                           Checking availability...
                         </div>
                       ) : usernameMessage && (
                         <div className={`text-sm ${
-                          usernameAvailable === true ? 'text-green-600' :
-                          usernameAvailable === false ? 'text-red-600' : 'text-gray-600'
+                          usernameAvailable === true ? 'text-green-600 dark:text-green-400' :
+                          usernameAvailable === false ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'
                         }`}>
                           {usernameMessage}
                         </div>
                       )}
                       {usernameAvailable === true && profile.username && (
-                        <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+                        <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">🎉</span>
                             <span className="font-medium">Exciting!</span>
                           </div>
                           <p className="mt-1">
                             You'll be able to access your profile at{' '}
-                            <span className="font-mono bg-white px-2 py-1 rounded border text-blue-700">
+                            <span className="font-mono bg-white dark:bg-gray-600 px-2 py-1 rounded border text-gray-700 dark:text-gray-400">
                               citywitty.com/{profile.username.toLowerCase()}
                             </span>
                           </p>
@@ -678,43 +722,43 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-sm font-semibold text-gray-900 dark:text-white">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     value={profile.email}
                     onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                    className="mt-1"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-gray-500 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone" className="text-sm font-semibold text-gray-900 dark:text-white">Phone</Label>
                   <Input
                     id="phone"
                     value={profile.phone}
                     onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                    className="mt-1"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-gray-500 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="whatsapp">WhatsApp Number</Label>
+                  <Label htmlFor="whatsapp" className="text-sm font-semibold text-gray-900 dark:text-white">WhatsApp Number</Label>
                   <Input
                     id="whatsapp"
                     value={profile.whatsapp}
                     onChange={(e) => setProfile({ ...profile, whatsapp: e.target.value })}
-                    className="mt-1"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-gray-500 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-500 transition-all duration-200"
                     placeholder="+91"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="description">Business Description</Label>
+                <Label htmlFor="description" className="text-sm font-semibold text-gray-900 dark:text-white">Business Description</Label>
                 <Textarea
                   id="description"
                   value={profile.description}
                   onChange={(e) => setProfile({ ...profile, description: e.target.value })}
-                  className="mt-1"
+                  className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-gray-500 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-500 transition-all duration-200"
                   rows={4}
                 />
               </div>
@@ -722,33 +766,40 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="business" className="mt-6">
-          <Card id="tour-profile-business" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                Business Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <TabsContent value="business" className="space-y-6">
+          <Card id="tour-profile-business" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+            <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 dark:from-emerald-700 dark:to-emerald-800 border-b border-emerald-800 dark:border-emerald-900">
+              <CardHeader className="py-6 px-6 pb-5">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 p-2.5 rounded-lg">
+                    <Building2 className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-white">Business Details</CardTitle>
+                    <CardDescription className="text-emerald-100 dark:text-emerald-200 mt-1">Business information, tax details, and location</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </div>
+            <CardContent className="space-y-6 p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="gst" className="text-sm font-medium">GST Number</Label>
+                  <Label htmlFor="gst" className="text-sm font-medium dark:text-white">GST Number</Label>
                   <Input
                     id="gst"
                     value={profile.gst}
                     onChange={(e) => setProfile({ ...profile, gst: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                     placeholder="Enter GST number"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="pan" className="text-sm font-medium">PAN Number</Label>
+                  <Label htmlFor="pan" className="text-sm font-medium dark:text-white">PAN Number</Label>
                   <Input
                     id="pan"
                     value={profile.pan}
                     onChange={(e) => setProfile({ ...profile, pan: e.target.value.toUpperCase() })}
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                     placeholder="Enter PAN number"
                     maxLength={10}
                   />
@@ -756,12 +807,12 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
               </div>
 
               <div>
-                <Label htmlFor="address" className="text-sm font-medium">Street Address</Label>
+                <Label htmlFor="address" className="text-sm font-medium dark:text-white">Street Address</Label>
                 <Textarea
                   id="address"
                   value={profile.address}
                   onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                  className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                  className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                   rows={3}
                   placeholder="Enter complete street address"
                 />
@@ -769,27 +820,27 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <Label htmlFor="city" className="text-sm font-medium">City</Label>
+                  <Label htmlFor="city" className="text-sm font-medium dark:text-white">City</Label>
                   <Input
                     id="city"
                     value={profile.city}
                     onChange={(e) => setProfile({ ...profile, city: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                     placeholder="City"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="state" className="text-sm font-medium">State</Label>
+                  <Label htmlFor="state" className="text-sm font-medium dark:text-white">State</Label>
                   <Input
                     id="state"
                     value={profile.state}
                     onChange={(e) => setProfile({ ...profile, state: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                     placeholder="State"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="pincode" className="text-sm font-medium">Pincode</Label>
+                  <Label htmlFor="pincode" className="text-sm font-medium dark:text-white">Pincode</Label>
                   <Input
                     id="pincode"
                     value={profile.pincode}
@@ -797,96 +848,96 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                       const value = e.target.value.replace(/\D/g, '');
                       setProfile({ ...profile, pincode: value });
                     }}
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                     maxLength={6}
                     placeholder="Pincode"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="locality" className="text-sm font-medium">Locality</Label>
+                  <Label htmlFor="locality" className="text-sm font-medium dark:text-white">Locality</Label>
                   <Input
                     id="locality"
                     value={profile.locality}
                     onChange={(e) => setProfile({ ...profile, locality: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                     placeholder="Locality"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="mapLocation" className="text-sm font-medium">Google Map Location</Label>
+                <Label htmlFor="mapLocation" className="text-sm font-medium dark:text-white">Google Map Location</Label>
                 <Input
                   id="mapLocation"
                   value={profile.mapLocation}
                   onChange={(e) => setProfile({ ...profile, mapLocation: e.target.value })}
                   placeholder="Enter business location for Google Maps"
-                  className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                  className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="website" className="text-sm font-medium">Website</Label>
+                  <Label htmlFor="website" className="text-sm font-medium dark:text-white">Website</Label>
                   <Input
                     id="website"
                     value={profile.website}
                     onChange={(e) => setProfile({ ...profile, website: e.target.value })}
                     placeholder="https://"
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="facebook" className="text-sm font-medium">Facebook</Label>
+                  <Label htmlFor="facebook" className="text-sm font-medium dark:text-white">Facebook</Label>
                   <Input
                     id="facebook"
                     value={profile.facebook}
                     onChange={(e) => setProfile({ ...profile, facebook: e.target.value })}
                     placeholder="https://facebook.com/"
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="instagram" className="text-sm font-medium">Instagram</Label>
+                  <Label htmlFor="instagram" className="text-sm font-medium dark:text-white">Instagram</Label>
                   <Input
                     id="instagram"
                     value={profile.instagram}
                     onChange={(e) => setProfile({ ...profile, instagram: e.target.value })}
                     placeholder="https://instagram.com/"
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="linkedin" className="text-sm font-medium">LinkedIn</Label>
+                  <Label htmlFor="linkedin" className="text-sm font-medium dark:text-white">LinkedIn</Label>
                   <Input
                     id="linkedin"
                     value={profile.linkedin}
                     onChange={(e) => setProfile({ ...profile, linkedin: e.target.value })}
                     placeholder="https://linkedin.com/in/"
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="x" className="text-sm font-medium">X</Label>
+                  <Label htmlFor="x" className="text-sm font-medium dark:text-white">X</Label>
                   <Input
                     id="x"
                     value={profile.x}
                     onChange={(e) => setProfile({ ...profile, x: e.target.value })}
                     placeholder="https://x.com/"
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="youtube" className="text-sm font-medium">YouTube</Label>
+                  <Label htmlFor="youtube" className="text-sm font-medium dark:text-white">YouTube</Label>
                   <Input
                     id="youtube"
                     value={profile.youtube}
                     onChange={(e) => setProfile({ ...profile, youtube: e.target.value })}
                     placeholder="https://youtube.com/"
-                    className="mt-2 focus:ring-2 focus:ring-green-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500 transition-all duration-200"
                   />
                 </div>
               </div>
@@ -894,38 +945,45 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="banking" className="mt-6">
-          <Card id="tour-profile-banking" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-purple-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                Banking Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <TabsContent value="banking" className="space-y-6">
+          <Card id="tour-profile-banking" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+            <div className="bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-700 dark:to-purple-800 border-b border-purple-800 dark:border-purple-900">
+              <CardHeader className="py-6 px-6 pb-5">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 p-2.5 rounded-lg">
+                    <Banknote className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-white">Banking Information</CardTitle>
+                    <CardDescription className="text-purple-100 dark:text-purple-200 mt-1">Bank account and payment details for settlements</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </div>
+            <CardContent className="space-y-6 p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="accountHolderName" className="text-sm font-medium">Account Holder Name</Label>
+                  <Label htmlFor="accountHolderName" className="text-sm font-medium dark:text-white">Account Holder Name</Label>
                   <Input
                     id="accountHolderName"
                     value={profile.accountHolderName}
                     onChange={(e) => setProfile({ ...profile, accountHolderName: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-500 transition-all duration-200"
                     placeholder="Account holder name"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="bankName" className="text-sm font-medium">Bank Name</Label>
+                  <Label htmlFor="bankName" className="text-sm font-medium dark:text-white">Bank Name</Label>
                   <Input
                     id="bankName"
                     value={profile.bankName}
                     onChange={(e) => setProfile({ ...profile, bankName: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-500 transition-all duration-200"
                     placeholder="Bank name"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="accountNumber" className="text-sm font-medium">Account Number</Label>
+                  <Label htmlFor="accountNumber" className="text-sm font-medium dark:text-white">Account Number</Label>
                   <Input
                     id="accountNumber"
                     value={profile.accountNumber}
@@ -933,37 +991,37 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                       const value = e.target.value.replace(/\D/g, '');
                       setProfile({ ...profile, accountNumber: value });
                     }}
-                    className="mt-2 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-500 transition-all duration-200"
                     placeholder="Account number"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="ifscCode" className="text-sm font-medium">IFSC Code</Label>
+                  <Label htmlFor="ifscCode" className="text-sm font-medium dark:text-white">IFSC Code</Label>
                   <Input
                     id="ifscCode"
                     value={profile.ifscCode}
                     onChange={(e) => setProfile({ ...profile, ifscCode: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-500 transition-all duration-200"
                     placeholder="IFSC code"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="branchName" className="text-sm font-medium">Branch Name</Label>
+                  <Label htmlFor="branchName" className="text-sm font-medium dark:text-white">Branch Name</Label>
                   <Input
                     id="branchName"
                     value={profile.branchName}
                     onChange={(e) => setProfile({ ...profile, branchName: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-500 transition-all duration-200"
                     placeholder="Branch name"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="upiId" className="text-sm font-medium">UPI ID</Label>
+                  <Label htmlFor="upiId" className="text-sm font-medium dark:text-white">UPI ID</Label>
                   <Input
                     id="upiId"
                     value={profile.upiId}
                     onChange={(e) => setProfile({ ...profile, upiId: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-500 transition-all duration-200"
                     placeholder="e.g., user@paytm"
                   />
                 </div>
@@ -972,42 +1030,49 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="hours" className="mt-6">
-          <Card id="tour-profile-hours" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-orange-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                Business Hours
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <TabsContent value="hours" className="space-y-6">
+          <Card id="tour-profile-hours" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+            <div className="bg-gradient-to-r from-orange-600 to-orange-700 dark:from-orange-700 dark:to-orange-800 border-b border-orange-800 dark:border-orange-900">
+              <CardHeader className="py-6 px-6 pb-5">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 p-2.5 rounded-lg">
+                    <Clock className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-white">Business Hours</CardTitle>
+                    <CardDescription className="text-orange-100 dark:text-orange-200 mt-1">Set your operating hours and days</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </div>
+            <CardContent className="space-y-6 p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="openTime" className="text-sm font-medium">Opening Time</Label>
+                  <Label htmlFor="openTime" className="text-sm font-medium dark:text-white">Opening Time</Label>
                   <Input
                     id="openTime"
                     type="time"
                     value={profile.openTime}
                     onChange={(e) => setProfile({ ...profile, openTime: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-orange-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-500 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="closeTime" className="text-sm font-medium">Closing Time</Label>
+                  <Label htmlFor="closeTime" className="text-sm font-medium dark:text-white">Closing Time</Label>
                   <Input
                     id="closeTime"
                     type="time"
                     value={profile.closeTime}
                     onChange={(e) => setProfile({ ...profile, closeTime: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-orange-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-500 transition-all duration-200"
                   />
                 </div>
               </div>
               <div className="space-y-4">
-                <Label className="text-sm font-medium">Days Open</Label>
+                <Label className="text-sm font-medium dark:text-white">Days Open</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-                    <div key={day} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-orange-50 transition-all duration-200">
+                    <div key={day} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-orange-50 dark:hover:bg-gray-700 transition-all duration-200">
                       <Checkbox
                         id={`day-${day}`}
                         checked={profile.days.includes(day)}
@@ -1017,7 +1082,7 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                         }}
                         className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                       />
-                      <Label htmlFor={`day-${day}`} className="cursor-pointer text-sm">{day}</Label>
+                      <Label htmlFor={`day-${day}`} className="cursor-pointer text-sm dark:text-white">{day}</Label>
                     </div>
                   ))}
                 </div>
@@ -1026,32 +1091,39 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="additional" className="mt-6">
-          <Card id="tour-profile-additional" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-pink-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                Additional Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <TabsContent value="additional" className="space-y-6">
+          <Card id="tour-profile-additional" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+            <div className="bg-gradient-to-r from-pink-600 to-pink-700 dark:from-pink-700 dark:to-pink-800 border-b border-pink-800 dark:border-pink-900">
+              <CardHeader className="py-6 px-6 pb-5">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 p-2.5 rounded-lg">
+                    <Package className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-white">Additional Information</CardTitle>
+                    <CardDescription className="text-pink-100 dark:text-pink-200 mt-1">Tags, payment methods, minimum order, and FAQs</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </div>
+            <CardContent className="space-y-6 p-8">
               <div>
-                <Label htmlFor="tags" className="text-sm font-medium">Tags</Label>
+                <Label htmlFor="tags" className="text-sm font-medium dark:text-white">Tags</Label>
                 <Input
                   id="tags"
                   value={profile.tags}
                   onChange={(e) => setProfile({ ...profile, tags: e.target.value })}
                   placeholder="e.g., fast food, delivery, vegetarian"
-                  className="mt-2 focus:ring-2 focus:ring-pink-500 transition-all duration-200"
+                  className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-pink-500 dark:focus:ring-pink-500 transition-all duration-200"
                 />
-                <p className="text-xs text-gray-500 mt-2">Enter tags separated by commas</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Enter tags separated by commas</p>
               </div>
 
               <div>
-                <Label className="text-sm font-medium">Accepted Payment Methods</Label>
+                <Label className="text-sm font-medium dark:text-white">Accepted Payment Methods</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                   {['Cash', 'Credit/Debit Card', 'UPI', 'Net Banking', 'Digital Wallets'].map(method => (
-                    <div key={method} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-pink-50 transition-all duration-200">
+                    <div key={method} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-pink-50 dark:hover:bg-gray-700 transition-all duration-200">
                       <Checkbox
                         id={`payment-${method}`}
                         checked={profile.paymentMethods.includes(method)}
@@ -1061,20 +1133,20 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                         }}
                         className="data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500"
                       />
-                      <Label htmlFor={`payment-${method}`} className="cursor-pointer text-sm">{method}</Label>
+                      <Label htmlFor={`payment-${method}`} className="cursor-pointer text-sm dark:text-white">{method}</Label>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="minOrderValue" className="text-sm font-medium">Minimum Order Value</Label>
+                <Label htmlFor="minOrderValue" className="text-sm font-medium dark:text-white">Minimum Order Value</Label>
                 <Input
                   id="minOrderValue"
                   type="number"
                   value={profile.minOrderValue}
                   onChange={(e) => setProfile({ ...profile, minOrderValue: Number(e.target.value) })}
-                  className="mt-2 focus:ring-2 focus:ring-pink-500 transition-all duration-200"
+                  className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-pink-500 dark:focus:ring-pink-500 transition-all duration-200"
                   min="0"
                   placeholder="Minimum order value"
                 />
@@ -1082,40 +1154,153 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="agentId" className="text-sm font-medium">Agent ID</Label>
+                  <Label htmlFor="agentId" className="text-sm font-medium dark:text-white">Agent ID</Label>
                   <Input
                     id="agentId"
                     value={profile.agentId}
                     onChange={(e) => setProfile({ ...profile, agentId: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-pink-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-pink-500 dark:focus:ring-pink-500 transition-all duration-200"
                     placeholder="Enter agent ID"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="agentName" className="text-sm font-medium">Agent Name</Label>
+                  <Label htmlFor="agentName" className="text-sm font-medium dark:text-white">Agent Name</Label>
                   <Input
                     id="agentName"
                     value={profile.agentName}
                     onChange={(e) => setProfile({ ...profile, agentName: e.target.value })}
-                    className="mt-2 focus:ring-2 focus:ring-pink-500 transition-all duration-200"
+                    className="mt-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-pink-500 dark:focus:ring-pink-500 transition-all duration-200"
                     placeholder="Enter agent name"
                   />
                 </div>
+              </div>
+
+              <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-8">
+                <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                  <CardHeader className="py-6 px-6">
+                    <CardTitle className="flex items-center gap-2 text-lg dark:text-white">
+                      <HelpCircle className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                      Frequently Asked Questions (FAQs)
+                    </CardTitle>
+                    <CardDescription className="mt-2 dark:text-gray-300">Help customers by answering common questions about your business</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6 p-6">
+                    {profile.faq.length > 0 && (
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Your FAQs ({profile.faq.length})</h4>
+                        <div className="grid gap-3">
+                          {profile.faq.map((item, index) => (
+                            <div key={index} className="group relative p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 dark:from-gray-700 to-purple-50 dark:to-gray-600 hover:shadow-md transition-all duration-200">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1 pr-8">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <p className="font-semibold text-sm text-gray-900 dark:text-white">{item.question}</p>
+                                    <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full">Q{index + 1}</span>
+                                  </div>
+                                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{item.answer}</p>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setProfile({
+                                      ...profile,
+                                      faq: profile.faq.filter((_, i) => i !== index)
+                                    });
+                                    toast.success('FAQ removed');
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-700 dark:hover:text-red-300 transition-all"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-6">
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Add New FAQ</h4>
+                      <div className="space-y-4 p-5 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                        <div>
+                          <Label htmlFor="faq-question-new" className="text-sm font-medium text-gray-700 dark:text-gray-300">Question <span className="text-red-500">*</span></Label>
+                          <Input
+                            id="faq-question-new"
+                            placeholder="e.g., What is your delivery time?"
+                            className="mt-2 border-gray-200 dark:border-gray-700 dark:bg-gray-600 dark:text-white focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-500 transition-all duration-200"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="faq-answer-new" className="text-sm font-medium text-gray-700 dark:text-gray-300">Answer <span className="text-red-500">*</span></Label>
+                          <Textarea
+                            id="faq-answer-new"
+                            placeholder="Provide a helpful answer..."
+                            className="mt-2 border-gray-200 dark:border-gray-700 dark:bg-gray-600 dark:text-white focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-500 transition-all duration-200"
+                            rows={4}
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const questionInput = document.getElementById('faq-question-new') as HTMLInputElement;
+                            const answerInput = document.getElementById('faq-answer-new') as HTMLTextAreaElement;
+                            
+                            if (questionInput?.value.trim() && answerInput?.value.trim()) {
+                              setProfile({
+                                ...profile,
+                                faq: [
+                                  ...profile.faq,
+                                  {
+                                    question: questionInput.value.trim(),
+                                    answer: answerInput.value.trim(),
+                                    certifiedBuyer: false,
+                                    isLike: false
+                                  }
+                                ]
+                              });
+                              questionInput.value = '';
+                              answerInput.value = '';
+                              toast.success('FAQ added successfully!');
+                            } else {
+                              toast.error('Please fill in both question and answer');
+                            }
+                          }}
+                          className="w-full bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-800 text-white font-medium transition-all"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add FAQ
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="store-images" className="mt-6">
-          <Card id="tour-profile-images" className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-teal-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                Store Images
-              </CardTitle>
-              <p className="text-sm text-gray-600">Upload up to 3 photos of your store</p>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <TabsContent value="store-images" className="space-y-6">
+          <Card id="tour-profile-images" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+            <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 dark:from-cyan-700 dark:to-cyan-800 border-b border-cyan-800 dark:border-cyan-900">
+              <CardHeader className="py-6 px-6 pb-5">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 p-2.5 rounded-lg">
+                    <Images className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-white">Store Images</CardTitle>
+                    <CardDescription className="text-cyan-100 dark:text-cyan-200 mt-1">Upload up to 3 photos of your store (JPG, PNG up to 5MB each)</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </div>
+            <CardContent className="space-y-6 p-8">
               {/* Display current images */}
               {profile.storeImages.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -1124,7 +1309,7 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                       <img
                         src={image}
                         alt={`Store ${index + 1}`}
-                        className="w-full h-40 object-cover rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
+                        className="w-full h-40 object-cover rounded-xl border-2 border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-all duration-300"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-xl pointer-events-none"></div>
                       <Button
@@ -1147,7 +1332,7 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                   size="sm"
                   onClick={() => storeImagesInputRef.current?.click()}
                   disabled={storeImagesLoading || profile.storeImages.length >= 3}
-                  className="hover:bg-teal-50 hover:border-teal-300 transition-all duration-200"
+                  className="hover:bg-teal-50 dark:hover:bg-gray-700 hover:border-teal-300 dark:hover:border-teal-700 transition-all duration-200"
                 >
                   {storeImagesLoading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1164,36 +1349,55 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
                   onChange={handleStoreImagesUpload}
                   className="hidden"
                 />
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
                   <p>JPG, PNG up to 5MB each</p>
-                  <p className="font-medium text-teal-600">{profile.storeImages.length}/3 images uploaded</p>
+                  <p className="font-medium text-teal-600 dark:text-teal-400">{profile.storeImages.length}/3 images uploaded</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
-
-      {/* Save Changes Button */}
-      <div className="flex flex-col sm:flex-row justify-center sm:justify-end gap-4 mt-8">
-        <Button
-          onClick={handleSave}
-          disabled={!hasChanges || saving}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-        >
-          {saving ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4 mr-2" />
-          )}
-          {saving ? 'Saving...' : 'Save Changes'}
-        </Button>
-        {hasChanges && (
-          <p className="text-sm text-gray-500 self-center sm:self-end">
-            You have unsaved changes
-          </p>
-        )}
+        </Tabs>
       </div>
+
+      {/* Floating Save Changes Button */}
+      {hasChanges && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-80 flex flex-col sm:flex-row items-center gap-3 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-amber-200 dark:border-amber-700 shadow-lg text-xs sm:text-sm">
+            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+            <p className="font-medium">Unsaved changes</p>
+          </div>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button
+              onClick={() => {
+                setProfile(initialProfile);
+              }}
+              disabled={saving}
+              variant="outline"
+              className="flex-1 sm:flex-none border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+            >
+              Discard
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 sm:flex-none bg-gradient-to-r from-gray-600 to-gray-700 dark:from-gray-700 dark:to-gray-800 hover:from-gray-700 hover:to-gray-800 dark:hover:from-gray-800 dark:hover:to-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl text-white font-semibold py-2.5"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
@@ -1213,7 +1417,7 @@ export function ProfileSettings({ tourIndex }: ProfileSettingsProps) {
             <AlertDialogAction
               onClick={confirmSave}
               disabled={saving}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-gray-600 hover:bg-gray-700"
             >
               {saving ? (
                 <>

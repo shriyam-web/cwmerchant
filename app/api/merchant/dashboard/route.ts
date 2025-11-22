@@ -235,6 +235,12 @@ export async function GET(req: Request) {
         mapLocation: partner.mapLocation || "",
         logo: partner.logo || "",
         bankDetails: partner.bankDetails || {},
+        faq: partner.faq && Array.isArray(partner.faq) ? partner.faq.map((item: any) => ({
+          question: item.question || '',
+          answer: item.answer || '',
+          certifiedBuyer: item.certifiedBuyer || false,
+          isLike: item.isLike || false
+        })) : [],
         status: partner.status || "pending",
         totalGraphics: partner.totalGraphics || 0,
         totalReels: partner.totalReels || 0,

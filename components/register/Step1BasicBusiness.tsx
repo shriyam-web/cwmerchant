@@ -25,7 +25,7 @@ export default function Step1BasicBusiness({ formData, handleInputChange, fieldE
                         id="merchantId"
                         value={formData.merchantId || "auto-generated"}
                         disabled
-                        className="bg-gradient-to-r from-gray-100 to-gray-200 cursor-not-allowed border-gray-300 focus:border-blue-500 shadow-sm rounded-lg h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
+                        className="bg-gradient-to-r from-gray-100 to-gray-200 cursor-not-allowed border-gray-300 focus:border-gray-500 shadow-sm rounded-lg h-10 p-3 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm"
                     />
                 </div>
                 <div className="space-y-2">
@@ -36,7 +36,7 @@ export default function Step1BasicBusiness({ formData, handleInputChange, fieldE
                         onChange={(e) => handleInputChange('legalName', e.target.value)}
                         placeholder="Enter legal name of the Business"
                         required
-                        className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg h-10 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm ${fieldErrors.legalName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                        className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg h-10 p-3 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm ${fieldErrors.legalName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                     />
                     {fieldErrors.legalName && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-2">
@@ -52,7 +52,7 @@ export default function Step1BasicBusiness({ formData, handleInputChange, fieldE
                         onChange={(e) => handleInputChange('displayName', e.target.value)}
                         placeholder="Enter display name of the business"
                         required
-                        className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg h-10 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm ${fieldErrors.displayName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                        className={`transition-all duration-300 ease-in-out shadow-sm border rounded-lg h-10 p-3 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 placeholder:text-gray-500 placeholder:font-normal placeholder:text-sm ${fieldErrors.displayName ? 'animate-pulse border-red-500 ring-2 ring-red-200 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                     />
                     {fieldErrors.displayName && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-2">

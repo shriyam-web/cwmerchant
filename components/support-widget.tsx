@@ -36,10 +36,10 @@ export function SupportWidget() {
               </a>
               <a 
                 href="tel:+919876543210"
-                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group"
+                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
               >
-                <Phone className="h-5 w-5 text-blue-600" />
-                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">Call Us</span>
+                <Phone className="h-5 w-5 text-gray-600" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-600">Call Us</span>
               </a>
               <a 
                 href="mailto:support@citywitty.com"
@@ -55,7 +55,7 @@ export function SupportWidget() {
       
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300"
+        className="w-14 h-14 rounded-full bg-gradient-to-r from-gray-600 to-gray-600 hover:from-gray-700 hover:to-gray-700 shadow-lg hover:shadow-xl transition-all duration-300"
       >
         <MessageCircle className="h-6 w-6" />
       </Button>

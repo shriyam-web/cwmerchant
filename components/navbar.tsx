@@ -50,7 +50,7 @@
 //               <Link
 //                 key={item.name}
 //                 href={item.href}
-//                 className="text-gray-600 hover:text-blue-600 transition-colors font-medium"
+//                 className="text-gray-600 hover:text-gray-600 transition-colors font-medium"
 //               >
 //                 {item.name}
 //               </Link>
@@ -64,8 +64,8 @@
 //                   key={item.name}
 //                   href={item.href}
 //                   className={`transition-all px-3 py-1.5 rounded-lg font-medium ${isActive
-//                     ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
-//                     : "text-gray-600 hover:text-blue-600"
+//                     ? "bg-gradient-to-r from-gray-600 to-gray-600 text-white shadow-md"
+//                     : "text-gray-600 hover:text-gray-600"
 //                     }`}
 //                 >
 //                   {item.name}
@@ -78,12 +78,12 @@
 //           {/* Desktop Auth Buttons */}
 //           <div className="hidden md:flex items-center space-x-2">
 //             <Link href="/login">
-//               <Button variant="ghost" className="text-gray-600 hover:text-blue-600">
+//               <Button variant="ghost" className="text-gray-600 hover:text-gray-600">
 //                 Login
 //               </Button>
 //             </Link>
 //             <Link href="/register">
-//               <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+//               <Button className="bg-gradient-to-r from-gray-600 to-gray-600 hover:from-gray-700 hover:to-gray-700">
 //                 Register as Merchant
 //               </Button>
 //             </Link>
@@ -120,7 +120,7 @@
 //                     <Link
 //                       key={item.name}
 //                       href={item.href}
-//                       className="text-gray-600 hover:text-blue-600 transition-colors font-medium py-2"
+//                       className="text-gray-600 hover:text-gray-600 transition-colors font-medium py-2"
 //                       onClick={() => setIsOpen(false)}
 //                     >
 //                       {item.name}
@@ -135,8 +135,8 @@
 //                         key={item.name}
 //                         href={item.href}
 //                         className={`transition-all font-medium py-2 px-3 rounded-md ${isActive
-//                           ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-//                           : "text-gray-600 hover:text-blue-600"
+//                           ? "bg-gradient-to-r from-gray-600 to-gray-600 text-white"
+//                           : "text-gray-600 hover:text-gray-600"
 //                           }`}
 //                         onClick={() => setIsOpen(false)}
 //                       >
@@ -154,7 +154,7 @@
 //                     </Button>
 //                   </Link>
 //                   <Link href="/register">
-//                     <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600" onClick={() => setIsOpen(false)}>
+//                     <Button className="w-full bg-gradient-to-r from-gray-600 to-gray-600" onClick={() => setIsOpen(false)}>
 //                       Register as Merchant
 //                     </Button>
 //                   </Link>
@@ -178,8 +178,9 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { LogOut } from "lucide-react";
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { useMerchantAuth } from '@/lib/auth-context'; // path adjust karo
+import { useMerchantAuth } from '@/lib/auth-context';
 import { useEffect, useRef } from "react";
+import { ThemeSwitcher } from './theme-switcher';
 
 
 
@@ -222,7 +223,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-screen-xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
 
@@ -242,8 +243,8 @@ export function Navbar() {
                     key={item.name}
                     href={item.href}
                     className={`transition-all px-1 py-1 rounded-lg font-medium text-[80%] sm:text-[80%] md:text-[80%] lg:text-base ${isActive
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                      : 'text-gray-600 hover:text-blue-600'
+                      ? 'bg-gradient-to-r from-gray-600 to-gray-600 text-white shadow-md'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400'
                       }`}
                     style={{ whiteSpace: "nowrap" }}
                   >
@@ -255,17 +256,18 @@ export function Navbar() {
 
             {/* ===== Desktop Auth / Merchant ===== */}
             <div className="hidden lg:flex items-center space-x-3 relative">
+              <ThemeSwitcher />
               {loadingProfile ? (
-                <span className="text-gray-500">Loading...</span>
+                <span className="text-gray-500 dark:text-gray-400">Loading...</span>
               ) : !merchant ? (
                 <>
                   <Link href="/login">
-                    <Button variant="ghost" className="text-gray-600 hover:text-blue-600">
+                    <Button variant="ghost" className="text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400">
                       Login
                     </Button>
                   </Link>
                   <Link href="/register">
-                    <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                    <Button className="bg-gradient-to-r from-gray-600 to-gray-600 hover:from-gray-700 hover:to-gray-700">
                       Register as Merchant
                     </Button>
                   </Link>
@@ -274,23 +276,23 @@ export function Navbar() {
                 <div className="relative" ref={desktopDropdownRef}>
                   <button
                     onClick={() => setDesktopDropdownOpen((prev) => !prev)}
-                    className="px-2 py-1 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center gap-2 shadow-lg transition-all p-2 md:p-3 ml-2 mt-1 mb-1 pt-1 pb-1 max-w-40 truncate text-[90%] sm:text-[90%] md:text-[90%] lg:text-base"
+                    className="px-2 py-1 rounded-lg font-medium text-white bg-gradient-to-r from-gray-500 via-gray-500 to-purple-500 flex items-center gap-2 shadow-lg transition-all p-2 md:p-3 ml-2 mt-1 mb-1 pt-1 pb-1 max-w-40 truncate text-[90%] sm:text-[90%] md:text-[90%] lg:text-base"
                     style={{ whiteSpace: "nowrap" }}
                   >
                     Hey, {firstName} <ChevronDown className="w-4 h-4" />
                   </button>
 
                   {desktopDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden animate-fade-in">
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl overflow-hidden animate-fade-in">
                       <Link
                         href="/dashboard"
-                        className="block px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all"
+                        className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-500 hover:via-gray-500 hover:to-purple-500 hover:text-white transition-all"
                         onClick={() => setDesktopDropdownOpen(false)}
                       >
                         Dashboard
                       </Link>
                       <button
-                        className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-md font-medium transition-colors"
                         onClick={() => {
                           logout();
                           setDesktopDropdownOpen(false);
@@ -307,12 +309,13 @@ export function Navbar() {
 
             {/* ===== Mobile Right Section (Auth + Burger) ===== */}
             <div className="flex items-center gap-1 lg:hidden">
+              <ThemeSwitcher />
               {/* Mobile Auth / Merchant */}
               {loadingProfile ? (
-                <span className="text-gray-500 text-sm">Loading...</span>
+                <span className="text-gray-500 dark:text-gray-400 text-sm">Loading...</span>
               ) : !merchant ? (
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-blue-600">
+                  <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400">
                     Login
                   </Button>
                 </Link>
@@ -320,23 +323,23 @@ export function Navbar() {
                 <div className="relative" ref={mobileDropdownRef}>
                   <button
                     onClick={() => setMobileDropdownOpen((prev) => !prev)}
-                    className="px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center gap-1 shadow max-w-32 truncate text-xs sm:text-sm"
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-gray-500 via-gray-500 to-purple-500 flex items-center gap-1 shadow max-w-32 truncate text-xs sm:text-sm"
                   >
                     Hey, {firstName}
                     <ChevronDown className="w-4 h-4" />
                   </button>
 
                   {mobileDropdownOpen && (
-                    <div className="fixed right-4 mt-2 w-40 bg-white border rounded-md shadow-lg z-50">
+                    <div className="fixed right-4 mt-2 w-40 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                       <Link
                         href="/dashboard"
-                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                         onClick={() => setMobileDropdownOpen(false)}
                       >
                         Merchant Dashboard
                       </Link>
                       <button
-                        className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-md font-medium transition-colors"
                         onClick={() => {
                           logout();
                           setMobileDropdownOpen(false);
@@ -357,18 +360,18 @@ export function Navbar() {
                     <Menu className="h-6 w-6" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] sm:w-[400px] p-6 [&>button]:hidden">
+                <SheetContent side="right" className="w-[300px] sm:w-[400px] p-6 [&>button]:hidden dark:bg-gray-900 dark:border-gray-800">
                   <div className="flex flex-col h-full justify-between">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-8">
                       <Link href="/" className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
                           <span className="text-white font-bold">C</span>
                         </div>
-                        <span className="font-bold text-gray-900 text-lg">CW Merchant Hub</span>
+                        <span className="font-bold text-gray-900 dark:text-gray-100 text-lg">CW Merchant Hub</span>
                       </Link>
                       <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
-                        <X className="h-6 w-6" />
+                        <X className="h-6 w-6 dark:text-gray-400" />
                       </Button>
                     </div>
 
@@ -381,8 +384,8 @@ export function Navbar() {
                             key={item.name}
                             href={item.href}
                             className={`transition-all font-medium py-2 px-3 rounded-md ${isActive
-                              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                              : 'text-gray-600 hover:text-blue-600'
+                              ? 'bg-gradient-to-r from-gray-600 to-gray-600 text-white'
+                              : 'text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400'
                               }`}
                             onClick={() => setIsOpen(false)}
                           >
@@ -397,29 +400,29 @@ export function Navbar() {
                       {!merchant ? (
                         <>
                           <Link href="/login">
-                            <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
+                            <Button variant="outline" className="w-full dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" onClick={() => setIsOpen(false)}>
                               Login
                             </Button>
                           </Link>
                           <Link href="/register">
-                            <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600" onClick={() => setIsOpen(false)}>
+                            <Button className="w-full bg-gradient-to-r from-gray-600 to-gray-600" onClick={() => setIsOpen(false)}>
                               Register as Merchant
                             </Button>
                           </Link>
                         </>
                       ) : (
                         <div className="flex flex-col space-y-2">
-                          <span className="px-4 py-2 font-medium truncate max-w-40">Hey, {firstName}</span>
+                          <span className="px-4 py-2 font-medium truncate max-w-40 dark:text-gray-300">Hey, {firstName}</span>
 
                           <Link
                             href="/dashboard"
-                            className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                            className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
                             onClick={() => setIsOpen(false)}
                           >
                             Merchant Dashboard
                           </Link>
                           <button
-                            className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors"
+                            className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-md font-medium transition-colors"
                             onClick={() => {
                               logout();
                               setIsOpen(false);

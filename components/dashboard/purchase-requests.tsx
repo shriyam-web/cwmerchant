@@ -253,17 +253,17 @@ export function PurchaseRequests() {
       <div id="tour-requests-main" className="space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Purchase Requests</h2>
-            <p className="text-gray-600">Review and approve customer purchase requests</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Purchase Requests</h2>
+            <p className="text-gray-600 dark:text-gray-400">Review and approve customer purchase requests</p>
           </div>
           {pendingCount > 0 && (
-            <Badge variant="secondary" className="self-start sm:self-auto bg-orange-100 text-orange-700">
+            <Badge variant="secondary" className="self-start sm:self-auto bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-700">
               {pendingCount} Pending {pendingCount === 1 ? 'Approval' : 'Approvals'}
             </Badge>
           )}
         </div>
 
-        <div id="tour-requests-filters" className="flex flex-col sm:flex-row gap-4">
+        <div id="tour-requests-filter" className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -291,15 +291,15 @@ export function PurchaseRequests() {
 
         <div className="space-y-4">
           {filteredRequests.length === 0 ? (
-            <Card>
+            <Card className="bg-white dark:bg-gray-950 border-0 dark:border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50">
               <CardContent className="p-12 text-center">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="rounded-full bg-gray-100 p-6">
-                    <Clock className="h-12 w-12 text-gray-400" />
+                  <div className="rounded-full bg-gray-100 dark:bg-gray-700 p-6">
+                    <Clock className="h-12 w-12 text-gray-400 dark:text-gray-400" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold text-gray-900">No Purchase Requests</h3>
-                    <p className="text-gray-600 max-w-md">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">No Purchase Requests</h3>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-md">
                       {searchTerm || filter !== 'all'
                         ? 'No requests match your current filters. Try adjusting your search or filter settings.'
                         : 'There are no purchase requests available at this time. New requests will appear here when customers submit them.'}
@@ -310,12 +310,12 @@ export function PurchaseRequests() {
             </Card>
           ) : (
             filteredRequests.map((request) => (
-              <Card key={request.id} className="hover:shadow-md transition-shadow">
+              <Card key={request.id} className="bg-white dark:bg-gray-950 border-0 dark:border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 hover:shadow-md dark:hover:shadow-gray-900/70 transition-shadow">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex w-full sm:w-auto items-start sm:items-center gap-4">
                       <Avatar className="w-12 h-12 flex-shrink-0">
-                        <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                        <AvatarFallback className="bg-gray-100 dark:bg-gray-900/40 text-gray-600 dark:text-gray-400 font-semibold">
                           {request.customerName
                             ? request.customerName
                               .split(' ')
@@ -326,12 +326,12 @@ export function PurchaseRequests() {
                       </Avatar>
 
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-gray-900 truncate">{request.customerName}</div>
-                        <div className="flex items-center gap-1.5 text-sm text-gray-600 break-words">
+                        <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">{request.customerName}</div>
+                        <div className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400 break-words">
                           <Phone className="h-3.5 w-3.5 flex-shrink-0" />
                           {request.customerPhone}
                         </div>
-                        <div className="text-sm text-gray-500 mt-1">
+                        <div className="text-sm text-gray-500 dark:text-gray-500 mt-1">
                           Submitted on {new Date(request.submittedAt).toLocaleString()}
                         </div>
                       </div>
@@ -341,12 +341,12 @@ export function PurchaseRequests() {
                       <div className="flex flex-col gap-1 sm:items-end">
                         <div className="flex items-baseline gap-2 sm:justify-end">
                           {typeof request.purchaseAmount === 'number' && request.purchaseAmount > request.amount && (
-                            <div className="text-sm text-gray-500 line-through">{formatAmount(request.purchaseAmount)}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-500 line-through">{formatAmount(request.purchaseAmount)}</div>
                           )}
-                          <div className="text-2xl font-bold text-gray-900">{formatAmount(request.amount)}</div>
+                          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatAmount(request.amount)}</div>
                         </div>
                         {typeof request.discountAmount === 'number' && request.discountAmount > 0 && (
-                          <div className="flex items-center gap-1 text-sm text-emerald-600 sm:justify-end">
+                          <div className="flex items-center gap-1 text-sm text-emerald-600 dark:text-emerald-400 sm:justify-end">
                             <Sparkles className="h-3.5 w-3.5" />
                             <span>
                               Save {formatAmount(request.discountAmount)}
@@ -355,7 +355,7 @@ export function PurchaseRequests() {
                           </div>
                         )}
                       </div>
-                      <div className="text-sm text-gray-600 sm:text-right">{request.product}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 sm:text-right">{request.product}</div>
                       <Badge
                         variant="secondary"
                         className={`${getStatusColor(request.status)} text-white capitalize self-start sm:self-auto`}
@@ -369,7 +369,7 @@ export function PurchaseRequests() {
                   </div>
 
                   {request.status === 'pending' && (
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2 pt-4 border-t border-gray-200 sm:justify-between">
+                    <div id="tour-requests-actions" className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2 pt-4 border-t border-gray-200 dark:border-gray-700 sm:justify-between">
                       <Button
                         size="default"
                         disabled={!!loadingStates[request.id]}

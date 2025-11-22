@@ -165,4 +165,10 @@ export interface IPartner extends Document {
         latitude?: number;
         longitude?: number;
     }[];
+    faq?: {
+        question: string;
+        answer: string;
+        certifiedBuyer?: boolean;
+        isLike?: boolean;
+    }[];
 }

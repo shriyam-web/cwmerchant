@@ -37,8 +37,8 @@ interface Merchant {
 
 const themeConfig: Record<string, any> = {
   classic: {
-    leftGradient: 'from-blue-600 to-blue-700',
-    bgGradient: 'from-blue-50 to-indigo-50',
+    leftGradient: 'from-gray-600 to-gray-700',
+    bgGradient: 'from-gray-50 to-gray-50',
     accentColor: '#1e40af',
   },
   friendship: {
@@ -146,7 +146,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
           <p className="mt-4 text-gray-600">Loading coupon...</p>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
           <p className="text-gray-600 mb-6">{error || 'Coupon not found'}</p>
           <Button
             onClick={() => window.history.back()}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-gray-600 hover:bg-gray-700"
           >
             Go Back
           </Button>
@@ -312,15 +312,15 @@ export default function CouponPage({ params }: { params: { code: string } }) {
               {isHappyHour && (
                 <>
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">⏰</span>
-                    <span className="font-semibold text-blue-700">Happy Hour Coupon</span>
+                    <span className="text-gray-600 mr-2">⏰</span>
+                    <span className="font-semibold text-gray-700">Happy Hour Coupon</span>
                   </li>
                   <li className="flex items-start ml-6">
-                    <span className="text-blue-600 mr-2">→</span>
+                    <span className="text-gray-600 mr-2">→</span>
                     Available on: {coupon.happyHourDays?.join(', ')}
                   </li>
                   <li className="flex items-start ml-6">
-                    <span className="text-blue-600 mr-2">→</span>
+                    <span className="text-gray-600 mr-2">→</span>
                     Time: {formatTimeRange(coupon.happyHourStartTime, coupon.happyHourEndTime)}
                   </li>
                 </>
@@ -357,7 +357,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
                   <p className="text-gray-600 font-semibold">Phone</p>
                   <a
                     href={`tel:${merchant.phone}`}
-                    className="text-blue-600 hover:underline break-all"
+                    className="text-gray-600 hover:underline break-all"
                   >
                     {merchant.phone}
                   </a>
@@ -368,7 +368,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
                   <p className="text-gray-600 font-semibold">Email</p>
                   <a
                     href={`mailto:${merchant.email}`}
-                    className="text-blue-600 hover:underline break-all"
+                    className="text-gray-600 hover:underline break-all"
                   >
                     {merchant.email}
                   </a>
@@ -381,7 +381,7 @@ export default function CouponPage({ params }: { params: { code: string } }) {
                     href={merchant.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline break-all"
+                    className="text-gray-600 hover:underline break-all"
                   >
                     Visit Site
                   </a>

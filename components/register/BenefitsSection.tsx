@@ -29,7 +29,7 @@ export default function BenefitsSection() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         {benefits.map(({ icon: Icon, title, description }) => (
           <div key={title} className="flex flex-col items-center text-center p-6 border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <Icon className="w-12 h-12 text-blue-600 mb-4" />
+            <Icon className="w-12 h-12 text-gray-600 mb-4" />
             <h3 className="text-lg font-semibold mb-2">{title}</h3>
             <p className="text-gray-600">{description}</p>
           </div>

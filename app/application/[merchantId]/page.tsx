@@ -149,7 +149,7 @@ export default function ApplicationStatusPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-5xl mx-auto space-y-8">
                     <Skeleton className="h-12 w-3/4 mx-auto" />
                     <Skeleton className="h-64 w-full" />
@@ -164,7 +164,7 @@ export default function ApplicationStatusPage() {
 
     if (error || !applicationData) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-2xl mx-auto">
                     <Card className="border-red-200">
                         <CardHeader>
@@ -188,7 +188,7 @@ export default function ApplicationStatusPage() {
     const statusConfig = getStatusConfig(applicationData.status);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto space-y-8">
                 {/* Header */}
                 <div className="text-center space-y-4">
@@ -273,7 +273,7 @@ export default function ApplicationStatusPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-blue-500" />
+                            <TrendingUp className="h-5 w-5 text-gray-500" />
                             Profile Completion
                         </CardTitle>
                         <CardDescription>
@@ -325,7 +325,7 @@ export default function ApplicationStatusPage() {
                     <Card>
                         <CardContent className="pt-6">
                             <div className="flex items-start gap-3">
-                                <Building className="h-5 w-5 text-blue-500 mt-1" />
+                                <Building className="h-5 w-5 text-gray-500 mt-1" />
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Business Type</p>
                                     <p className="text-lg font-semibold text-gray-900">{applicationData.profileDetails.category}</p>
@@ -466,7 +466,7 @@ export default function ApplicationStatusPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <ArrowRight className="h-5 w-5 text-blue-500" />
+                                <ArrowRight className="h-5 w-5 text-gray-500" />
                                 Next Steps
                             </CardTitle>
                             <CardDescription>
@@ -481,7 +481,7 @@ export default function ApplicationStatusPage() {
                             <ul className="space-y-3">
                                 {applicationData.nextSteps.map((step, index) => (
                                     <li key={index} className="flex items-start gap-3">
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
+                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-sm font-medium">
                                             {index + 1}
                                         </div>
                                         <p className="text-gray-700 mt-0.5">{step}</p>

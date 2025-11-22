@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { MerchantAuthProvider } from "@/lib/auth-context";
 import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/lib/theme-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -50,16 +51,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
         
       </head>
       <body className={inter.className}>
-        <MerchantAuthProvider>
-          {children}
-          <Toaster />
-        </MerchantAuthProvider>
+        <ThemeProvider>
+          <MerchantAuthProvider>
+            {children}
+            <Toaster />
+          </MerchantAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

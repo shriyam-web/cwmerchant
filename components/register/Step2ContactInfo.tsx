@@ -46,7 +46,7 @@ export default function Step2ContactInfo({ formData, handleInputChange, fieldErr
                                 handleInputChange('merchantSlug', '');
                                 triggerRegenerateSuggestions();
                             }}
-                            className="mt-2 text-sm text-blue-600 hover:text-blue-800 underline"
+                            className="mt-2 text-sm text-gray-600 hover:text-gray-800 underline"
                         >
                             Try other username
                         </button>
@@ -57,7 +57,7 @@ export default function Step2ContactInfo({ formData, handleInputChange, fieldErr
                             {suggestedSlugs.length > 0 ? (
                                 <ul className="list-disc list-inside text-sm text-gray-700 max-h-40 overflow-y-auto">
                                     {suggestedSlugs.map((slug: string) => (
-                                        <li key={slug} className="cursor-pointer text-blue-600 hover:underline"
+                                        <li key={slug} className="cursor-pointer text-gray-600 hover:underline"
                                             onClick={() => handleInputChange('merchantSlug', slug)}>
                                             {slug}
                                         </li>
@@ -69,7 +69,7 @@ export default function Step2ContactInfo({ formData, handleInputChange, fieldErr
                         </div>
                     )}
                     {formData.merchantSlug && (
-                        <p className="text-sm text-blue-600 mt-1">
+                        <p className="text-sm text-gray-600 mt-1">
                             Your profile URL post-verification will be: https://www.citywitty.com/merchants/{formData.merchantSlug}
                         </p>
                     )}

@@ -160,21 +160,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Navbar />
 
       <div className="flex flex-1 pt-10">
         {/* Left branding section */}
         <div className={`hidden lg:flex lg:w-1/2 ${isRemoteAccess
           ? 'bg-gradient-to-br from-orange-600 via-red-600 to-pink-600'
-          : 'bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600'
+          : 'bg-gradient-to-br from-gray-600 via-gray-600 to-purple-600'
           } text-white items-center justify-center relative overflow-hidden transition-all duration-500`}>
           <div className="absolute inset-0 opacity-20" />
           <div className="relative z-10 max-w-md text-center p-10">
             <h1 className="text-3xl font-extrabold mb-4">
               {isRemoteAccess ? 'CityWitty Admin Access' : 'CityWitty Merchant Hub'}
             </h1>
-            <p className="text-lg text-indigo-100 mb-6">
+            <p className="text-lg text-gray-100 mb-6">
               {isRemoteAccess
                 ? 'Secure remote access system for administrative support and merchant account management.'
                 : 'Grow your business with digital presence, local visibility, and e-commerce tools. Login to manage your journey 🚀'}
@@ -186,7 +186,7 @@ export default function Login() {
         {/* Right login form */}
         <div className="flex-1 flex items-center justify-center px-6 mb-2 mt-2 pt-7">
           <div className="w-full max-w-md">
-            <Link href="/" className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 mb-6">
+            <Link href="/" className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-700 mb-6">
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Home</span>
             </Link>
@@ -196,12 +196,12 @@ export default function Login() {
               <div className="text-center mb-8">
                 <div className={`w-16 h-16 ${isRemoteAccess
                   ? 'bg-gradient-to-br from-orange-100 to-red-100'
-                  : 'bg-gradient-to-br from-blue-100 to-indigo-100'
+                  : 'bg-gradient-to-br from-gray-100 to-gray-100'
                   } rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner transition-all duration-300`}>
                   {isRemoteAccess ? (
                     <Shield className="h-8 w-8 text-orange-600" />
                   ) : (
-                    <Lock className="h-8 w-8 text-blue-600" />
+                    <Lock className="h-8 w-8 text-gray-600" />
                   )}
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900">
@@ -340,7 +340,7 @@ export default function Login() {
 
                     {/* Forgot password link */}
                     <div className="flex items-center justify-end">
-                      <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                      <Link href="/forgot-password" className="text-sm text-gray-600 hover:underline">
                         Forgot password?
                       </Link>
                     </div>
@@ -357,7 +357,7 @@ export default function Login() {
                   type="submit"
                   className={`w-full h-12 text-lg font-medium rounded-xl shadow-lg transition-all ${isRemoteAccess
                     ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
-                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
+                    : 'bg-gradient-to-r from-gray-600 to-gray-600 hover:from-gray-700 hover:to-gray-700'
                     }`}
                   disabled={isRemoteAccess ? (verifyingOtp || !otpSent) : loading}
                 >
@@ -372,7 +372,7 @@ export default function Login() {
                 <div className="text-center mt-8">
                   <p className="text-gray-600">
                     Don&apos;t have an account?{' '}
-                    <Link href="/register" className="text-blue-600 hover:underline font-medium">
+                    <Link href="/register" className="text-gray-600 hover:underline font-medium">
                       Register as Merchant
                     </Link>
                   </p>

@@ -68,7 +68,7 @@ export default function PrivacyPolicyPage() {
                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Merchant Rights</h2>
                     <p className="text-gray-700 mb-6">
                         Merchants have the right to access, correct, or delete their personal information. Requests can be sent to our support team at <a href="mailto:support.merchant@citywitty.com
-" className="text-blue-600 underline">support.merchant@citywitty.com
+" className="text-gray-600 underline">support.merchant@citywitty.com
                         </a>.
                     </p>
 
@@ -79,7 +79,7 @@ export default function PrivacyPolicyPage() {
 
                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Contact Us</h2>
                     <p className="text-gray-700">
-                        For questions or concerns about this Privacy Policy or merchant data handling, contact our support team at <a href="mailto:contact@citywitty.com" className="text-blue-600 underline">contact@citywitty.com</a>.
+                        For questions or concerns about this Privacy Policy or merchant data handling, contact our support team at <a href="mailto:contact@citywitty.com" className="text-gray-600 underline">contact@citywitty.com</a>.
                     </p>
                 </div>
             </section>

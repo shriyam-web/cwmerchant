@@ -191,7 +191,7 @@ export default function MerchantPackagesPage() {
 
 
             {/* Hero Section */}
-            <section className="py-10 pt-20 bg-gradient-to-r from-indigo-50 to-purple-50">
+            <section className="py-10 pt-20 bg-gradient-to-r from-gray-50 to-purple-50">
 
 
 
@@ -206,7 +206,7 @@ export default function MerchantPackagesPage() {
                     </p>
                     <a
                         href="#pricing"
-                        className="inline-block px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl shadow hover:bg-indigo-700 transition"
+                        className="inline-block px-6 py-3 bg-gray-600 text-white font-medium rounded-xl shadow hover:bg-gray-700 transition"
                     >
                         View Packages
                     </a>
@@ -229,7 +229,7 @@ export default function MerchantPackagesPage() {
                         For Enterprise Pricing contact us at{" "}
                         <a
                             href="mailto:support.merchant@citywitty.com"
-                            className="text-indigo-600 hover:underline"
+                            className="text-gray-600 hover:underline"
                         >
                             support.merchant@citywitty.com
                         </a>
@@ -243,7 +243,7 @@ export default function MerchantPackagesPage() {
             {/* Benefits Section */}
             <section
                 id="benefits"
-                className="relative py-28 bg-gradient-to-b from-white via-indigo-50/50 to-purple-50 overflow-hidden"
+                className="relative py-28 bg-gradient-to-b from-white via-gray-50/50 to-purple-50 overflow-hidden"
             >
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
                     {/* Intro */}
@@ -277,11 +277,11 @@ export default function MerchantPackagesPage() {
                             <div
                                 key={benefit.title}
                                 className="relative bg-white rounded-3xl p-8 text-center border border-gray-100
-            shadow-md hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-300 transition-all duration-300 group"
+            shadow-md hover:shadow-2xl hover:-translate-y-2 hover:border-gray-300 transition-all duration-300 group"
                             >
                                 {/* Icon wrapper */}
-                                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 
-            flex items-center justify-center shadow-xl ring-1 ring-indigo-200 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-gray-500 to-purple-500 
+            flex items-center justify-center shadow-xl ring-1 ring-gray-200 group-hover:scale-110 transition-transform duration-300">
                                     <benefit.icon className="w-10 h-10 text-white" />
                                 </div>
 
@@ -292,7 +292,7 @@ export default function MerchantPackagesPage() {
                                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">{benefit.desc}</p>
 
                                 {/* Accent border bottom */}
-                                <div className="mt-6 h-1 w-16 bg-indigo-500 mx-auto rounded-full opacity-70"></div>
+                                <div className="mt-6 h-1 w-16 bg-gray-500 mx-auto rounded-full opacity-70"></div>
                             </div>
                         ))}
                     </div>
@@ -301,7 +301,7 @@ export default function MerchantPackagesPage() {
                 {/* Decorative Background */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute -top-20 -right-20 w-96 h-96 bg-purple-200 rounded-full opacity-10"></div>
-                    <div className="absolute -bottom-32 -left-24 w-96 h-96 bg-indigo-200 rounded-full opacity-10"></div>
+                    <div className="absolute -bottom-32 -left-24 w-96 h-96 bg-gray-200 rounded-full opacity-10"></div>
                 </div>
             </section>
 

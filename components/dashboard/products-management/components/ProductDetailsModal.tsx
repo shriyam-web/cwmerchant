@@ -70,17 +70,17 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-                <DialogHeader className="px-6 pt-6 pb-4">
+            <DialogContent className="max-w-4xl max-h-[90vh] p-0 bg-white dark:bg-gray-950 border dark:border-gray-800">
+                <DialogHeader className="px-6 pt-6 pb-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                            <DialogTitle className="text-2xl font-bold">{product.productName}</DialogTitle>
-                            <DialogDescription className="flex items-center gap-2 mt-2">
+                            <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">{product.productName}</DialogTitle>
+                            <DialogDescription className="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-400">
                                 <Box className="h-4 w-4" />
                                 {product.productCategory}
                                 {product.brand && (
                                     <>
-                                        <span className="text-muted-foreground">•</span>
+                                        <span className="text-muted-foreground dark:text-gray-500">•</span>
                                         <Tag className="h-4 w-4" />
                                         {product.brand}
                                     </>
@@ -90,7 +90,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         {onEdit && (
                             <Button
                                 onClick={handleEdit}
-                                className="mt-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg"
+                                className="mt-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white shadow-lg"
                             >
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit Product
@@ -110,7 +110,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                                 </Badge>
                             )}
                             {product.cityWittyAssured && (
-                                <Badge className="bg-gradient-to-r from-blue-600 to-blue-500 text-white border-0">
+                                <Badge className="bg-gradient-to-r from-gray-600 to-gray-500 text-white border-0">
                                     <Shield className="h-3 w-3 mr-1" />
                                     CityWitty Assured
                                 </Badge>
@@ -131,7 +131,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
 
                         {/* Product Images */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">Product Images</h3>
+                            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Product Images</h3>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                 {hasProductImages ? (
                                     productImages.map((image, index) => (
@@ -151,7 +151,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
 
                         {/* Pricing Section */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">Pricing</h3>
+                            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Pricing</h3>
                             <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-4 rounded-xl border-2 border-green-200 dark:border-green-800">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600">
@@ -207,8 +207,8 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
 
                         {/* Description */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">Description</h3>
-                            <p className="text-muted-foreground leading-relaxed">{product.productDescription}</p>
+                            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Description</h3>
+                            <p className="text-muted-foreground dark:text-gray-400 leading-relaxed">{product.productDescription}</p>
                         </div>
 
                         {/* Product Highlights */}
@@ -216,7 +216,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">Key Highlights</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Key Highlights</h3>
                                     <ul className="space-y-2">
                                         {productHighlights.map((highlight, index) => (
                                             <li key={index} className="flex items-start gap-2">
@@ -233,11 +233,11 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
 
                         {/* Stock & Availability */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">Stock & Availability</h3>
+                            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Stock & Availability</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className={`p-4 rounded-xl border-2 ${product.isAvailableStock ? 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700'}`}>
+                                <div className={`p-4 rounded-xl border-2 ${product.isAvailableStock ? 'bg-gray-50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-800' : 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700'}`}>
                                     <div className="flex items-center gap-3">
-                                        <Package className={`h-5 w-5 ${product.isAvailableStock ? 'text-blue-600' : 'text-gray-500'}`} />
+                                        <Package className={`h-5 w-5 ${product.isAvailableStock ? 'text-gray-600' : 'text-gray-500'}`} />
                                         <div>
                                             <p className="font-semibold">
                                                 {product.isAvailableStock ? `${product.availableStocks ?? 0} units` : 'Out of Stock'}
@@ -270,14 +270,14 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">Product Variants</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Product Variants</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         {productVariants.map((variant) => (
-                                            <div key={variant.variantId} className="p-4 rounded-xl border-2 bg-gray-50 dark:bg-gray-900/20">
-                                                <p className="font-semibold">{variant.name}</p>
+                                            <div key={variant.variantId} className="p-4 rounded-xl border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
+                                                <p className="font-semibold text-gray-900 dark:text-white">{variant.name}</p>
                                                 <div className="flex items-center justify-between mt-2">
-                                                    <span className="text-green-600 font-bold">{currencyFormatter.format(variant.price ?? 0)}</span>
-                                                    <span className="text-sm text-muted-foreground">{variant.stock ?? 0} in stock</span>
+                                                    <span className="text-green-600 dark:text-green-400 font-bold">{currencyFormatter.format(variant.price ?? 0)}</span>
+                                                    <span className="text-sm text-muted-foreground dark:text-gray-500">{variant.stock ?? 0} in stock</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -289,34 +289,34 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                         {/* Features */}
                         <Separator />
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">Features</h3>
+                            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Features</h3>
                             <div className="flex flex-wrap gap-2">
                                 {product.instore && (
-                                    <Badge variant="outline" className="border-blue-300 text-blue-600">
+                                    <Badge variant="outline" className="border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
                                         <MapPin className="h-3 w-3 mr-1" />
                                         In-Store Available
                                     </Badge>
                                 )}
                                 {product.isWalletCompatible && (
-                                    <Badge variant="outline" className="border-purple-300 text-purple-600">
+                                    <Badge variant="outline" className="border-purple-300 text-purple-600 dark:border-purple-700 dark:text-purple-400">
                                         <Wallet className="h-3 w-3 mr-1" />
                                         Wallet Compatible
                                     </Badge>
                                 )}
                                 {product.isWarranty && (
-                                    <Badge variant="outline" className="border-green-300 text-green-600">
+                                    <Badge variant="outline" className="border-green-300 text-green-600 dark:border-green-700 dark:text-green-400">
                                         <Shield className="h-3 w-3 mr-1" />
                                         Warranty Available
                                     </Badge>
                                 )}
                                 {(product.deliveryFee ?? 0) === 0 && (
-                                    <Badge variant="outline" className="border-orange-300 text-orange-600">
+                                    <Badge variant="outline" className="border-orange-300 text-orange-600 dark:border-orange-700 dark:text-orange-400">
                                         <Truck className="h-3 w-3 mr-1" />
                                         Free Delivery
                                     </Badge>
                                 )}
                                 {product.isReplacement && (
-                                    <Badge variant="outline" className="border-red-300 text-red-600">
+                                    <Badge variant="outline" className="border-red-300 text-red-600 dark:border-red-700 dark:text-red-400">
                                         <RefreshCw className="h-3 w-3 mr-1" />
                                         Replacement Available
                                     </Badge>
@@ -329,26 +329,26 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">Warranty & Replacement</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Warranty & Replacement</h3>
                                     <div className="space-y-3">
                                         {product.isWarranty && product.warrantyDescription && (
                                             <div className="p-4 rounded-xl border-2 bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
                                                 <div className="flex items-start gap-3">
-                                                    <Shield className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                                                    <Shield className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
                                                     <div>
-                                                        <p className="font-semibold">Warranty</p>
-                                                        <p className="text-sm text-muted-foreground mt-1">{product.warrantyDescription}</p>
+                                                        <p className="font-semibold text-gray-900 dark:text-white">Warranty</p>
+                                                        <p className="text-sm text-muted-foreground dark:text-gray-400 mt-1">{product.warrantyDescription}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         )}
                                         {product.isReplacement && product.replacementDays && (
-                                            <div className="p-4 rounded-xl border-2 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+                                            <div className="p-4 rounded-xl border-2 bg-gray-50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-800">
                                                 <div className="flex items-start gap-3">
-                                                    <RefreshCw className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                                                    <RefreshCw className="h-5 w-5 text-gray-600 dark:text-gray-400 shrink-0 mt-0.5" />
                                                     <div>
-                                                        <p className="font-semibold">Replacement Policy</p>
-                                                        <p className="text-sm text-muted-foreground mt-1">
+                                                        <p className="font-semibold text-gray-900 dark:text-white">Replacement Policy</p>
+                                                        <p className="text-sm text-muted-foreground dark:text-gray-400 mt-1">
                                                             {product.replacementDays} days replacement available
                                                         </p>
                                                     </div>
@@ -365,37 +365,37 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">Dimensions & Weight</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Dimensions & Weight</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                         {product.productHeight && (
-                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20">
+                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
                                                 <div className="flex items-center gap-2">
-                                                    <Ruler className="h-4 w-4 text-muted-foreground" />
+                                                    <Ruler className="h-4 w-4 text-muted-foreground dark:text-gray-500" />
                                                     <div>
-                                                        <p className="text-xs text-muted-foreground">Height</p>
-                                                        <p className="font-semibold">{product.productHeight} mm</p>
+                                                        <p className="text-xs text-muted-foreground dark:text-gray-500">Height</p>
+                                                        <p className="font-semibold text-gray-900 dark:text-white">{product.productHeight} mm</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         )}
                                         {product.productWidth && (
-                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20">
+                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
                                                 <div className="flex items-center gap-2">
-                                                    <Ruler className="h-4 w-4 text-muted-foreground" />
+                                                    <Ruler className="h-4 w-4 text-muted-foreground dark:text-gray-500" />
                                                     <div>
-                                                        <p className="text-xs text-muted-foreground">Width</p>
-                                                        <p className="font-semibold">{product.productWidth} mm</p>
+                                                        <p className="text-xs text-muted-foreground dark:text-gray-500">Width</p>
+                                                        <p className="font-semibold text-gray-900 dark:text-white">{product.productWidth} mm</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         )}
                                         {product.productWeight && (
-                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20">
+                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
                                                 <div className="flex items-center gap-2">
-                                                    <Weight className="h-4 w-4 text-muted-foreground" />
+                                                    <Weight className="h-4 w-4 text-muted-foreground dark:text-gray-500" />
                                                     <div>
-                                                        <p className="text-xs text-muted-foreground">Weight</p>
-                                                        <p className="font-semibold">{product.productWeight} g</p>
+                                                        <p className="text-xs text-muted-foreground dark:text-gray-500">Weight</p>
+                                                        <p className="font-semibold text-gray-900 dark:text-white">{product.productWeight} g</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -410,24 +410,24 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">Package Details</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Package Details</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                         {product.productPackageHeight && (
-                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20">
-                                                <p className="text-xs text-muted-foreground">Package Height</p>
-                                                <p className="font-semibold">{product.productPackageHeight} cm</p>
+                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
+                                                <p className="text-xs text-muted-foreground dark:text-gray-500">Package Height</p>
+                                                <p className="font-semibold text-gray-900 dark:text-white">{product.productPackageHeight} cm</p>
                                             </div>
                                         )}
                                         {product.productPackageWidth && (
-                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20">
-                                                <p className="text-xs text-muted-foreground">Package Width</p>
-                                                <p className="font-semibold">{product.productPackageWidth} cm</p>
+                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
+                                                <p className="text-xs text-muted-foreground dark:text-gray-500">Package Width</p>
+                                                <p className="font-semibold text-gray-900 dark:text-white">{product.productPackageWidth} cm</p>
                                             </div>
                                         )}
                                         {product.productPackageWeight && (
-                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20">
-                                                <p className="text-xs text-muted-foreground">Package Weight</p>
-                                                <p className="font-semibold">{product.productPackageWeight} g</p>
+                                            <div className="p-3 rounded-lg border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
+                                                <p className="text-xs text-muted-foreground dark:text-gray-500">Package Weight</p>
+                                                <p className="font-semibold text-gray-900 dark:text-white">{product.productPackageWeight} g</p>
                                             </div>
                                         )}
                                     </div>
@@ -440,11 +440,11 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">What's Inside the Box</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">What's Inside the Box</h3>
                                     <ul className="space-y-2">
                                         {whatsInsideTheBox.map((item, index) => (
-                                            <li key={index} className="flex items-start gap-2">
-                                                <Box className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                                            <li key={index} className="flex items-start gap-2 text-gray-900 dark:text-gray-300">
+                                                <Box className="h-5 w-5 text-gray-600 dark:text-gray-400 shrink-0 mt-0.5" />
                                                 <span>{item}</span>
                                             </li>
                                         ))}
@@ -458,7 +458,7 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">Deliverable Locations</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Deliverable Locations</h3>
                                     <div className="flex flex-wrap gap-2">
                                         {deliverableLocations.map((location, index) => (
                                             <Badge key={index} variant="secondary">
@@ -476,11 +476,11 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
                                         <Info className="h-5 w-5" />
                                         Additional Information
                                     </h3>
-                                    <p className="text-muted-foreground">{product.additionalInfo}</p>
+                                    <p className="text-muted-foreground dark:text-gray-400">{product.additionalInfo}</p>
                                 </div>
                             </>
                         )}
@@ -490,15 +490,15 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
                                         <HelpCircle className="h-5 w-5" />
                                         Frequently Asked Questions
                                     </h3>
                                     <div className="space-y-4">
                                         {faq.map((item, index) => (
-                                            <div key={index} className="p-4 rounded-xl border-2 bg-gray-50 dark:bg-gray-900/20">
-                                                <p className="font-semibold mb-2">{item.question}</p>
-                                                <p className="text-sm text-muted-foreground">{item.answer}</p>
+                                            <div key={index} className="p-4 rounded-xl border-2 bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-700">
+                                                <p className="font-semibold mb-2 text-gray-900 dark:text-white">{item.question}</p>
+                                                <p className="text-sm text-muted-foreground dark:text-gray-400">{item.answer}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -511,11 +511,11 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
                             <>
                                 <Separator />
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-3">Offer Details</h3>
+                                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Offer Details</h3>
                                     <div className="p-4 rounded-xl border-2 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border-orange-200 dark:border-orange-800">
                                         <div className="flex items-center gap-3">
-                                            <Zap className="h-5 w-5 text-orange-600" />
-                                            <p className="font-semibold">{product.offerApplicable}</p>
+                                            <Zap className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                                            <p className="font-semibold text-gray-900 dark:text-white">{product.offerApplicable}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -524,8 +524,8 @@ export const ProductDetailsModal = ({ product, open, onOpenChange, onEdit }: Pro
 
                         {/* Product ID */}
                         <Separator />
-                        <div className="text-sm text-muted-foreground">
-                            <span className="font-semibold">Product ID:</span> {product.productId}
+                        <div className="text-sm text-muted-foreground dark:text-gray-400">
+                            <span className="font-semibold text-gray-900 dark:text-white">Product ID:</span> {product.productId}
                         </div>
                     </div>
                 </ScrollArea>

@@ -59,7 +59,7 @@ export default function ContactForm() {
                                 <h3 className="font-semibold">📧 Email</h3>
                                 <a
                                     href="mailto:support.merchant@citywitty.com"
-                                    className="text-indigo-600"
+                                    className="text-gray-600"
                                 >
                                     support.merchant@citywitty.com
                                 </a>
@@ -70,7 +70,7 @@ export default function ContactForm() {
                                 <a
                                     href="https://wa.me/916389202030"
                                     target="_blank"
-                                    className="text-indigo-600"
+                                    className="text-gray-600"
                                 >
                                     +91 6389 202 030
                                 </a>
@@ -78,7 +78,7 @@ export default function ContactForm() {
 
                             <div>
                                 <h3 className="font-semibold">📞 Call Support</h3>
-                                <a href="tel:+916389202030" className="text-indigo-600">
+                                <a href="tel:+916389202030" className="text-gray-600">
                                     +91 6389 202 030
                                 </a>
                             </div>
@@ -98,7 +98,7 @@ export default function ContactForm() {
                     </div>
 
                     {/* RIGHT FORM */}
-                    <div className="p-10 bg-indigo-50">
+                    <div className="p-10 bg-gray-50">
                         <h2 className="text-2xl font-bold">Write to Merchant Support</h2>
                         <p className="mt-2 text-gray-700">
                             Fill this quick form and choose Email or WhatsApp to reach us
@@ -166,7 +166,7 @@ export default function ContactForm() {
                             <div className="flex flex-wrap gap-3">
                                 <button
                                     onClick={handleEmail}
-                                    className="inline-flex items-center px-5 py-3 rounded-full bg-indigo-600 text-white font-semibold shadow hover:shadow-lg"
+                                    className="inline-flex items-center px-5 py-3 rounded-full bg-gray-600 text-white font-semibold shadow hover:shadow-lg"
                                 >
                                     Send via Email
                                 </button>

@@ -115,7 +115,13 @@ const PartnerSchema = new Schema<IPartner>({
   podcastLog: [PodcastLogSchema],
   minimumOrderValue: { type: Number },
   offlineDiscount: [OfflineDiscountSchema],
-  branchLocations: [BranchLocationSchema]
+  branchLocations: [BranchLocationSchema],
+  faq: [{
+    question: { type: String },
+    answer: { type: String },
+    certifiedBuyer: { type: Boolean, default: false },
+    isLike: { type: Boolean, default: false }
+  }]
 }, { timestamps: true }
 );
 

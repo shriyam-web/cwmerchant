@@ -28,10 +28,10 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
   return (
     <div className="space-y-8">
       {/* Pricing Section */}
-      <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 p-6 border-2 border-blue-200 dark:border-blue-800">
+      <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/20 dark:to-gray-900/20 p-6 border-2 border-gray-200 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-4">
-          <IndianRupee className="h-5 w-5 text-blue-600" />
-          <h4 className="font-semibold text-blue-900 dark:text-blue-100">Pricing Details</h4>
+          <IndianRupee className="h-5 w-5 text-gray-600" />
+          <h4 className="font-semibold text-gray-900 dark:text-gray-100">Pricing Details</h4>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
@@ -40,7 +40,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-blue-600" />
+                  <Tag className="h-4 w-4 text-gray-600" />
                   MRP *
                 </FormLabel>
                 <FormControl>
@@ -48,7 +48,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-blue-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
                   />
                 </FormControl>
                 <FormMessage />
@@ -82,7 +82,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Gift className="h-4 w-4 text-blue-600" />
+                  <Gift className="h-4 w-4 text-gray-600" />
                   Discount (₹)
                 </FormLabel>
                 <FormControl>
@@ -90,7 +90,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-blue-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
                   />
                 </FormControl>
                 <FormMessage />
@@ -103,14 +103,14 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-blue-600" />
+                  <Sparkles className="h-4 w-4 text-gray-600" />
                   Offer Applicable
                 </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="e.g., Festival Offer"
-                    className="border-l-4 border-l-blue-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
                   />
                 </FormControl>
                 <FormMessage />
@@ -121,10 +121,10 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
       </div>
 
       {/* Fees Section */}
-      <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 p-6 border-2 border-blue-200 dark:border-blue-800">
+      <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/20 dark:to-gray-900/20 p-6 border-2 border-gray-200 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-4">
-          <Truck className="h-5 w-5 text-blue-600" />
-          <h4 className="font-semibold text-blue-900 dark:text-blue-100">Delivery & Fees</h4>
+          <Truck className="h-5 w-5 text-gray-600" />
+          <h4 className="font-semibold text-gray-900 dark:text-gray-100">Delivery & Fees</h4>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
@@ -133,7 +133,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Truck className="h-4 w-4 text-blue-600" />
+                  <Truck className="h-4 w-4 text-gray-600" />
                   Delivery Fee (₹)
                 </FormLabel>
                 <FormControl>
@@ -141,7 +141,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-blue-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
                   />
                 </FormControl>
                 <FormMessage />
@@ -154,7 +154,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Truck className="h-4 w-4 text-blue-600" />
+                  <Truck className="h-4 w-4 text-gray-600" />
                   Handling Fee (₹)
                 </FormLabel>
                 <FormControl>
@@ -162,7 +162,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-blue-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
                   />
                 </FormControl>
                 <FormMessage />
@@ -175,7 +175,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex itemscenter gap-2">
-                  <Wallet className="h-4 w-4 text-blue-600" />
+                  <Wallet className="h-4 w-4 text-gray-600" />
                   Cashback Points
                 </FormLabel>
                 <FormControl>
@@ -183,7 +183,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="numeric"
                     placeholder="0"
-                    className="border-l-4 border-l-blue-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
                   />
                 </FormControl>
                 <FormMessage />
@@ -194,10 +194,10 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
             control={form.control}
             name="isWalletCompatible"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-blue-300 dark:border-blue-700 p-4 bg-white dark:bg-gray-950 shadow-sm">
+              <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-gray-300 dark:border-gray-700 p-4 bg-white dark:bg-gray-950 shadow-sm">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base flex items-center gap-2">
-                    <Wallet className="h-4 w-4 text-blue-600" />
+                    <Wallet className="h-4 w-4 text-gray-600" />
                     Wallet Compatible
                   </FormLabel>
                   <p className="text-sm text-muted-foreground">
@@ -205,7 +205,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                   </p>
                 </div>
                 <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-blue-600" />
+                  <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-gray-600" />
                 </FormControl>
               </FormItem>
             )}
