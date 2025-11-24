@@ -904,7 +904,10 @@ export default function Dashboard() {
           case "requests":
             return <div id="tour-requests"><PurchaseRequests /></div>;
           case "profile":
-            return <div id="tour-profile-settings"><ProfileSettings tourIndex={currentTourIndex} tourTarget={typeof tourSteps[currentTourIndex]?.target === 'string' ? tourSteps[currentTourIndex]?.target : undefined} /></div>;
+            {
+              const target = tourSteps[currentTourIndex]?.target;
+              return <div id="tour-profile-settings"><ProfileSettings tourIndex={currentTourIndex} tourTarget={typeof target === 'string' ? target : undefined} /></div>;
+            }
           case "support":
             return <div id="tour-support"><DigitalSupport merchant={merchant} /></div>;
           default:
