@@ -14,8 +14,8 @@ export default function HeroContent() {
 
             {/* Main Heading */}
             <h1 className="text-4xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight tracking-tight font-poppins">
-                Accelerate Your Store’s Growth
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-600 mt-2">
+                Accelerate Your Store's Growth
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-500 mt-2">
                     {/* & Boost Your Brand Visibility. */}
                 </span>
             </h1>
@@ -30,7 +30,7 @@ export default function HeroContent() {
                 <Link href="/register">
                     <Button
                         size="lg"
-                        className="bg-gradient-to-r from-gray-600 to-gray-600 hover:from-gray-700 hover:to-gray-700 px-10 py-5 text-lg group shadow-xl transform hover:scale-105 transition-all duration-300"
+                        className="bg-gradient-to-r from-blue-500 to-blue-500 hover:from-blue-600 hover:to-blue-600 px-10 py-5 text-lg group shadow-xl transform hover:scale-105 transition-all duration-300"
                     >
                         Get Featured
                         <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

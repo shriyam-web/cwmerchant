@@ -48,10 +48,10 @@ export default function Home() {
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-12">
               <div className="text-center mb-16">
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
                   How to Join Citywitty Merchant Community
                 </h2>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                   Simple 4-step process to start growing your business
                 </p>
               </div>
@@ -62,7 +62,7 @@ export default function Home() {
                     step: "01",
                     title: "Fill the Form",
                     description: "Complete our simple merchant registration form with your business details",
-                    icon: <Users className="h-8 w-8 text-gray-600" />
+                    icon: <Users className="h-8 w-8 text-primary" />
                   },
                   {
                     step: "02",
@@ -85,15 +85,15 @@ export default function Home() {
                 ].map((item, index) => (
                   <div key={index} className="text-center group">
                     <div className="relative mb-6">
-                      <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-16 h-16 bg-gradient-to-br from-secondary to-secondary/80 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                         {item.icon}
                       </div>
-                      <Badge variant="secondary" className="absolute -top-2 -right-2 bg-gray-600 text-white">
+                      <Badge variant="secondary" className="absolute -top-2 -right-2 bg-primary text-primary-foreground">
                         {item.step}
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{item.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                    <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                   </div>
                 ))}
               </div>
@@ -102,13 +102,13 @@ export default function Home() {
 
 
           {/* Features Section */}
-          <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-50">
+          <section className="py-20 bg-secondary/20">
             <div className="container mx-auto px-4 sm:px-6 lg:px-12">
               <div className="text-center mb-16">
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
                   Why Choose Citywitty Merchant Hub?
                 </h2>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                   Powerful tools and insights to help your business thrive
                 </p>
               </div>
@@ -146,17 +146,17 @@ export default function Home() {
                     icon: <Clock className="h-8 w-8" />
                   }
                 ].map((feature, index) => (
-                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 bg-card/80 backdrop-blur-sm">
                     <CardHeader>
-                      <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-100 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <div className="text-gray-600">
+                      <div className="w-16 h-16 bg-gradient-to-br from-secondary to-secondary/80 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <div className="text-primary">
                           {feature.icon}
                         </div>
                       </div>
-                      <CardTitle className="text-xl text-gray-900">{feature.title}</CardTitle>
+                      <CardTitle className="text-xl text-card-foreground">{feature.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <CardDescription className="text-gray-600 leading-relaxed">
+                      <CardDescription className="text-muted-foreground leading-relaxed">
                         {feature.description}
                       </CardDescription>
                     </CardContent>

@@ -124,7 +124,7 @@ export default function Categories() {
       icon: Store,
       merchantCount: '420+',
       avgGrowth: '87%',
-      color: 'bg-teal-100 text-teal-600',
+      color: 'bg-blue-100 text-blue-600',
       examples: ['Legal Services', 'Financial Advisory', 'Consulting', 'Accounting', 'Insurance']
     },
     {
@@ -133,7 +133,7 @@ export default function Categories() {
       icon: Palette,
       merchantCount: '190+',
       avgGrowth: '213%',
-      color: 'bg-cyan-100 text-cyan-600',
+      color: 'bg-blue-100 text-blue-600',
       examples: ['Art Supplies', 'Handicrafts', 'Creative Workshops', 'Art Studios', 'Craft Materials']
     }
   ];
@@ -141,19 +141,19 @@ export default function Categories() {
   const totalMerchants = categories.reduce((sum, cat) => sum + parseInt(cat.merchantCount.replace(/[^0-9]/g, '')), 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="pt-20 pb-16">
         <div className="container mx-auto px-4">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-gray-100 text-gray-700 border-gray-200">
+            <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
               {totalMerchants.toLocaleString()}+ Active Merchants
             </Badge>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Business Categories
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-600">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-700">
                 We Serve
               </span>
             </h1>
@@ -215,10 +215,10 @@ export default function Categories() {
           </div>
 
           {/* Stats Section */}
-          <div className="mt-20 bg-gradient-to-r from-gray-600 to-gray-700 rounded-2xl p-12 text-white">
+          <div className="mt-20 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-12 text-white">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Growing Across All Categories</h2>
-              <p className="text-xl text-gray-100">
+              <p className="text-xl text-blue-100">
                 Our merchants are succeeding in every business vertical
               </p>
             </div>
@@ -226,19 +226,19 @@ export default function Categories() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="text-4xl font-bold mb-2">{totalMerchants.toLocaleString()}+</div>
-                <div className="text-gray-100">Total Merchants</div>
+                <div className="text-blue-100">Total Merchants</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold mb-2">12</div>
-                <div className="text-gray-100">Business Categories</div>
+                <div className="text-blue-100">Business Categories</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold mb-2">50+</div>
-                <div className="text-gray-100">Cities Covered</div>
+                <div className="text-blue-100">Cities Covered</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold mb-2">145%</div>
-                <div className="text-gray-100">Average Growth</div>
+                <div className="text-blue-100">Average Growth</div>
               </div>
             </div>
           </div>
@@ -253,7 +253,7 @@ export default function Categories() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/register">
-                <Button size="lg" className="bg-gradient-to-r from-gray-600 to-gray-600">
+                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700">
                   Register Anyway
                 </Button>
               </Link>

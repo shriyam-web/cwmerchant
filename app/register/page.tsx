@@ -139,7 +139,7 @@ export default function PartnerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <HeroSection />
       <BenefitsSection />

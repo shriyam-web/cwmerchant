@@ -98,7 +98,7 @@ export default function ContactForm() {
                     </div>
 
                     {/* RIGHT FORM */}
-                    <div className="p-10 bg-gray-50">
+                    <div className="p-10 bg-blue-50">
                         <h2 className="text-2xl font-bold">Write to Merchant Support</h2>
                         <p className="mt-2 text-gray-700">
                             Fill this quick form and choose Email or WhatsApp to reach us
@@ -166,7 +166,7 @@ export default function ContactForm() {
                             <div className="flex flex-wrap gap-3">
                                 <button
                                     onClick={handleEmail}
-                                    className="inline-flex items-center px-5 py-3 rounded-full bg-gray-600 text-white font-semibold shadow hover:shadow-lg"
+                                    className="inline-flex items-center px-5 py-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow hover:shadow-lg"
                                 >
                                     Send via Email
                                 </button>
@@ -180,7 +180,7 @@ export default function ContactForm() {
 
                                 <a
                                     href="tel:+916389202030"
-                                    className="inline-flex items-center px-5 py-3 rounded-full border border-gray-600 text-gray-700 font-semibold hover:bg-gray-100"
+                                    className="inline-flex items-center px-5 py-3 rounded-full border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50"
                                 >
                                     Call Support
                                 </a>

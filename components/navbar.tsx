@@ -180,7 +180,6 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { useMerchantAuth } from '@/lib/auth-context';
 import { useEffect, useRef } from "react";
-import { ThemeSwitcher } from './theme-switcher';
 
 
 
@@ -243,7 +242,7 @@ export function Navbar() {
                     key={item.name}
                     href={item.href}
                     className={`transition-all px-1 py-1 rounded-lg font-medium text-[80%] sm:text-[80%] md:text-[80%] lg:text-base ${isActive
-                      ? 'bg-gradient-to-r from-gray-600 to-gray-600 text-white shadow-md'
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-500 text-white shadow-md'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400'
                       }`}
                     style={{ whiteSpace: "nowrap" }}
@@ -256,7 +255,6 @@ export function Navbar() {
 
             {/* ===== Desktop Auth / Merchant ===== */}
             <div className="hidden lg:flex items-center space-x-3 relative">
-              <ThemeSwitcher />
               {loadingProfile ? (
                 <span className="text-gray-500 dark:text-gray-400">Loading...</span>
               ) : !merchant ? (
@@ -267,7 +265,7 @@ export function Navbar() {
                     </Button>
                   </Link>
                   <Link href="/register">
-                    <Button className="bg-gradient-to-r from-gray-600 to-gray-600 hover:from-gray-700 hover:to-gray-700">
+                    <Button className="bg-gradient-to-r from-blue-500 to-blue-500 hover:from-blue-600 hover:to-blue-600">
                       Register as Merchant
                     </Button>
                   </Link>
@@ -276,7 +274,7 @@ export function Navbar() {
                 <div className="relative" ref={desktopDropdownRef}>
                   <button
                     onClick={() => setDesktopDropdownOpen((prev) => !prev)}
-                    className="px-2 py-1 rounded-lg font-medium text-white bg-gradient-to-r from-gray-500 via-gray-500 to-purple-500 flex items-center gap-2 shadow-lg transition-all p-2 md:p-3 ml-2 mt-1 mb-1 pt-1 pb-1 max-w-40 truncate text-[90%] sm:text-[90%] md:text-[90%] lg:text-base"
+                    className="px-2 py-1 rounded-lg font-medium text-white bg-gradient-to-r from-blue-500 via-blue-500 to-blue-500 flex items-center gap-2 shadow-lg transition-all p-2 md:p-3 ml-2 mt-1 mb-1 pt-1 pb-1 max-w-40 truncate text-[90%] sm:text-[90%] md:text-[90%] lg:text-base"
                     style={{ whiteSpace: "nowrap" }}
                   >
                     Hey, {firstName} <ChevronDown className="w-4 h-4" />
@@ -286,7 +284,7 @@ export function Navbar() {
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl overflow-hidden animate-fade-in">
                       <Link
                         href="/dashboard"
-                        className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-500 hover:via-gray-500 hover:to-purple-500 hover:text-white transition-all"
+                        className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-500 hover:via-blue-500 hover:to-blue-500 hover:text-white transition-all"
                         onClick={() => setDesktopDropdownOpen(false)}
                       >
                         Dashboard
@@ -309,7 +307,6 @@ export function Navbar() {
 
             {/* ===== Mobile Right Section (Auth + Burger) ===== */}
             <div className="flex items-center gap-1 lg:hidden">
-              <ThemeSwitcher />
               {/* Mobile Auth / Merchant */}
               {loadingProfile ? (
                 <span className="text-gray-500 dark:text-gray-400 text-sm">Loading...</span>
@@ -323,7 +320,7 @@ export function Navbar() {
                 <div className="relative" ref={mobileDropdownRef}>
                   <button
                     onClick={() => setMobileDropdownOpen((prev) => !prev)}
-                    className="px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-gray-500 via-gray-500 to-purple-500 flex items-center gap-1 shadow max-w-32 truncate text-xs sm:text-sm"
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 via-blue-500 to-blue-500 flex items-center gap-1 shadow max-w-32 truncate text-xs sm:text-sm"
                   >
                     Hey, {firstName}
                     <ChevronDown className="w-4 h-4" />
@@ -384,7 +381,7 @@ export function Navbar() {
                             key={item.name}
                             href={item.href}
                             className={`transition-all font-medium py-2 px-3 rounded-md ${isActive
-                              ? 'bg-gradient-to-r from-gray-600 to-gray-600 text-white'
+                              ? 'bg-gradient-to-r from-blue-500 to-blue-500 text-white'
                               : 'text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400'
                               }`}
                             onClick={() => setIsOpen(false)}

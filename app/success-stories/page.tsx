@@ -107,7 +107,7 @@ export default function SuccessStories() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="pt-20 pb-16">
@@ -119,7 +119,7 @@ export default function SuccessStories() {
             </Badge>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Merchants Growing with
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-600">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">
                 Citywitty
               </span>
             </h1>
@@ -128,7 +128,7 @@ export default function SuccessStories() {
               and achieving remarkable growth with our premium customer network.
             </p>
             <Link href="/register">
-              <Button size="lg" className="bg-gradient-to-r from-gray-600 to-gray-600 hover:from-gray-700 hover:to-gray-700">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
                 Start Your Success Story
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -180,8 +180,8 @@ export default function SuccessStories() {
                       const Icon = metric.icon;
                       return (
                         <div key={metricIndex} className="text-center">
-                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Icon className="h-5 w-5 text-gray-600" />
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <Icon className="h-5 w-5 text-blue-600" />
                           </div>
                           <div className="text-lg font-bold text-gray-900">{metric.value}</div>
                           <div className="text-xs text-gray-600">{metric.label}</div>
@@ -195,13 +195,13 @@ export default function SuccessStories() {
           </div>
 
           {/* CTA Section */}
-          <div className="text-center mt-16 bg-gradient-to-r from-gray-600 to-gray-700 rounded-2xl p-12 text-white">
+          <div className="text-center mt-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl p-12 text-white">
             <h2 className="text-3xl font-bold mb-4">Ready to Write Your Success Story?</h2>
-            <p className="text-xl text-gray-100 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
               Join thousands of successful merchants and start growing your business today
             </p>
             <Link href="/register">
-              <Button size="lg" className="bg-white text-gray-600 hover:bg-gray-100">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                 Register as Merchant Now
               </Button>
             </Link>

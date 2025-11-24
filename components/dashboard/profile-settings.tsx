@@ -1,5 +1,5 @@
 'use client';
-
+ 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,8 +10,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Camera, Save, Eye, ExternalLink, Loader2, AlertTriangle, X, Plus, Trash2, HelpCircle, Building2, Banknote, Clock, Images, Package } from 'lucide-react';
+import { Camera, Save, Eye, ExternalLink, Loader2, AlertTriangle, X, Plus, Trash2, HelpCircle, Building2, Banknote, Clock, Images, Package, Crop } from 'lucide-react';
+import Cropper from 'react-easy-crop';
 import { useMerchantAuth } from '@/lib/auth-context';
 import { toast } from 'sonner';
 
@@ -208,6 +210,14 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
   const storeImagesInputRef = useRef<HTMLInputElement>(null);
   const [storeImagesLoading, setStoreImagesLoading] = useState(false);
 
+  // Crop modal state
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [cropImage, setCropImage] = useState<string>('');
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedArea, setCroppedArea] = useState<any>(null);
+
   // Username availability states
   const [usernameChecking, setUsernameChecking] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
@@ -336,29 +346,144 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
       return;
     }
 
+    // Convert file to base64 for cropping
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropImage(reader.result as string);
+      setShowCropModal(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onCropComplete = (croppedAreaPercent: any, croppedAreaPixels: any) => {
+    console.log('Crop completed:', { croppedAreaPercent, croppedAreaPixels });
+    setCroppedArea(croppedAreaPercent);
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const createCroppedImage = async (): Promise<Blob | null> => {
+    if (!cropImage || !croppedArea || !croppedAreaPixels) {
+      console.error('Missing cropImage, croppedArea, or croppedAreaPixels');
+      return null;
+    }
+
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.crossOrigin = 'anonymous';
+
+      image.onload = () => {
+        try {
+          console.log('Original image dimensions:', image.naturalWidth, 'x', image.naturalHeight);
+          console.log('Cropped area (percent):', croppedArea);
+          console.log('Cropped area pixels:', croppedAreaPixels);
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          if (!ctx) {
+            reject(new Error('Unable to get canvas context'));
+            return;
+          }
+
+          // Calculate the correct coordinates based on the original image dimensions
+          // The croppedArea gives percentages, so we convert to actual pixel coordinates
+          const x = Math.round((croppedArea.x / 100) * image.naturalWidth);
+          const y = Math.round((croppedArea.y / 100) * image.naturalHeight);
+          const width = Math.round((croppedArea.width / 100) * image.naturalWidth);
+          const height = Math.round((croppedArea.height / 100) * image.naturalHeight);
+
+          console.log('Calculated coordinates:', { x, y, width, height });
+
+          // Set canvas size to the cropped area size
+          canvas.width = width;
+          canvas.height = height;
+
+          // Draw the cropped portion of the image onto the canvas
+          ctx.drawImage(
+            image,
+            x,
+            y,
+            width,
+            height,
+            0,
+            0,
+            width,
+            height
+          );
+
+          // Convert canvas to blob
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                console.log('Successfully created cropped blob, size:', blob.size);
+                resolve(blob);
+              } else {
+                reject(new Error('Failed to generate cropped image blob'));
+              }
+            },
+            'image/png',
+            0.95
+          );
+        } catch (error) {
+          console.error('Error creating cropped image:', error);
+          reject(error);
+        }
+      };
+
+      image.onerror = (error) => {
+        console.error('Error loading image for cropping:', error);
+        reject(new Error('Failed to load image for cropping'));
+      };
+
+      image.src = cropImage;
+    });
+  };
+
+  const handleCropConfirm = async () => {
+    console.log('Starting crop confirmation, croppedAreaPixels:', croppedAreaPixels);
     setLoading(true);
+
     try {
+      const croppedBlob = await createCroppedImage();
+      if (!croppedBlob) {
+        console.error('createCroppedImage returned null');
+        toast.error('Failed to process cropped image');
+        return;
+      }
+
+      console.log('Cropped blob created, size:', croppedBlob.size);
+      setShowCropModal(false);
+
+      const file = new File([croppedBlob], 'cropped-logo.png', { type: 'image/png' });
+      console.log('Created file for upload, size:', file.size);
+
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/upload-logo', {
+      const uploadResponse = await fetch('/api/upload-logo', {
         method: 'POST',
         body: formData,
       });
 
-      const data = await response.json();
+      const data = await uploadResponse.json();
+      console.log('Upload response:', uploadResponse.status, data);
 
-      if (response.ok) {
+      if (uploadResponse.ok) {
         setProfile((prevProfile) => ({ ...prevProfile, logo: data.url }));
         toast.success('Logo uploaded successfully!');
       } else {
         toast.error(data.error || 'Failed to upload logo');
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Something went wrong. Please try again.');
+      console.error('Crop/Upload error:', error);
+      toast.error(error instanceof Error ? error.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
+      setCropImage('');
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setCroppedAreaPixels(null);
+      setCroppedArea(null);
     }
   };
 
@@ -440,6 +565,38 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
     } catch (error) {
       console.error('Delete error:', error);
       toast.error('Failed to delete image. Please try again.');
+    }
+  };
+
+  const removeLogo = async () => {
+    if (!profile.logo) {
+      toast.error('No logo to remove');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/delete-image', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageUrl: profile.logo }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          logo: '',
+        }));
+        toast.success('Logo removed successfully!');
+      } else {
+        toast.error(data.error || 'Failed to remove logo');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Failed to remove logo. Please try again.');
     }
   };
 
@@ -551,7 +708,77 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
   };
 
   return (
-    <div className="min-h-screen">
+    <>
+      {/* Crop Modal */}
+      <Dialog open={showCropModal} onOpenChange={setShowCropModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden dark:bg-gray-800 dark:text-white dark:border-gray-700">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 dark:text-white">
+              <Crop className="h-5 w-5" />
+              Crop Your Logo
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden" style={{ height: '400px' }}>
+              <Cropper
+                image={cropImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                cropShape="rect"
+                showGrid={true}
+                restrictPosition={true}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Zoom</label>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCropModal(false);
+                  setCropImage('');
+                  setCrop({ x: 0, y: 0 });
+                  setZoom(1);
+                  setCroppedAreaPixels(null);
+                  setCroppedArea(null);
+                }}
+                className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleCropConfirm} disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Apply Crop
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="min-h-screen">
       {/* Premium Header */}
       <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <div className="p-6 md:p-8">
@@ -629,21 +856,35 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                     <Camera className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                 </div>
-                <div className="text-center sm:text-left">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={loading}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
-                  >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Camera className="h-4 w-4 mr-2" />
+                <div className="text-center sm:text-left space-y-3">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={loading}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
+                    >
+                      {loading ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Camera className="h-4 w-4 mr-2" />
+                      )}
+                      {loading ? 'Uploading...' : 'Change Logo'}
+                    </Button>
+                    {profile.logo && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={removeLogo}
+                        disabled={loading}
+                        className="transition-all duration-200"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Remove Logo
+                      </Button>
                     )}
-                    {loading ? 'Uploading...' : 'Change Logo'}
-                  </Button>
+                  </div>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -651,7 +892,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                     onChange={handleLogoUpload}
                     className="hidden"
                   />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">JPG, PNG up to 5MB</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG up to 5MB</p>
                 </div>
               </div>
 
@@ -1287,7 +1528,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
 
         <TabsContent value="store-images" className="space-y-6">
           <Card id="tour-profile-images" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
-            <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 dark:from-cyan-700 dark:to-cyan-800 border-b border-cyan-800 dark:border-cyan-900">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 border-b border-blue-800 dark:border-blue-900">
               <CardHeader className="py-6 px-6 pb-5">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/20 p-2.5 rounded-lg">
@@ -1295,7 +1536,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                   </div>
                   <div>
                     <CardTitle className="text-xl text-white">Store Images</CardTitle>
-                    <CardDescription className="text-cyan-100 dark:text-cyan-200 mt-1">Upload up to 3 photos of your store (JPG, PNG up to 5MB each)</CardDescription>
+                    <CardDescription className="text-blue-100 dark:text-blue-200 mt-1">Upload up to 3 photos of your store (JPG, PNG up to 5MB each)</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -1332,7 +1573,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                   size="sm"
                   onClick={() => storeImagesInputRef.current?.click()}
                   disabled={storeImagesLoading || profile.storeImages.length >= 3}
-                  className="hover:bg-teal-50 dark:hover:bg-gray-700 hover:border-teal-300 dark:hover:border-teal-700 transition-all duration-200"
+                  className="hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200"
                 >
                   {storeImagesLoading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1351,7 +1592,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                 />
                 <div className="text-sm text-gray-600 dark:text-gray-400">
                   <p>JPG, PNG up to 5MB each</p>
-                  <p className="font-medium text-teal-600 dark:text-teal-400">{profile.storeImages.length}/3 images uploaded</p>
+                  <p className="font-medium text-blue-600 dark:text-blue-400">{profile.storeImages.length}/3 images uploaded</p>
                 </div>
               </div>
             </CardContent>
@@ -1434,6 +1675,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </>
   );
 }

@@ -389,7 +389,7 @@ export default function Dashboard() {
     TrendingUp: <TrendingUp className="h-6 w-6 text-purple-500" />,
     AlertTriangle: <AlertTriangle className="h-6 w-6 text-orange-500" />,
     Users: <Users className="h-6 w-6 text-gray-500" />,
-    CheckCircle: <CheckCircle className="h-6 w-6 text-teal-500" />,
+    CheckCircle: <CheckCircle className="h-6 w-6 text-blue-500" />,
   };
 
   // Fetch active offers count

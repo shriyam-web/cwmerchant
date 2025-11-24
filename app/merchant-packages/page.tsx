@@ -191,12 +191,12 @@ export default function MerchantPackagesPage() {
 
 
             {/* Hero Section */}
-            <section className="py-10 pt-20 bg-gradient-to-r from-gray-50 to-purple-50">
+            <section className="py-10 pt-20 bg-gradient-to-r from-blue-50 to-cyan-50">
 
 
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-6">
+                    <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 mb-6">
                         Choose the Right Merchant Package
                     </h1>
                     <p className="text-lg text-gray-700 mb-8">
@@ -206,7 +206,7 @@ export default function MerchantPackagesPage() {
                     </p>
                     <a
                         href="#pricing"
-                        className="inline-block px-6 py-3 bg-gray-600 text-white font-medium rounded-xl shadow hover:bg-gray-700 transition"
+                        className="inline-block px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium rounded-xl shadow hover:from-blue-600 hover:to-cyan-600 transition"
                     >
                         View Packages
                     </a>
@@ -214,9 +214,9 @@ export default function MerchantPackagesPage() {
             </section>
 
             {/* Pricing Plans */}
-            <section id="pricing" className="py-24 bg-gray-50">
+            <section id="pricing" className="py-24 bg-white">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
-                    <h2 className="text-4xl font-extrabold text-gray-900 mb-12">
+                    <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 mb-12">
                         Our Pricing Plans
                     </h2>
 
@@ -229,7 +229,7 @@ export default function MerchantPackagesPage() {
                         For Enterprise Pricing contact us at{" "}
                         <a
                             href="mailto:support.merchant@citywitty.com"
-                            className="text-gray-600 hover:underline"
+                            className="text-blue-600 hover:underline font-semibold"
                         >
                             support.merchant@citywitty.com
                         </a>
@@ -243,7 +243,7 @@ export default function MerchantPackagesPage() {
             {/* Benefits Section */}
             <section
                 id="benefits"
-                className="relative py-28 bg-gradient-to-b from-white via-gray-50/50 to-purple-50 overflow-hidden"
+                className="relative py-28 bg-gradient-to-b from-white via-blue-50/30 to-cyan-50 overflow-hidden"
             >
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
                     {/* Intro */}
@@ -252,9 +252,9 @@ export default function MerchantPackagesPage() {
                             style={{ lineHeight: "1.25" }}
                             className="text-4xl md:text-5xl text-gray-900 mb-6 leading-tight"
                         >
-                            Unlock the <span style={{ color: "#4F46E5" }}>Power & Benefits</span> of <br />
+                            Unlock the <span style={{ color: "#0EA5E9" }}>Power & Benefits</span> of <br />
                             <span style={{
-                                background: "linear-gradient(to right, #6366F1, #e22d2dff)",
+                                background: "linear-gradient(to right, #3B82F6, #06B6D4)",
                                 WebkitBackgroundClip: "text",
                                 color: "transparent",
                                 fontWeight: 600
@@ -280,8 +280,8 @@ export default function MerchantPackagesPage() {
             shadow-md hover:shadow-2xl hover:-translate-y-2 hover:border-gray-300 transition-all duration-300 group"
                             >
                                 {/* Icon wrapper */}
-                                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-gray-500 to-purple-500 
-            flex items-center justify-center shadow-xl ring-1 ring-gray-200 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 
+            flex items-center justify-center shadow-xl ring-1 ring-blue-200 group-hover:scale-110 transition-transform duration-300">
                                     <benefit.icon className="w-10 h-10 text-white" />
                                 </div>
 
@@ -292,7 +292,7 @@ export default function MerchantPackagesPage() {
                                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">{benefit.desc}</p>
 
                                 {/* Accent border bottom */}
-                                <div className="mt-6 h-1 w-16 bg-gray-500 mx-auto rounded-full opacity-70"></div>
+                                <div className="mt-6 h-1 w-16 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full opacity-70"></div>
                             </div>
                         ))}
                     </div>
@@ -300,8 +300,8 @@ export default function MerchantPackagesPage() {
 
                 {/* Decorative Background */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute -top-20 -right-20 w-96 h-96 bg-purple-200 rounded-full opacity-10"></div>
-                    <div className="absolute -bottom-32 -left-24 w-96 h-96 bg-gray-200 rounded-full opacity-10"></div>
+                    <div className="absolute -top-20 -right-20 w-96 h-96 bg-cyan-200 rounded-full opacity-10"></div>
+                    <div className="absolute -bottom-32 -left-24 w-96 h-96 bg-blue-200 rounded-full opacity-10"></div>
                 </div>
             </section>
 
