@@ -21,14 +21,14 @@ export const StepBadges = ({ context }: { context: ProductsFormContextType }) =>
     <div className="space-y-8">
 
       {/* Additional Info Section */}
-      <div className="border-2 rounded-xl p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/20 dark:to-gray-900/20">
+      <div className="border-2 rounded-xl p-6 bg-gradient-to-br from-teal-50 to-teal-100/50 dark:from-teal-950/20 dark:to-teal-900/20 border-teal-200 dark:border-teal-800">
         <FormField
           control={form.control}
           name="additionalInfo"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center gap-2">
-                <Info className="h-4 w-4 text-gray-500" />
+                <Info className="h-4 w-4 text-teal-600" />
                 Additional Information
               </FormLabel>
               <FormControl>
@@ -36,7 +36,7 @@ export const StepBadges = ({ context }: { context: ProductsFormContextType }) =>
                   {...field}
                   rows={4}
                   placeholder="Any extra details customers should know..."
-                  className="border-l-4 border-l-gray-500 focus:border-l-gray-600"
+                  className="border-l-4 border-l-teal-500 focus:border-l-teal-600"
                 />
               </FormControl>
               <FormMessage />
@@ -46,14 +46,14 @@ export const StepBadges = ({ context }: { context: ProductsFormContextType }) =>
       </div>
 
       {/* FAQs Section */}
-      <div className="border-2 rounded-xl p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/20 dark:to-gray-900/20">
+      <div className="border-2 rounded-xl p-6 bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/20 dark:to-amber-900/20 border-amber-200 dark:border-amber-800">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gray-500 shadow-lg">
+            <div className="p-2 rounded-lg bg-amber-500 shadow-lg">
               <HelpCircle className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-600">Frequently Asked Questions</h3>
+              <h3 className="text-lg font-semibold text-amber-700 dark:text-amber-300">Frequently Asked Questions</h3>
               <p className="text-sm text-muted-foreground">
                 {faqFieldArray.fields.length} FAQ{faqFieldArray.fields.length !== 1 ? 's' : ''} added
               </p>
@@ -69,15 +69,15 @@ export const StepBadges = ({ context }: { context: ProductsFormContextType }) =>
                 answer: '',
               })
             }
-            className="border-2 border-gray-300 hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-950/30"
+            className="border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/30"
           >
             <Plus className="mr-2 h-4 w-4" /> Add FAQ
           </Button>
         </div>
 
         {faqFieldArray.fields.length === 0 && (
-          <div className="text-center py-8 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50">
-            <HelpCircle className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+          <div className="text-center py-8 rounded-lg border-2 border-dashed border-amber-200 dark:border-amber-800 bg-white/50 dark:bg-gray-900/50">
+            <HelpCircle className="h-12 w-12 text-amber-300 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground">No FAQs added yet. Add common questions and answers.</p>
           </div>
         )}

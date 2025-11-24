@@ -139,21 +139,21 @@ const quickLinks = [
         description: "Add new products to your store",
         icon: FileText,
         href: "/dashboard?tab=products",
-        color: "text-green-600"
+        color: "text-green-600 dark:text-green-400"
     },
     {
         title: "View Orders",
         description: "Check purchase requests & orders",
         icon: CreditCard,
         href: "/dashboard?tab=requests",
-        color: "text-purple-600"
+        color: "text-purple-600 dark:text-purple-400"
     },
     {
         title: "Profile Settings",
         description: "Update your business information",
         icon: User,
         href: "/dashboard?tab=profile",
-        color: "text-orange-600"
+        color: "text-orange-600 dark:text-orange-400"
     }
 ];
 
@@ -200,34 +200,34 @@ export function SupportWidget() {
                             <div className="grid grid-cols-1 gap-2">
                                 <a
                                     href="tel:+919336458109"
-                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-50 transition-colors group"
+                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/40 transition-colors group"
                                 >
-                                    <Phone className="h-4 w-4 text-green-600" />
+                                    <Phone className="h-4 w-4 text-green-600 dark:text-green-400" />
                                     <div>
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-green-600">Call Support</span>
-                                        <p className="text-xs text-gray-600">+91 93364 58109</p>
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-green-600 dark:group-hover:text-green-400">Call Support</span>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">+91 93364 58109</p>
                                     </div>
                                 </a>
                                 <a
                                     href="mailto:support@citywitty.com"
-                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-colors group"
+                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors group"
                                 >
-                                    <Mail className="h-4 w-4 text-blue-600" />
+                                    <Mail className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                                     <div>
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">Email Support</span>
-                                        <p className="text-xs text-gray-600">support@citywitty.com</p>
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">Email Support</span>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">support@citywitty.com</p>
                                     </div>
                                 </a>
                                 <a
                                     href="https://wa.me/919336458109"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-50 transition-colors group"
+                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/40 transition-colors group"
                                 >
-                                    <MessageCircle className="h-4 w-4 text-green-600" />
+                                    <MessageCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                                     <div>
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-green-600">WhatsApp</span>
-                                        <p className="text-xs text-gray-600">Quick chat support</p>
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-green-600 dark:group-hover:text-green-400">WhatsApp</span>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">Quick chat support</p>
                                     </div>
                                 </a>
                             </div>
@@ -260,13 +260,13 @@ export function SupportWidget() {
                                             <a
                                                 key={index}
                                                 href={link.href}
-                                                className="flex flex-col items-center p-3 rounded-lg border border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-colors group"
+                                                className="flex flex-col items-center p-3 rounded-lg border border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:border-blue-300 dark:hover:border-blue-600 transition-colors group"
                                             >
                                                 <IconComponent className={`h-5 w-5 mb-1 ${link.color}`} />
-                                                <span className="text-xs font-medium text-center text-gray-700 group-hover:text-gray-900">
+                                                <span className="text-xs font-medium text-center text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">
                                                     {link.title}
                                                 </span>
-                                                <span className="text-xs text-gray-500 text-center leading-tight">
+                                                <span className="text-xs text-gray-500 dark:text-gray-400 text-center leading-tight">
                                                     {link.description}
                                                 </span>
                                             </a>
@@ -311,21 +311,21 @@ export function SupportWidget() {
 
                         {/* FAQ Section */}
                         <div className="border-t pt-3">
-                            <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-2 mb-3">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2 mb-3">
                                 <MessageCircle className="h-4 w-4" />
                                 Help & FAQs
                             </h4>
 
                             <div className="space-y-2 max-h-64 overflow-y-auto">
                                 {faqs.map((category, categoryIndex) => (
-                                    <div key={categoryIndex} className="border rounded-lg">
+                                    <div key={categoryIndex} className="border border-gray-200 dark:border-gray-700 rounded-lg">
                                         <Button
                                             variant="ghost"
                                             size="sm"
                                             onClick={() => setActiveCategory(activeCategory === category.category ? null : category.category)}
-                                            className="w-full justify-between p-3 h-auto text-left"
+                                            className="w-full justify-between p-3 h-auto text-left hover:bg-gray-50 dark:hover:bg-gray-900/40"
                                         >
-                                            <span className="text-sm font-medium text-gray-900">{category.category}</span>
+                                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{category.category}</span>
                                             {activeCategory === category.category ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                                         </Button>
 

@@ -435,7 +435,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-950"
+                className="hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950"
                 onClick={() => locationsFieldArray.remove(index)}
               >
                 <Trash2 className="h-4 w-4" />
@@ -466,16 +466,16 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
       </div>
 
       {/* Warranty & Replacement Section */}
-      <div className="border-2 rounded-xl p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/20 dark:to-gray-900/20">
+      <div className="border-2 rounded-xl p-6 bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-950/20 dark:to-violet-900/20 border-violet-200 dark:border-violet-800">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-lg bg-gray-500 shadow-lg">
+          <div className="p-2 rounded-lg bg-violet-500 shadow-lg">
             <Shield className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-600">Warranty & Replacement</h3>
+            <h3 className="text-lg font-semibold text-violet-700 dark:text-violet-300">Warranty & Replacement</h3>
             <p className="text-sm text-muted-foreground">Protect your customers with guarantees</p>
           </div>
-          <Shield className="h-5 w-5 text-gray-500" />
+          <Shield className="h-5 w-5 text-violet-500" />
         </div>
 
         <div className="space-y-4">
@@ -483,9 +483,9 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             control={form.control}
             name="isWarranty"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-gray-200 dark:border-gray-800 p-4 bg-white/50 dark:bg-gray-900/50">
+              <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-violet-300 dark:border-violet-700 p-4 bg-white/50 dark:bg-gray-900/50">
                 <div className="space-y-0.5 flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gray-400">
+                  <div className="p-2 rounded-lg bg-violet-500">
                     <Shield className="h-4 w-4 text-white" />
                   </div>
                   <div>
@@ -497,7 +497,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="data-[state=checked]:bg-gray-500"
+                    className="data-[state=checked]:bg-violet-600"
                   />
                 </FormControl>
               </FormItem>
@@ -510,7 +510,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Info className="h-4 w-4 text-gray-500" />
+                  <Info className="h-4 w-4 text-violet-500" />
                   Warranty Details {watchIsWarranty ? '*' : ''}
                 </FormLabel>
                 <FormControl>
@@ -519,7 +519,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     rows={3}
                     disabled={!watchIsWarranty}
                     placeholder="E.g. 1 year on manufacturing defects"
-                    className="border-l-4 border-l-gray-500 focus:border-l-gray-600 disabled:opacity-50"
+                    className="border-l-4 border-l-violet-500 focus:border-l-violet-600 disabled:opacity-50"
                   />
                 </FormControl>
                 <FormMessage />
@@ -527,15 +527,15 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             )}
           />
 
-          <div className="h-px bg-gray-300 my-4" />
+          <div className="h-px bg-violet-300 my-4" />
 
           <FormField
             control={form.control}
             name="isReplacement"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-gray-200 dark:border-gray-800 p-4 bg-white/50 dark:bg-gray-900/50">
+              <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-violet-300 dark:border-violet-700 p-4 bg-white/50 dark:bg-gray-900/50">
                 <div className="space-y-0.5 flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gray-400">
+                  <div className="p-2 rounded-lg bg-violet-500">
                     <Package className="h-4 w-4 text-white" />
                   </div>
                   <div>
@@ -547,7 +547,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="data-[state=checked]:bg-gray-500"
+                    className="data-[state=checked]:bg-violet-600"
                   />
                 </FormControl>
               </FormItem>
@@ -560,7 +560,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-gray-500" />
+                  <Clock className="h-4 w-4 text-violet-500" />
                   Replacement Days {watchIsReplacement ? '*' : ''}
                 </FormLabel>
                 <FormControl>
@@ -569,7 +569,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     disabled={!watchIsReplacement}
                     inputMode="numeric"
                     placeholder="E.g. 7"
-                    className="border-l-4 border-l-gray-500 focus:border-l-gray-600 disabled:opacity-50"
+                    className="border-l-4 border-l-violet-500 focus:border-l-violet-600 disabled:opacity-50"
                   />
                 </FormControl>
                 <FormMessage />
