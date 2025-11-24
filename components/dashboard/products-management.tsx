@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Package, ShoppingCart, CheckCircle, XCircle, AlertTriangle, Flame, TrendingUp, Globe, Zap, Lock } from 'lucide-react';
+import { Plus, Package, ShoppingCart, CheckCircle, XCircle, AlertTriangle, Flame, TrendingUp, Globe, Zap, Lock, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -507,7 +507,7 @@ export const ProductsManagement = () => {
                                                 size="sm"
                                                 variant="ghost"
                                                 className="h-8 w-8 p-0 hover:bg-gray-50 dark:hover:bg-gray-900/30"
-                                                onClick={() => onEdit?.(product)}
+                                                onClick={() => handleEditProduct(product)}
                                             >
                                                 <Eye className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                                             </Button>

@@ -1,0 +1,20 @@
+
+> nextjs@0.1.0 build
+> next build
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./components/dashboard/products-management.tsx:512:50
+Type error: Cannot find name 'Eye'.
+
+[0m [90m 510 | [39m                                                onClick[33m=[39m{() [33m=>[39m handleEditProduct(product)}[0m
+[0m [90m 511 | [39m                                            [33m>[39m[0m
+[0m[31m[1m>[22m[39m[90m 512 | [39m                                                [33m<[39m[33mEye[39m className[33m=[39m[32m"h-4 w-4 text-gray-600 dark:text-gray-400"[39m [33m/[39m[33m>[39m[0m
+[0m [90m     | [39m                                                 [31m[1m^[22m[39m[0m
+[0m [90m 513 | [39m                                            [33m<[39m[33m/[39m[33mButton[39m[33m>[39m[0m
+[0m [90m 514 | [39m                                        [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+[0m [90m 515 | [39m                                    [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
