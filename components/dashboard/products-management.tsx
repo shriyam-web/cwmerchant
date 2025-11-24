@@ -182,7 +182,7 @@ export const ProductsManagement = () => {
                 <CardHeader className="relative pb-6 overflow-hidden">
                     <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div className="flex items-start gap-4 flex-1 min-w-0">
-                            <div className="p-3 rounded-xl bg-gradient-to-br from-gray-500 to-purple-600 shadow-lg flex-shrink-0">
+                            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-lg flex-shrink-0">
                                 <Globe className="h-6 w-6 text-white" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -201,19 +201,21 @@ export const ProductsManagement = () => {
                                 </Button>
                             </DialogTrigger>
                             <DialogContent
-                                className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-950 border dark:border-gray-800"
+                                className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-2xl dark:shadow-2xl dark:shadow-gray-900/50"
                                 onInteractOutside={(event) => event.preventDefault()}
                                 onEscapeKeyDown={(event) => event.preventDefault()}
                             >
-                                <DialogHeader>
-                                    <DialogTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                                        <Package className="h-5 w-5" />
+                                <DialogHeader className="bg-gradient-to-r from-blue-50 via-white to-purple-50 dark:from-blue-950/20 dark:via-gray-900 dark:to-purple-950/20 border-b border-gray-200 dark:border-gray-800 -m-6 mb-0 p-6 rounded-t-lg">
+                                    <DialogTitle className="flex items-center gap-3 text-gray-900 dark:text-white font-semibold text-lg">
+                                        <div className="p-2 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40">
+                                            <Package className="h-5 w-5 text-blue-700 dark:text-blue-300" />
+                                        </div>
                                         {form.getValues('productId') ? 'Edit Product' : 'Add New Product'}
                                     </DialogTitle>
                                 </DialogHeader>
                                 <ProductsFormContext.Provider value={contextValue}>
                                     <Form {...form}>
-                                        <form onSubmit={form.handleSubmit(handleSubmitProduct)} className="space-y-6">
+                                        <form onSubmit={form.handleSubmit(handleSubmitProduct)} className="space-y-8 p-6">
                                             <StepNavigation context={contextValue} />
                                             <RenderStep
                                                 context={contextValue}
@@ -384,7 +386,7 @@ export const ProductsManagement = () => {
                         <div className="space-y-6">
                             {/* Title Section */}
                             <div className="flex items-center gap-4">
-                                <div className="p-3.5 rounded-xl bg-gradient-to-br from-gray-500 via-gray-600 to-gray-600 shadow-lg flex-shrink-0">
+                                <div className="p-3.5 rounded-xl bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 shadow-lg flex-shrink-0">
                                     <ShoppingCart className="h-7 w-7 text-white" />
                                 </div>
                                 <div className="flex-1">
@@ -532,10 +534,15 @@ export const ProductsManagement = () => {
 
             {/* Delete Confirmation Dialog */}
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <AlertDialogContent className="bg-white dark:bg-gray-950 border dark:border-gray-800">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className="text-gray-900 dark:text-gray-100">Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                <AlertDialogContent className="bg-white dark:bg-gray-950 border border-red-200 dark:border-red-800">
+                    <AlertDialogHeader className="bg-gradient-to-r from-red-50 dark:from-red-900/30 to-orange-50 dark:to-orange-900/30 -m-6 mb-0 p-6 rounded-t-lg border-b border-red-200 dark:border-red-800">
+                        <AlertDialogTitle className="flex items-center gap-2 text-red-900 dark:text-red-200">
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 text-white">
+                                <AlertTriangle className="h-5 w-5" />
+                            </div>
+                            Are you sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-red-700 dark:text-red-300 mt-2">
                             This action cannot be undone. This will permanently delete the product
                             and all its images.
                         </AlertDialogDescription>

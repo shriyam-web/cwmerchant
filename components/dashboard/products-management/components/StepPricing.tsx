@@ -28,9 +28,9 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
   return (
     <div className="space-y-8">
       {/* Pricing Section */}
-      <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/20 dark:to-gray-900/20 p-6 border-2 border-gray-200 dark:border-gray-800">
+      <div className="rounded-xl bg-gradient-to-br from-pink-50 to-pink-100/50 dark:from-pink-950/20 dark:to-pink-900/20 p-6 border-2 border-pink-200 dark:border-pink-800">
         <div className="flex items-center gap-2 mb-4">
-          <IndianRupee className="h-5 w-5 text-gray-600" />
+          <IndianRupee className="h-5 w-5 text-pink-600" />
           <h4 className="font-semibold text-gray-900 dark:text-gray-100">Pricing Details</h4>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -48,7 +48,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-pink-500 bg-white dark:bg-gray-950 border-pink-200 dark:border-pink-900 focus-visible:ring-pink-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -90,7 +90,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-pink-500 bg-white dark:bg-gray-950 border-pink-200 dark:border-pink-900 focus-visible:ring-pink-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -141,7 +141,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-pink-500 bg-white dark:bg-gray-950 border-pink-200 dark:border-pink-900 focus-visible:ring-pink-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -162,7 +162,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                     {...field}
                     inputMode="decimal"
                     placeholder="₹"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-pink-500 bg-white dark:bg-gray-950 border-pink-200 dark:border-pink-900 focus-visible:ring-pink-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -205,7 +205,7 @@ export const StepPricing = ({ context }: { context: ProductsFormContextType }) =
                   </p>
                 </div>
                 <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-gray-600" />
+                  <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-purple-600" />
                 </FormControl>
               </FormItem>
             )}

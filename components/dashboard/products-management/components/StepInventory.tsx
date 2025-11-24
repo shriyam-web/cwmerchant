@@ -37,9 +37,9 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
   return (
     <div className="space-y-8">
       {/* Stock & Availability Section */}
-      <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/30 dark:to-gray-950/30 p-6 space-y-4">
+      <div className="rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/20 p-6 space-y-4">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 rounded-lg bg-gray-500">
+          <div className="p-2 rounded-lg bg-emerald-500">
             <Box className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -61,7 +61,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                 <p className="text-sm text-muted-foreground">Indicate if customers can purchase directly at your outlet.</p>
               </div>
               <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-gray-600" />
+                <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-emerald-600" />
               </FormControl>
             </FormItem>
           )}
@@ -71,16 +71,16 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
           control={form.control}
           name="isAvailableStock"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-gray-400 dark:border-gray-600 p-4 bg-white dark:bg-gray-950 shadow-sm">
+            <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-emerald-300 dark:border-emerald-800 p-4 bg-white dark:bg-gray-950 shadow-sm">
               <div className="space-y-0.5">
                 <FormLabel className="text-base flex items-center gap-2">
-                  <Package className="h-4 w-4 text-gray-600" />
+                  <Package className="h-4 w-4 text-emerald-600" />
                   Product In Stock
                 </FormLabel>
                 <p className="text-sm text-muted-foreground">Disable this when the product is temporarily unavailable.</p>
               </div>
               <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-gray-600" />
+                <Switch checked={field.value} onCheckedChange={field.onChange} className="data-[state=checked]:bg-emerald-600" />
               </FormControl>
             </FormItem>
           )}
@@ -101,7 +101,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                   disabled={!watchIsAvailableStock}
                   inputMode="numeric"
                   placeholder="0"
-                  className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                  className="border-l-4 border-l-emerald-500 bg-white dark:bg-gray-950 focus-visible:ring-emerald-500"
                 />
               </FormControl>
               <FormMessage />
@@ -111,9 +111,9 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
       </div>
 
       {/* Product Dimensions Section */}
-      <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/30 dark:to-gray-950/30 p-6 space-y-4">
+      <div className="rounded-xl border-2 border-cyan-200 dark:border-cyan-800 bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-950/20 dark:to-cyan-900/20 p-6 space-y-4">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 rounded-lg bg-gray-500">
+          <div className="p-2 rounded-lg bg-cyan-500">
             <Package className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -137,7 +137,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     {...field}
                     inputMode="decimal"
                     placeholder="0"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-cyan-500 bg-white dark:bg-gray-950 focus-visible:ring-cyan-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -150,7 +150,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-gray-600" />
+                  <TrendingUp className="h-4 w-4 text-cyan-600" />
                   Width (cm)
                 </FormLabel>
                 <FormControl>
@@ -158,7 +158,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     {...field}
                     inputMode="decimal"
                     placeholder="0"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-cyan-500 bg-white dark:bg-gray-950 focus-visible:ring-cyan-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -171,7 +171,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Box className="h-4 w-4 text-gray-600" />
+                  <Box className="h-4 w-4 text-cyan-600" />
                   Weight (g)
                 </FormLabel>
                 <FormControl>
@@ -179,7 +179,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     {...field}
                     inputMode="decimal"
                     placeholder="0"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-cyan-500 bg-white dark:bg-gray-950 focus-visible:ring-cyan-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -190,9 +190,9 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
       </div>
 
       {/* Package Dimensions Section */}
-      <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/30 dark:to-gray-950/30 p-6 space-y-4">
+      <div className="rounded-xl border-2 border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/20 dark:to-indigo-900/20 p-6 space-y-4">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 rounded-lg bg-gray-500">
+          <div className="p-2 rounded-lg bg-indigo-500">
             <Box className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -208,7 +208,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-gray-600 rotate-90" />
+                  <TrendingUp className="h-4 w-4 text-indigo-600 rotate-90" />
                   Height (cm)
                 </FormLabel>
                 <FormControl>
@@ -216,7 +216,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     {...field}
                     inputMode="decimal"
                     placeholder="0"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-indigo-500 bg-white dark:bg-gray-950 focus-visible:ring-indigo-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -229,7 +229,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-gray-600" />
+                  <TrendingUp className="h-4 w-4 text-indigo-600" />
                   Width (cm)
                 </FormLabel>
                 <FormControl>
@@ -237,7 +237,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     {...field}
                     inputMode="decimal"
                     placeholder="0"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-indigo-500 bg-white dark:bg-gray-950 focus-visible:ring-indigo-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -250,7 +250,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
-                  <Box className="h-4 w-4 text-gray-600" />
+                  <Box className="h-4 w-4 text-indigo-600" />
                   Weight (g)
                 </FormLabel>
                 <FormControl>
@@ -258,7 +258,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                     {...field}
                     inputMode="decimal"
                     placeholder="0"
-                    className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                    className="border-l-4 border-l-indigo-500 bg-white dark:bg-gray-950 focus-visible:ring-indigo-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -269,10 +269,10 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
       </div>
 
       {/* What's Inside the Box Section */}
-      <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/30 dark:to-gray-950/30 p-6 space-y-4">
+      <div className="rounded-xl border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/20 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gray-500">
+            <div className="p-2 rounded-lg bg-orange-500">
               <Box className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -289,9 +289,9 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             variant="outline"
             size="sm"
             onClick={() => boxItemsFieldArray.append('')}
-            className="bg-white dark:bg-gray-950 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+            className="bg-white dark:bg-gray-950 border-orange-300 hover:bg-orange-50 hover:border-orange-400"
           >
-            <Plus className="mr-2 h-4 w-4 text-gray-600" /> Add Item
+            <Plus className="mr-2 h-4 w-4 text-orange-600" /> Add Item
           </Button>
         </div>
         {boxItemsFieldArray.fields.length === 0 && (
@@ -303,7 +303,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
         <div className="space-y-3">
           {boxItemsFieldArray.fields.map((fieldItem: any, index: number) => (
             <div key={fieldItem.id} className="flex gap-2">
-              <div className="flex items-center justify-center w-8 h-10 rounded-lg bg-gray-400 text-white font-bold text-sm shadow-md">
+              <div className="flex items-center justify-center w-8 h-10 rounded-lg bg-orange-500 text-white font-bold text-sm shadow-md">
                 {index + 1}
               </div>
               <FormField
@@ -315,7 +315,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                       <Input
                         {...field}
                         placeholder="E.g. USB-C charge cable"
-                        className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950"
+                        className="border-l-4 border-l-orange-500 bg-white dark:bg-gray-950 focus-visible:ring-orange-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -326,7 +326,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-950"
+                className="hover:bg-orange-100 hover:text-orange-600 dark:hover:bg-orange-950"
                 onClick={() => boxItemsFieldArray.remove(index)}
               >
                 <Trash2 className="h-4 w-4" />
@@ -337,10 +337,10 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
       </div>
 
       {/* Deliverable Locations Section */}
-      <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/30 dark:to-gray-950/30 p-6 space-y-4">
+      <div className="rounded-xl border-2 border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-950/20 dark:to-rose-900/20 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gray-500">
+            <div className="p-2 rounded-lg bg-rose-500">
               <MapPin className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -357,9 +357,9 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
             variant="outline"
             size="sm"
             onClick={() => locationsFieldArray.append('')}
-            className="bg-white dark:bg-gray-950 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+            className="bg-white dark:bg-gray-950 border-rose-300 hover:bg-rose-50 hover:border-rose-400"
           >
-            <Plus className="mr-2 h-4 w-4 text-gray-600" /> Add Location
+            <Plus className="mr-2 h-4 w-4 text-rose-600" /> Add Location
           </Button>
         </div>
         {locationsFieldArray.fields.length === 0 && (
@@ -371,7 +371,7 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
         <div className="space-y-3">
           {locationsFieldArray.fields.map((fieldItem: any, index: number) => (
             <div key={fieldItem.id} className="flex gap-2">
-              <div className="flex items-center justify-center w-8 h-10 rounded-lg bg-gray-400 text-white font-bold text-sm shadow-md">
+              <div className="flex items-center justify-center w-8 h-10 rounded-lg bg-rose-500 text-white font-bold text-sm shadow-md">
                 {index + 1}
               </div>
               <FormField
@@ -386,13 +386,13 @@ export const StepInventory = ({ context }: { context: ProductsFormContextType })
                             variant="outline"
                             role="combobox"
                             className={cn(
-                              'w-full justify-between border-l-4 border-l-gray-500 bg-white dark:bg-gray-950',
+                              'w-full justify-between border-l-4 border-l-rose-500 bg-white dark:bg-gray-950 focus-visible:ring-rose-500',
                               !field.value && 'text-muted-foreground'
                             )}
                             type="button"
                           >
                             <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-gray-600" />
+                              <MapPin className="h-4 w-4 text-rose-600" />
                               {field.value || 'Select city...'}
                             </div>
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

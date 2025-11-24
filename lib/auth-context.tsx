@@ -107,6 +107,8 @@ interface Merchant {
   state?: string;
   pincode?: string;
   country?: string;
+  ListingLimit?: number;
+  [key: string]: any;
 }
 
 interface MerchantRegisterData {

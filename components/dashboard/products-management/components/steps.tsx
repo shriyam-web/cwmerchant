@@ -53,54 +53,60 @@ const renderStepContent = (props: StepRendererProps) => {
 export const StepNavigation = ({ context }: { context: ProductsFormContextType }) => {
   const { currentStep, goToStep, loading } = context;
 
-  return (
-    <div className="flex items-center justify-between gap-1">
-      {steps.map((step, index) => {
-        const Icon = dynamicStepIcons[index] ?? Package;
-        const isCompleted = index < currentStep;
-        const isActive = index === currentStep;
+  const stepColors = [
+    { light: 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800', indicator: 'bg-blue-500' },
+    { light: 'bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800', indicator: 'bg-purple-500' },
+    { light: 'bg-pink-50 dark:bg-pink-950/30 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-800', indicator: 'bg-pink-500' },
+    { light: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800', indicator: 'bg-emerald-500' },
+    { light: 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800', indicator: 'bg-amber-500' },
+  ];
 
-        return (
-          <div key={step.title} className="flex items-center flex-1">
-            <button
-              type="button"
-              onClick={() => goToStep(index)}
-              className={cn(
-                'relative flex h-14 w-14 items-center justify-center rounded-xl text-sm font-medium border-2 transition-colors',
-                isActive
-                  ? 'bg-gradient-to-br from-gray-500 to-gray-400 text-white shadow-xl border-transparent'
-                  : isCompleted
-                    ? 'bg-gray-100 text-gray-600 dark:from-gray-900/30 dark:text-gray-400 border-gray-300 dark:border-gray-700 shadow-md'
-                    : 'bg-muted text-muted-foreground border-gray-200 dark:border-gray-700'
-              )}
-              title={`${step.title} — ${step.description}`}
-              disabled={loading}
-            >
-              {isCompleted ? <Check className="h-6 w-6 drop-shadow-sm" /> : <Icon className="h-6 w-6" />}
-              <span
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-1">
+        {steps.map((step, index) => {
+          const Icon = dynamicStepIcons[index] ?? Package;
+          const isCompleted = index < currentStep;
+          const isActive = index === currentStep;
+          const colors = stepColors[index];
+
+          return (
+            <div key={step.title} className="flex items-center flex-1">
+              <button
+                type="button"
+                onClick={() => goToStep(index)}
                 className={cn(
-                  'absolute -top-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center text-xs font-bold shadow-sm',
+                  'relative flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold border-2 transition-all',
                   isActive
-                    ? 'bg-white text-primary'
+                    ? `${colors.light} border-current`
                     : isCompleted
-                      ? 'bg-gray-500 text-white'
-                      : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+                      ? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-700'
+                      : 'bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800'
                 )}
+                title={`${step.title} — ${step.description}`}
+                disabled={loading}
               >
-                {index + 1}
-              </span>
-            </button>
-            {index < steps.length - 1 && (
-              <div
-                className={cn(
-                  'mx-2 h-1.5 flex-1 rounded-full relative overflow-hidden',
-                  index < currentStep ? 'bg-gray-400 shadow-sm' : 'bg-gray-200 dark:bg-gray-700'
-                )}
-              />
-            )}
+                {isCompleted ? <Check className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+              </button>
+              {index < steps.length - 1 && (
+                <div
+                  className={cn(
+                    'mx-2 h-1 flex-1 rounded-full transition-colors',
+                    index < currentStep ? colors.indicator : 'bg-gray-200 dark:bg-gray-800'
+                  )}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className="flex justify-between gap-2 px-1">
+        {steps.map((step, index) => (
+          <div key={step.title} className="flex-1 text-center">
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-400">{step.title}</p>
           </div>
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 };
@@ -141,12 +147,13 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
   };
 
   return (
-    <div className="flex justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
+    <div className="flex justify-between gap-3 pt-8 border-t border-gray-200 dark:border-gray-700/50">
       <Button
         type="button"
         variant="outline"
         onClick={goToPreviousStep}
         disabled={isFirstStep || loading}
+        className="px-6 py-2.5 font-semibold text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900/50"
       >
         Previous
       </Button>
@@ -154,6 +161,7 @@ export const BottomNavigation = ({ context, form }: { context: ProductsFormConte
         type={isLastStep ? "submit" : "button"}
         onClick={isLastStep ? handleSubmit : handleNext}
         disabled={loading}
+        className="px-8 py-2.5 font-bold text-white bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:shadow-lg hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-200"
       >
         {loading ? (
           <>

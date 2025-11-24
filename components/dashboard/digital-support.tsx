@@ -125,11 +125,11 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
             case 'completed':
                 return 'text-emerald-600 dark:text-emerald-400';
             case 'in_progress':
-                return 'text-gray-600 dark:text-gray-400';
+                return 'text-blue-600 dark:text-blue-400';
             case 'pending':
                 return 'text-amber-600 dark:text-amber-400';
             default:
-                return 'text-gray-600 dark:text-gray-400';
+                return 'text-blue-600 dark:text-blue-400';
         }
     };
 
@@ -255,15 +255,15 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
         <div id="tour-support-main" className="min-h-screen">
             <div className="max-w-7xl mx-auto px-6 pt-0 pb-6 space-y-8">
                 {/* Upgrade Banner */}
-                {!isMarketLeader && <Card className="border border-gray-200 bg-gray-50/50 dark:border-gray-900 dark:bg-gray-950/30">
+                {!isMarketLeader && <Card className="border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/30">
                     <CardContent className="p-4 sm:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                             <div className="flex-1 mb-4 sm:mb-0">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <Badge className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 dark:bg-gray-900 dark:text-gray-200">
+                                    <Badge className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 dark:bg-blue-900 dark:text-blue-200">
                                         AD
                                     </Badge>
-                                    <Crown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                                    <Crown className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                                 </div>
                                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 dark:text-white">
                                     Don't settle for limits when your business deserves the world.
@@ -288,7 +288,7 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
                                 </div>
                             </div>
                             <div className="flex-shrink-0">
-                                <Button className="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-medium px-6 py-2 rounded-lg dark:bg-gray-700 dark:hover:bg-gray-600">
+                                <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg dark:bg-blue-600 dark:hover:bg-blue-700">
                                     Upgrade Now
                                 </Button>
                             </div>
@@ -300,7 +300,7 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
                 <div id="tour-support-plan" className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
 
                     <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">Your Plan</h2>
-                    <Badge className="bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1 dark:bg-gray-900 dark:text-gray-200">
+                    <Badge className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 dark:bg-blue-900 dark:text-blue-200">
                         {merchant?.purchasedPackage?.variantName || 'No Plan available'}
                     </Badge>
                 </div>
@@ -320,13 +320,13 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
 
                                 // Check if service has 0 limit or is fully consumed
                                 const isLimitExhausted = 'total' in item && (item.total === 0 || item.used >= item.total);
-                                const cardBgClass = isLimitExhausted ? 'bg-red-50 border-red-300 dark:bg-red-950/30 dark:border-red-900' : 'border-gray-200 dark:border-gray-700 dark:bg-gray-800';
+                                const cardBgClass = isLimitExhausted ? 'bg-red-50 border-red-300 dark:bg-red-950/30 dark:border-red-900' : 'border-blue-200 bg-blue-50/30 dark:border-blue-900 dark:bg-blue-950/20';
 
                                 return (
                                     <div key={item.type} className={`border rounded-lg p-4 sm:p-6 ${cardBgClass}`}>
                                         <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4 space-y-4 sm:space-y-0">
-                                            <div className={`p-3 rounded-lg border flex-shrink-0 self-center sm:self-start ${isLimitExhausted ? 'border-red-300 bg-red-100 dark:border-red-900 dark:bg-red-950/50' : 'border-gray-200 dark:border-gray-700 dark:bg-gray-700'}`}>
-                                                <IconComponent className={`h-6 w-6 ${isLimitExhausted ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`} />
+                                            <div className={`p-3 rounded-lg border flex-shrink-0 self-center sm:self-start ${isLimitExhausted ? 'border-red-300 bg-red-100 dark:border-red-900 dark:bg-red-950/50' : 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/40'}`}>
+                                                <IconComponent className={`h-6 w-6 ${isLimitExhausted ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`} />
                                             </div>
                                             <div className="flex-1">
                                                 <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-white">{item.title}</h3>
@@ -401,19 +401,19 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
                 </Card>
 
                 {/* Request History */}
-                <Card id="tour-support-requests" className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 dark:border-gray-700">
+                <Card id="tour-support-requests" className="border border-blue-200 dark:border-blue-900 dark:bg-blue-950/20">
+                    <CardHeader className="border-b border-blue-100 dark:border-blue-900">
                         <div className="flex items-center">
-                            <History className="h-6 w-6 text-gray-700 mr-3 dark:text-gray-400" />
+                            <History className="h-6 w-6 text-blue-600 mr-3 dark:text-blue-400" />
                             <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Digital Support Log</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="p-4 sm:p-6">
                         <div className="space-y-4 sm:space-y-6">
                             {requests.map((request) => (
-                                <div key={request.id} className="border border-gray-200 rounded-lg p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-700/50">
+                                <div key={request.id} className="border border-blue-200 rounded-lg p-4 sm:p-6 bg-blue-50/30 dark:border-blue-900 dark:bg-blue-950/20">
                                     <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4 space-y-4 sm:space-y-0">
-                                        <div className={`p-3 rounded-lg border flex-shrink-0 self-center sm:self-start dark:border-gray-600 dark:bg-gray-700 ${getStatusColor(request.status)}`}>
+                                        <div className={`p-3 rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/40 ${getStatusColor(request.status)}`}>
                                             {getStatusIcon(request.status)}
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -425,8 +425,8 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
                                                     </Badge>
                                                 )}
                                             </div>
-                                            <p className="text-gray-600 text-sm mb-4 leading-relaxed dark:text-gray-400">{request.description}</p>
-                                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
+                                            <p className="text-gray-600 text-sm mb-4 leading-relaxed dark:text-gray-300">{request.description}</p>
+                                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                                                 <div className="flex items-center gap-1">
                                                     <Calendar className="h-4 w-4" />
                                                     Submitted: {new Date(request.submittedAt).toLocaleDateString('en-US', {
@@ -456,9 +456,9 @@ export default function DigitalSupport({ merchant }: DigitalSupportProps) {
                         </div>
                         {requests.length === 0 && (
                             <div className="text-center py-8 sm:py-12">
-                                <History className="h-12 sm:h-16 w-12 sm:w-16 text-gray-300 mx-auto mb-4 dark:text-gray-700" />
-                                <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2 dark:text-gray-400">No requests yet</h3>
-                                <p className="text-gray-600 dark:text-gray-500">Your digital support request history will appear here</p>
+                                <History className="h-12 sm:h-16 w-12 sm:w-16 text-blue-300 mx-auto mb-4 dark:text-blue-700" />
+                                <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2 dark:text-gray-100">No requests yet</h3>
+                                <p className="text-gray-600 dark:text-gray-400">Your digital support request history will appear here</p>
                             </div>
                         )}
                     </CardContent>

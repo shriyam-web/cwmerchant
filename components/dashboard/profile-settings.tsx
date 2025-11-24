@@ -1,5 +1,5 @@
 'use client';
- 
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -711,7 +711,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
     <>
       {/* Crop Modal */}
       <Dialog open={showCropModal} onOpenChange={setShowCropModal}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden dark:bg-gray-800 dark:text-white dark:border-gray-700">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden dark:bg-slate-800 dark:text-white dark:border-blue-700">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 dark:text-white">
               <Crop className="h-5 w-5" />
@@ -719,7 +719,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="relative w-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden" style={{ height: '400px' }}>
+            <div className="relative w-full bg-gray-100 dark:bg-slate-700 rounded-lg overflow-hidden" style={{ height: '400px' }}>
               <Cropper
                 image={cropImage}
                 crop={crop}
@@ -742,7 +742,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                 step={0.1}
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700"
               />
             </div>
             <div className="flex justify-end gap-2">
@@ -756,7 +756,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                   setCroppedAreaPixels(null);
                   setCroppedArea(null);
                 }}
-                className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                className="dark:bg-slate-700 dark:text-white dark:border-slate-600"
               >
                 Cancel
               </Button>
@@ -780,7 +780,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
 
       <div className="min-h-screen">
       {/* Premium Header */}
-      <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <div className="border-b border-blue-200 dark:border-blue-900 bg-white dark:bg-slate-900">
         <div className="p-6 md:p-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div>
@@ -790,7 +790,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
             <Button
               onClick={() => merchant?.merchantSlug && window.open(`https://www.citywitty.com/merchants/${merchant.merchantSlug}`, '_blank')}
               disabled={!merchant?.merchantSlug}
-              className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 dark:from-gray-700 dark:to-gray-800 dark:hover:from-gray-800 dark:hover:to-gray-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-700 dark:to-blue-800 dark:hover:from-blue-800 dark:hover:to-blue-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <Eye className="h-4 w-4 mr-2" />
               Preview Store
@@ -803,32 +803,32 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
       {/* Main Content */}
       <div className="p-4 md:p-8 max-w-7xl mx-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 h-auto mb-8">
-            <TabsTrigger value="basic" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-white dark:bg-slate-800 p-2 rounded-xl shadow-sm border border-blue-200 dark:border-blue-900 h-auto mb-8">
+            <TabsTrigger value="basic" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:bg-orange-100 dark:data-[state=inactive]:bg-slate-700 data-[state=inactive]:text-orange-700 dark:data-[state=inactive]:text-slate-300 transition-all duration-200 font-medium">
               <span className="hidden sm:inline">Basic</span>
               <span className="sm:hidden">Info</span>
             </TabsTrigger>
-            <TabsTrigger value="business" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">Business</TabsTrigger>
-            <TabsTrigger value="banking" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+            <TabsTrigger value="business" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=inactive]:bg-emerald-100 dark:data-[state=inactive]:bg-slate-700 data-[state=inactive]:text-emerald-700 dark:data-[state=inactive]:text-slate-300 transition-all duration-200 font-medium">Business</TabsTrigger>
+            <TabsTrigger value="banking" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=inactive]:bg-purple-100 dark:data-[state=inactive]:bg-slate-700 data-[state=inactive]:text-purple-700 dark:data-[state=inactive]:text-slate-300 transition-all duration-200 font-medium">
               <span className="hidden sm:inline">Banking</span>
               <span className="sm:hidden">Bank</span>
             </TabsTrigger>
-            <TabsTrigger value="hours" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+            <TabsTrigger value="hours" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:bg-orange-100 dark:data-[state=inactive]:bg-slate-700 data-[state=inactive]:text-orange-700 dark:data-[state=inactive]:text-slate-300 transition-all duration-200 font-medium">
               <span className="hidden sm:inline">Hours</span>
               <span className="sm:hidden">Hrs</span>
             </TabsTrigger>
-            <TabsTrigger value="store-images" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+            <TabsTrigger value="store-images" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-blue-100 dark:data-[state=inactive]:bg-slate-700 data-[state=inactive]:text-blue-700 dark:data-[state=inactive]:text-slate-300 transition-all duration-200 font-medium">
               <span className="hidden sm:inline">Images</span>
               <span className="sm:hidden">Imgs</span>
             </TabsTrigger>
-            <TabsTrigger value="additional" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-gray-600 data-[state=active]:text-white data-[state=inactive]:bg-gray-100 dark:data-[state=inactive]:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300 transition-all duration-200 font-medium">
+            <TabsTrigger value="additional" className="text-xs sm:text-sm rounded-lg data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=inactive]:bg-pink-100 dark:data-[state=inactive]:bg-slate-700 data-[state=inactive]:text-pink-700 dark:data-[state=inactive]:text-slate-300 transition-all duration-200 font-medium">
               <span className="hidden sm:inline">More</span>
               <span className="sm:hidden">+</span>
             </TabsTrigger>
           </TabsList>
 
         <TabsContent value="basic" className="space-y-6">
-          <Card id="tour-profile-basic" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+          <Card id="tour-profile-basic" className="shadow-md border border-orange-200 dark:border-orange-900 rounded-xl overflow-hidden bg-white dark:bg-orange-950/20 hover:shadow-lg transition-shadow duration-300">
             <div className="bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-700 dark:to-red-700 border-b border-orange-800 dark:border-red-900">
               <CardHeader className="py-6 px-6 pb-5">
                 <div className="flex items-center gap-3">
@@ -1008,7 +1008,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
         </TabsContent>
 
         <TabsContent value="business" className="space-y-6">
-          <Card id="tour-profile-business" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+          <Card id="tour-profile-business" className="shadow-md border border-emerald-200 dark:border-emerald-900 rounded-xl overflow-hidden bg-white dark:bg-emerald-950/20 hover:shadow-lg transition-shadow duration-300">
             <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 dark:from-emerald-700 dark:to-emerald-800 border-b border-emerald-800 dark:border-emerald-900">
               <CardHeader className="py-6 px-6 pb-5">
                 <div className="flex items-center gap-3">
@@ -1187,7 +1187,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
         </TabsContent>
 
         <TabsContent value="banking" className="space-y-6">
-          <Card id="tour-profile-banking" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+          <Card id="tour-profile-banking" className="shadow-md border border-purple-200 dark:border-purple-900 rounded-xl overflow-hidden bg-white dark:bg-purple-950/20 hover:shadow-lg transition-shadow duration-300">
             <div className="bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-700 dark:to-purple-800 border-b border-purple-800 dark:border-purple-900">
               <CardHeader className="py-6 px-6 pb-5">
                 <div className="flex items-center gap-3">
@@ -1272,7 +1272,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
         </TabsContent>
 
         <TabsContent value="hours" className="space-y-6">
-          <Card id="tour-profile-hours" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+          <Card id="tour-profile-hours" className="shadow-md border border-orange-200 dark:border-orange-900 rounded-xl overflow-hidden bg-white dark:bg-orange-950/20 hover:shadow-lg transition-shadow duration-300">
             <div className="bg-gradient-to-r from-orange-600 to-orange-700 dark:from-orange-700 dark:to-orange-800 border-b border-orange-800 dark:border-orange-900">
               <CardHeader className="py-6 px-6 pb-5">
                 <div className="flex items-center gap-3">
@@ -1333,7 +1333,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
         </TabsContent>
 
         <TabsContent value="additional" className="space-y-6">
-          <Card id="tour-profile-additional" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+          <Card id="tour-profile-additional" className="shadow-md border border-pink-200 dark:border-pink-900 rounded-xl overflow-hidden bg-white dark:bg-pink-950/20 hover:shadow-lg transition-shadow duration-300">
             <div className="bg-gradient-to-r from-pink-600 to-pink-700 dark:from-pink-700 dark:to-pink-800 border-b border-pink-800 dark:border-pink-900">
               <CardHeader className="py-6 px-6 pb-5">
                 <div className="flex items-center gap-3">
@@ -1416,11 +1416,11 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                 </div>
               </div>
 
-              <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-8">
-                <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+              <div className="border-t-2 border-pink-200 dark:border-pink-900 pt-8">
+                <Card className="border border-pink-200 dark:border-pink-900 bg-white dark:bg-pink-950/20 rounded-lg shadow-sm">
                   <CardHeader className="py-6 px-6">
                     <CardTitle className="flex items-center gap-2 text-lg dark:text-white">
-                      <HelpCircle className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                      <HelpCircle className="h-5 w-5 text-pink-500 dark:text-pink-400" />
                       Frequently Asked Questions (FAQs)
                     </CardTitle>
                     <CardDescription className="mt-2 dark:text-gray-300">Help customers by answering common questions about your business</CardDescription>
@@ -1431,7 +1431,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                         <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Your FAQs ({profile.faq.length})</h4>
                         <div className="grid gap-3">
                           {profile.faq.map((item, index) => (
-                            <div key={index} className="group relative p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 dark:from-gray-700 to-purple-50 dark:to-gray-600 hover:shadow-md transition-all duration-200">
+                            <div key={index} className="group relative p-4 rounded-lg border border-pink-200 dark:border-pink-700 bg-gradient-to-r from-pink-50 dark:from-pink-950/40 to-pink-50 dark:to-pink-950/30 hover:shadow-md transition-all duration-200">
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 pr-8">
                                   <div className="flex items-center gap-2 mb-2">
@@ -1461,9 +1461,9 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                       </div>
                     )}
 
-                    <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-6">
-                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Add New FAQ</h4>
-                      <div className="space-y-4 p-5 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                    <div className="border-t-2 border-pink-200 dark:border-pink-700 pt-6">
+                      <h4 className="text-sm font-semibold text-pink-700 dark:text-pink-300 mb-4">Add New FAQ</h4>
+                      <div className="space-y-4 p-5 rounded-lg border-2 border-dashed border-pink-200 dark:border-pink-700 bg-pink-50 dark:bg-pink-950/20">
                         <div>
                           <Label htmlFor="faq-question-new" className="text-sm font-medium text-gray-700 dark:text-gray-300">Question <span className="text-red-500">*</span></Label>
                           <Input
@@ -1512,7 +1512,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
                               toast.error('Please fill in both question and answer');
                             }
                           }}
-                          className="w-full bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-800 text-white font-medium transition-all"
+                          className="w-full bg-pink-600 dark:bg-pink-700 hover:bg-pink-700 dark:hover:bg-pink-800 text-white font-medium transition-all"
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           Add FAQ
@@ -1527,7 +1527,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
         </TabsContent>
 
         <TabsContent value="store-images" className="space-y-6">
-          <Card id="tour-profile-images" className="shadow-md border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300">
+          <Card id="tour-profile-images" className="shadow-md border border-blue-200 dark:border-blue-900 rounded-xl overflow-hidden bg-white dark:bg-blue-950/20 hover:shadow-lg transition-shadow duration-300">
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 border-b border-blue-800 dark:border-blue-900">
               <CardHeader className="py-6 px-6 pb-5">
                 <div className="flex items-center gap-3">
@@ -1615,14 +1615,14 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
               }}
               disabled={saving}
               variant="outline"
-              className="flex-1 sm:flex-none border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+              className="flex-1 sm:flex-none border-blue-300 dark:border-blue-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700 hover:bg-blue-50 transition-all duration-200 font-medium"
             >
               Discard
             </Button>
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 sm:flex-none bg-gradient-to-r from-gray-600 to-gray-700 dark:from-gray-700 dark:to-gray-800 hover:from-gray-700 hover:to-gray-800 dark:hover:from-gray-800 dark:hover:to-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl text-white font-semibold py-2.5"
+              className="flex-1 sm:flex-none bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 hover:from-blue-700 hover:to-blue-800 dark:hover:from-blue-800 dark:hover:to-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl text-white font-semibold py-2.5"
             >
               {saving ? (
                 <>
@@ -1658,7 +1658,7 @@ export function ProfileSettings({ tourIndex, tourTarget }: ProfileSettingsProps)
             <AlertDialogAction
               onClick={confirmSave}
               disabled={saving}
-              className="bg-gray-600 hover:bg-gray-700"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               {saving ? (
                 <>

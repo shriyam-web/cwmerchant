@@ -29,11 +29,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
         }
 
-        console.log('Partner found - products:', partner.products?.length || 0);
+        console.log('Partner found - products:', partner.products?.length || 0, 'ListingLimit:', partner.ListingLimit);
         return NextResponse.json({
             products: partner.products || [],
             total: partner.products?.length || 0,
-            debug: { partnerId: partner._id, hasProducts: !!partner.products }
+            ListingLimit: partner.ListingLimit,
+            debug: { partnerId: partner._id, hasProducts: !!partner.products, ListingLimit: partner.ListingLimit }
         });
     } catch (error) {
         console.error('Error fetching products:', error);

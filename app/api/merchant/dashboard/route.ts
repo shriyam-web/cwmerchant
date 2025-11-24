@@ -252,6 +252,7 @@ export async function GET(req: Request) {
         ds_weblog: partner.ds_weblog || [],
         podcastLog: partner.podcastLog || [],
         isAdmin,
+        ListingLimit: partner.ListingLimit,
       },
       stats,
       requests,

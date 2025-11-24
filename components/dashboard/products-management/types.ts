@@ -426,19 +426,19 @@ export const steps = [
   {
     title: 'Basics',
     description: 'Share the core product information to get started.',
-    color: 'from-gray-500 to-gray-400',
+    color: 'from-blue-500 to-blue-600',
     fields: ['productId', 'productName', 'productCategory', 'productDescription', 'brand'] as const,
   },
   {
     title: 'Media & Highlights',
     description: 'Add images and highlight key selling points.',
-    color: 'from-gray-400 to-gray-300',
+    color: 'from-purple-500 to-purple-600',
     fields: ['productImages', 'productHighlights'] as const,
   },
   {
     title: 'Pricing & Variants',
     description: 'Configure pricing, offers, variants, and wallet options.',
-    color: 'from-gray-500 to-gray-400',
+    color: 'from-pink-500 to-pink-600',
     fields: [
       'originalPrice',
       'discountedPrice',
@@ -454,7 +454,7 @@ export const steps = [
   {
     title: 'Inventory Availablility & Logistics',
     description: 'Update inventory, shipping, and packaging details.',
-    color: 'from-gray-400 to-gray-300',
+    color: 'from-emerald-500 to-emerald-600',
     fields: [
       'instore',
       'isAvailableStock',
@@ -477,7 +477,7 @@ export const steps = [
   {
     title: 'Extra Information',
     description: 'Add FAQs or extra info.',
-    color: 'from-gray-500 to-gray-400',
+    color: 'from-amber-500 to-amber-600',
     fields: [
       'additionalInfo',
       'faq',

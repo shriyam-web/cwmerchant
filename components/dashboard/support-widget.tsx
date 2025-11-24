@@ -132,7 +132,7 @@ const quickLinks = [
         description: "Request graphics, videos, podcasts & websites",
         icon: Zap,
         href: "/dashboard?tab=support",
-        color: "text-gray-600"
+        color: "text-blue-600 dark:text-blue-400"
     },
     {
         title: "Add Product",
@@ -173,11 +173,11 @@ export function SupportWidget() {
     return (
         <div className="fixed bottom-6 right-6 z-50">
             {isExpanded ? (
-                <Card className="w-96 max-h-[80vh] overflow-hidden shadow-xl border-2 border-gray-200">
+                <Card className="w-96 max-h-[80vh] overflow-hidden shadow-xl border-2 border-blue-200 dark:border-blue-800">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                             <CardTitle className="text-lg flex items-center gap-2">
-                                <HelpCircle className="h-5 w-5 text-gray-600" />
+                                <HelpCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                                 Support Center
                             </CardTitle>
                             <Button
@@ -193,7 +193,7 @@ export function SupportWidget() {
                     <CardContent className="space-y-4 overflow-y-auto max-h-[70vh]">
                         {/* Contact Methods */}
                         <div className="space-y-3">
-                            <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                                 <Phone className="h-4 w-4" />
                                 Contact Support
                             </h4>
@@ -210,11 +210,11 @@ export function SupportWidget() {
                                 </a>
                                 <a
                                     href="mailto:support@citywitty.com"
-                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
+                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-colors group"
                                 >
-                                    <Mail className="h-4 w-4 text-gray-600" />
+                                    <Mail className="h-4 w-4 text-blue-600" />
                                     <div>
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-gray-600">Email Support</span>
+                                        <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">Email Support</span>
                                         <p className="text-xs text-gray-600">support@citywitty.com</p>
                                     </div>
                                 </a>
@@ -231,7 +231,7 @@ export function SupportWidget() {
                                     </div>
                                 </a>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                            <div className="flex items-center gap-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 p-2 rounded border border-blue-100 dark:border-blue-900">
                                 <Clock className="h-3 w-3" />
                                 <span>Mon-Fri: 9AM-6PM IST | Sat: 9AM-2PM IST</span>
                             </div>
@@ -260,7 +260,7 @@ export function SupportWidget() {
                                             <a
                                                 key={index}
                                                 href={link.href}
-                                                className="flex flex-col items-center p-3 rounded-lg border hover:bg-gray-50 transition-colors group"
+                                                className="flex flex-col items-center p-3 rounded-lg border border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-colors group"
                                             >
                                                 <IconComponent className={`h-5 w-5 mb-1 ${link.color}`} />
                                                 <span className="text-xs font-medium text-center text-gray-700 group-hover:text-gray-900">
@@ -296,11 +296,11 @@ export function SupportWidget() {
                                     {serviceStatus.map((service, index) => {
                                         const IconComponent = service.icon;
                                         return (
-                                            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                                                <span className="text-xs font-medium text-gray-700">{service.service}</span>
+                                            <div key={index} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/40 rounded border border-blue-100 dark:border-blue-900">
+                                                <span className="text-xs font-medium text-gray-700 dark:text-gray-200">{service.service}</span>
                                                 <div className="flex items-center gap-1">
-                                                    <IconComponent className="h-3 w-3 text-green-600" />
-                                                    <span className="text-xs text-green-700 capitalize">{service.status}</span>
+                                                    <IconComponent className="h-3 w-3 text-green-600 dark:text-green-400" />
+                                                    <span className="text-xs text-green-700 dark:text-green-400 capitalize">{service.status}</span>
                                                 </div>
                                             </div>
                                         );
@@ -332,11 +332,11 @@ export function SupportWidget() {
                                         {activeCategory === category.category && (
                                             <div className="px-3 pb-3 space-y-2">
                                                 {category.questions.map((faq, faqIndex) => (
-                                                    <div key={faqIndex} className="bg-gray-50 rounded p-3">
-                                                        <h5 className="text-sm font-medium text-gray-900 mb-1">
+                                                    <div key={faqIndex} className="bg-blue-50 dark:bg-blue-950/30 rounded p-3 border border-blue-100 dark:border-blue-900">
+                                                        <h5 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                                                             {faq.question}
                                                         </h5>
-                                                        <p className="text-xs text-gray-600 leading-relaxed">
+                                                        <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                                                             {faq.answer}
                                                         </p>
                                                     </div>
@@ -352,7 +352,7 @@ export function SupportWidget() {
             ) : (
                 <Button
                     onClick={() => setIsExpanded(true)}
-                    className="h-12 w-12 rounded-full bg-gray-600 hover:bg-gray-700 shadow-lg border-2 border-white"
+                    className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 shadow-lg border-2 border-white"
                 >
                     <HelpCircle className="h-6 w-6 text-white" />
                 </Button>

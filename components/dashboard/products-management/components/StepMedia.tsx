@@ -32,54 +32,47 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
   return (
     <div className="space-y-8">
       {/* Product Images Section */}
-      <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/30 dark:to-gray-900/30 p-6 space-y-4">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gray-500">
-              <ImageIcon className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <FormLabel className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                Product Images *
-              </FormLabel>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                {imagesFieldArray.fields.length} of 5 images
-              </p>
-            </div>
+          <div>
+            <FormLabel className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              Product Images
+              <span className="text-red-600 ml-1">*</span>
+            </FormLabel>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              {imagesFieldArray.fields.length} of 5 images
+            </p>
           </div>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => document.getElementById('image-upload-input')?.click()}
-              disabled={uploadingImages || imagesFieldArray.fields.length >= 5}
-              className="bg-white dark:bg-gray-950 border-gray-300 hover:bg-gray-50 hover:border-gray-400 group"
-            >
-              {uploadingImages ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-gray-600" /> Uploading...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-2 h-4 w-4 text-gray-600" /> Upload Images
-                </>
-              )}
-            </Button>
-            <input
-              id="image-upload-input"
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={handleImageUpload}
-              disabled={uploadingImages || imagesFieldArray.fields.length >= 5}
-            />
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => document.getElementById('image-upload-input')?.click()}
+            disabled={uploadingImages || imagesFieldArray.fields.length >= 5}
+            className="bg-white dark:bg-gray-900/50 border-purple-200 dark:border-purple-900 hover:bg-purple-50 dark:hover:bg-purple-950/20"
+          >
+            {uploadingImages ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...
+              </>
+            ) : (
+              <>
+                <Upload className="mr-2 h-4 w-4" /> Upload Images
+              </>
+            )}
+          </Button>
+          <input
+            id="image-upload-input"
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleImageUpload}
+            disabled={uploadingImages || imagesFieldArray.fields.length >= 5}
+          />
         </div>
-        <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-          <Info className="h-4 w-4" />
-          Upload between 1 to 5 images (max 5MB each). The first image becomes the cover photo.
+        <p className="text-xs text-gray-600 dark:text-gray-400">
+          Upload 1-5 images (max 5MB each). The first image becomes the cover photo.
         </p>
         <div className="space-y-3">
           {imagesFieldArray.fields.map((fieldItem, index) => (
@@ -90,16 +83,16 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormControl>
-                      <div className="flex gap-3 items-center bg-white dark:bg-gray-950 rounded-lg p-2 border-2 border-gray-200 dark:border-gray-800 group-hover:border-gray-400">
+                      <div className="flex gap-3 items-center bg-white dark:bg-gray-900/50 rounded-lg p-2 border border-purple-200 dark:border-purple-900">
                         {field.value && (
                           <div className="relative">
                             <img
                               src={field.value}
                               alt={`Product ${index + 1}`}
-                              className="w-20 h-20 object-cover rounded-lg border-2 border-gray-300 shadow-md"
+                              className="w-16 h-16 object-cover rounded-lg"
                             />
                             {index === 0 && (
-                              <div className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold shadow-lg">
+                              <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
                                 Cover
                               </div>
                             )}
@@ -110,11 +103,8 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
                             {...field}
                             placeholder="Image URL"
                             disabled
-                            className="border-l-4 border-l-purple-500 bg-gray-50 dark:bg-gray-900"
+                            className="bg-purple-50/40 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900"
                           />
-                          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 ml-1">
-                            Image {index + 1} {index === 0 && '(Cover Photo)'}
-                          </p>
                         </div>
                       </div>
                     </FormControl>
@@ -128,7 +118,7 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
                 size="icon"
                 onClick={() => imagesFieldArray.remove(index)}
                 disabled={imagesFieldArray.fields.length === 1}
-                className="hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-950 mt-2"
+                className="hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950 mt-2 h-9 w-9"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -137,23 +127,17 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
         </div>
       </div>
 
-      <Separator className="bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-
       {/* Product Highlights Section */}
-      <div className="rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/30 dark:to-gray-900/30 p-6 space-y-4">
+      <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gray-500">
-              <Star className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <FormLabel className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                Product Highlights *
-              </FormLabel>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                {highlightsFieldArray.fields.length} of 10 highlights
-              </p>
-            </div>
+          <div>
+            <FormLabel className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              Product Highlights
+              <span className="text-red-600 ml-1">*</span>
+            </FormLabel>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              {highlightsFieldArray.fields.length} of 10 highlights
+            </p>
           </div>
           <Button
             type="button"
@@ -161,19 +145,18 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
             size="sm"
             onClick={() => highlightsFieldArray.append('')}
             disabled={highlightsFieldArray.fields.length >= 10}
-            className="bg-white dark:bg-gray-950 border-gray-300 hover:bg-gray-50 hover:border-gray-400 group"
+            className="bg-white dark:bg-gray-900/50 border-purple-200 dark:border-purple-900 hover:bg-purple-50 dark:hover:bg-purple-950/20"
           >
-            <Plus className="mr-2 h-4 w-4 text-gray-600" /> Add Highlight
+            <Plus className="mr-2 h-4 w-4" /> Add
           </Button>
         </div>
-        <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-          <Star className="h-4 w-4" />
-          Mention the standout features or benefits customers should know.
+        <p className="text-xs text-gray-600 dark:text-gray-400">
+          Mention standout features or benefits customers should know.
         </p>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {highlightsFieldArray.fields.map((fieldItem, index) => (
             <div key={fieldItem.id} className="flex gap-2 group">
-              <div className="flex items-center justifycenter w-8 h-10 rounded-lg bg-gray-400 text-white font-bold text-sm shadow-md">
+              <div className="flex items-center justify-center w-8 h-10 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold text-sm flex-shrink-0">
                 {index + 1}
               </div>
               <FormField
@@ -184,8 +167,8 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="E.g. 120Hz AMOLED display"
-                        className="border-l-4 border-l-gray-500 bg-white dark:bg-gray-950 focus:border-l-gray-600"
+                        placeholder="E.g., 120Hz AMOLED display"
+                        className="h-10 bg-white dark:bg-gray-900/50 border-purple-200 dark:border-purple-900 focus-visible:ring-purple-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -198,7 +181,7 @@ export const StepMedia = ({ context, handleImageUpload }: StepRendererProps) => 
                 size="icon"
                 onClick={() => highlightsFieldArray.remove(index)}
                 disabled={highlightsFieldArray.fields.length === 1}
-                className="hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-950"
+                className="hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950 h-9 w-9"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

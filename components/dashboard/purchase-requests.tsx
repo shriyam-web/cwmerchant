@@ -291,11 +291,11 @@ export function PurchaseRequests() {
 
         <div className="space-y-4">
           {filteredRequests.length === 0 ? (
-            <Card className="bg-white dark:bg-gray-950 border-0 dark:border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50">
+            <Card className="bg-white dark:bg-slate-950 border-0 dark:border dark:border-slate-800 shadow-lg dark:shadow-slate-900/50">
               <CardContent className="p-12 text-center">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="rounded-full bg-gray-100 dark:bg-gray-700 p-6">
-                    <Clock className="h-12 w-12 text-gray-400 dark:text-gray-400" />
+                  <div className="rounded-full bg-blue-100 dark:bg-blue-950/40 p-6">
+                    <Clock className="h-12 w-12 text-blue-500 dark:text-blue-400" />
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">No Purchase Requests</h3>
@@ -310,12 +310,12 @@ export function PurchaseRequests() {
             </Card>
           ) : (
             filteredRequests.map((request) => (
-              <Card key={request.id} className="bg-white dark:bg-gray-950 border-0 dark:border dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 hover:shadow-md dark:hover:shadow-gray-900/70 transition-shadow">
+              <Card key={request.id} className="bg-white dark:bg-slate-950 border-0 dark:border dark:border-slate-800 shadow-lg dark:shadow-slate-900/50 hover:shadow-md dark:hover:shadow-slate-900/70 transition-shadow">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex w-full sm:w-auto items-start sm:items-center gap-4">
                       <Avatar className="w-12 h-12 flex-shrink-0">
-                        <AvatarFallback className="bg-gray-100 dark:bg-gray-900/40 text-gray-600 dark:text-gray-400 font-semibold">
+                        <AvatarFallback className="bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold">
                           {request.customerName
                             ? request.customerName
                               .split(' ')
@@ -369,7 +369,7 @@ export function PurchaseRequests() {
                   </div>
 
                   {request.status === 'pending' && (
-                    <div id="tour-requests-actions" className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2 pt-4 border-t border-gray-200 dark:border-gray-700 sm:justify-between">
+                    <div id="tour-requests-actions" className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2 pt-4 border-t border-blue-200 dark:border-slate-700 sm:justify-between">
                       <Button
                         size="default"
                         disabled={!!loadingStates[request.id]}
