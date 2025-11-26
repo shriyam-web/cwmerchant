@@ -66,6 +66,25 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
     setNotificationsBadgeCount(unreadNotificationsCount);
   }, [activeOffersCount, pendingRequestsCount, unreadNotificationsCount]);
 
+  // Auto-hide sidebar on mobile/tablet views
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        setSidebarOpen(false);
+      }
+    };
+
+    // Check on mount
+    handleResize();
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [setSidebarOpen]);
+
   useEffect(() => {
     if (!merchant?.id) {
       return;
@@ -128,7 +147,7 @@ export function DashboardSidebar({ activeTab, onTabChange, sidebarOpen, setSideb
   };
 
   return (
-    <div className={`fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 z-40 lg:z-auto transform lg:transform-none transition-all duration-300 ease-in-out lg:trangray-x-0 ${sidebarOpen ? 'trangray-x-0' : '-trangray-x-full'} lg:block overflow-y-auto`}>
+    <div className={`fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 z-40 lg:z-auto transform lg:transform-none transition-all duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:block overflow-y-auto`}>
       <div className="h-full flex flex-col">
         <div className="p-4 flex-shrink-0">
           {/* Logo */}
