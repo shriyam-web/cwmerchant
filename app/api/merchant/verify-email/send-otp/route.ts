@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       : { merchantId };
 
     const partner = await Partner.findOne(partnerQuery);
-    
+
     if (!partner) {
       return NextResponse.json({ error: "Merchant not found" }, { status: 404 });
     }
@@ -68,7 +68,9 @@ export async function POST(req: NextRequest) {
                   ${otp}
                 </span>
               </div>
-
+<p style="margin-top:10px;">
+By proceeding with OTP verification, you agree that you have read and accepted all CityWitty Merchant Terms & Conditions available at <a href="https://partner.citywitty.com/terms">https://partner.citywitty.com/terms. </a>
+</p>
               <p style="margin-top:10px;">If you did not create an account with CityWitty Merchant Hub, please ignore this email or contact our <a href="https://partner.citywitty.com/contact" style="color:#0d6efd; text-decoration:none;">support team</a>.</p>
 
               <p style="margin-top:30px;">Thank you,<br><strong>CityWitty Merchant Hub Team</strong></p>
@@ -85,9 +87,9 @@ export async function POST(req: NextRequest) {
       `
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      message: "Verification OTP sent to your email" 
+    return NextResponse.json({
+      success: true,
+      message: "Verification OTP sent to your email"
     });
   } catch (err) {
     console.error("Send Email Verification OTP Error:", err);
