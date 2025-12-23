@@ -50,6 +50,66 @@ export default function TermsPage() {
                     CityWitty Merchant Hub reserves the right to suspend or terminate any merchant account at its discretion, including for non-compliance with these terms, fraudulent activities, or failure to maintain agreed standards. Termination may occur with or without prior notice.
                 </p>
 
+                <h1 className='text-xl font-bold mb-4'>6A. Termination by Merchant (Voluntary Exit) </h1>
+                <p>
+                    If a Merchant Partner chooses to discontinue or terminate services from CityWitty Merchant Hub (CWMH) at their own discretion, the following terms shall apply:
+                    <br /> <br />
+                    i. Annual Plan Commitment
+                    Merchant Partners are required to opt for an annual billing plan, payable in full at the time of onboarding.
+                    If a merchant chooses an installment-based payment option (monthly or quarterly), the annual plan value remains binding and applicable.
+
+                    <br /> <br />
+                    ii. Non-Refundable Setup & First Quarter Charges
+                    Any amount paid to CityWitty or its authorized representatives during the first quarter of the subscription period shall be treated as a basic setup and onboarding fee, which includes but is not limited to:
+                    <br />
+                    - Merchant dashboard setup
+                    <br />
+                    - Website design and development
+                    <br />
+                    - Social media account creation and setup
+                    <br />
+                    - Google Business Profile setup
+                    <br />
+                    - Initial branding, listings, and platform integration
+                    <br />
+
+                    These charges are non-refundable under any circumstances, irrespective of whether the merchant exits early or discontinues services.
+
+                    <br /> <br />
+                    iii. Liability for Services Rendered
+                    The merchant agrees to bear the full cost of:
+
+                    All services rendered
+
+                    Development work completed
+
+                    Marketing, branding, and promotional activities executed
+                    during the active subscription period up to the termination date.
+
+                    <br /> <br />
+
+                    iv. No Adjustment Based on Installments
+                    Termination rights or financial obligations are not linked to the payment frequency (monthly/quarterly).
+                    The merchant’s liability is determined by the services already performed, not by the installment amount paid.
+
+                    <br /> <br />
+                    v. Outstanding Dues
+                    Any pending service fees, development charges, or agreed commercial dues up to the termination date must be cleared in full before account closure.
+                    <br /> <br />
+
+                vi. Effect of Termination
+                    Upon termination initiated by the merchant:
+
+                    Access to CityWitty Merchant Hub services may be discontinued
+
+                    Listings, offers, and promotions may be removed from the platform
+
+                    CityWitty shall not be liable for any loss of business, visibility, or data arising from such termination</p>
+                <br />
+
+                vii. By proceeding with OTP verification of the Merchant Hub, you agree that you have read and accepted all CityWitty Merchant Terms & Conditions available at <a href="https://partner.citywitty.com/terms">https://partner.citywitty.com/terms</a>.
+
+                <br /> <br />
                 <h2 className="text-2xl font-semibold mb-4">7. Limitation of Liability</h2>
                 <p className="mb-4">
                     CityWitty Merchant Hub is not liable for any indirect, incidental, or consequential damages arising from your participation in the program, including lost revenue or reputational damage. Your sole remedy is limited to the termination of the partnership in accordance with these terms.
